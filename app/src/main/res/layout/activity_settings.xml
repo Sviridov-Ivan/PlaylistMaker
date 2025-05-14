@@ -24,6 +24,7 @@
             android:textSize="22sp" />
 
         <ImageView
+            android:id="@+id/arrow_back_to_main"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:paddingTop="10sp"

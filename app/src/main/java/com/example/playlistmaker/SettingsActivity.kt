@@ -1,6 +1,9 @@
 package com.example.playlistmaker
 
+import android.content.Intent
 import android.os.Bundle
+import android.widget.Button
+import android.widget.ImageView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -16,5 +19,12 @@ class SettingsActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }*/
+        val viewArrowBackToMain = findViewById<ImageView>(R.id.arrow_back_to_main)
+
+        //Реализация возврата на стартовый экран
+        viewArrowBackToMain.setOnClickListener {
+            val backToMainIntent = Intent(this, MainActivity::class.java)
+            startActivity(backToMainIntent)
+        }
     }
 }
