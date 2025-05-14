@@ -23,6 +23,12 @@ class MainActivity : AppCompatActivity() {
 
         buttonSearch.setOnClickListener(buttonSearchClickListener)
 
+
+        //Взаимодействие с кнопкой ПОИСК через лямбду
+        buttonSearch.setOnClickListener {
+            Toast.makeText(this@MainActivity, "Нажали на кнопку Поиск!", Toast.LENGTH_SHORT).show()
+        }
+
         //Взаимодействие с кнопкой МЕДИАТЕКА через реализацию анонимного класса
         val buttonMedia = findViewById<Button>(R.id.button_media)
 
@@ -35,6 +41,12 @@ class MainActivity : AppCompatActivity() {
         buttonMedia.setOnClickListener(buttonMediaClickListener)
 
 
+        //Взаимодействие с кнопкой МЕДИАТЕКА через лямбду
+        buttonMedia.setOnClickListener {
+            Toast.makeText(this@MainActivity, "Нажали на кнопку Медиатека!", Toast.LENGTH_SHORT).show()
+        }
+
+        //Взаимодействие с кнопкой Настройки через реализацию анонимного класса
         val buttonSettings = findViewById<Button>(R.id.button_settings)
 
         val buttonSettingsClickListener: View.OnClickListener = object : View.OnClickListener {
@@ -44,6 +56,12 @@ class MainActivity : AppCompatActivity() {
         }
 
         buttonSettings.setOnClickListener(buttonSettingsClickListener)
+
+
+        //Взаимодействие с кнопкой Настройки через лямбду
+        buttonSettings.setOnClickListener {
+            Toast.makeText(this@MainActivity, "Нажали на кнопку Настройки!", Toast.LENGTH_SHORT).show()
+        }
 
 
 
