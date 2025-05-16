@@ -53,7 +53,7 @@
             android:layout_weight="1"
             android:text="@string/theme"
             android:textColor="@color/black"
-            android:textSize="16sp" />
+            android:textSize="@dimen/settings_text_size" />
 
         <Switch
             android:layout_width="56dp"
@@ -78,7 +78,7 @@
             android:layout_weight="1"
             android:text="@string/share_app"
             android:textColor="@color/black"
-            android:textSize="16sp" />
+            android:textSize="@dimen/settings_text_size" />
 
         <ImageView
             android:layout_width="24dp"
@@ -104,7 +104,7 @@
             android:layout_weight="1"
             android:text="@string/support"
             android:textColor="@color/black"
-            android:textSize="16sp" />
+            android:textSize="@dimen/settings_text_size" />
 
         <ImageView
             android:layout_width="24dp"
@@ -130,7 +130,7 @@
             android:layout_weight="1"
             android:text="@string/agreement"
             android:textColor="@color/black"
-            android:textSize="16sp" />
+            android:textSize="@dimen/settings_text_size" />
 
         <ImageView
             android:layout_width="24dp"
