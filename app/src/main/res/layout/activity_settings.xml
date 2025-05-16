@@ -1,147 +1,142 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:background="@color/white">
 
-    <FrameLayout
+    <!-- Настройки + возврат -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="start"
-            android:paddingLeft="48sp"
-            android:paddingTop="8sp"
-            android:paddingRight="48sp"
-            android:paddingBottom="12sp"
-            android:text="@string/settings_button"
-            android:textColor="@color/black"
-            android:textSize="22sp" />
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingLeft="@dimen/layout_name_settings"
+        android:paddingRight="@dimen/layout_name_settings"
+        android:paddingTop="@dimen/layout_name_settings"
+        android:paddingBottom="@dimen/layout_name_settings">
 
         <ImageView
             android:id="@+id/arrow_back_to_main"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:paddingTop="10sp"
-            android:paddingBottom="10dp"
             android:scaleType="centerCrop"
-            android:src="@drawable/light_mode_3"
-            android:layout_gravity="start"/>
+            android:src="@drawable/light_mode_3" />
 
-    </FrameLayout>
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingLeft="16dp"
+            android:text="@string/settings_button"
+            android:textColor="@color/black"
+            android:textSize="22sp" />
+    </LinearLayout>
 
-    <FrameLayout
+
+    <!-- Выбор темной темы -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:paddingStart="@dimen/settings_text_view_left"
+        android:paddingEnd="@dimen/settings_image_view_right"
+        android:paddingTop="10dp"
+        android:paddingBottom="11dp"
+        android:gravity="center_vertical"
         android:layout_marginTop="24dp">
 
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="start"
-            android:paddingLeft="@dimen/settings_text_view_left"
-            android:paddingTop="@dimen/settings_text_view_top_bottom"
-            android:paddingRight="@dimen/settings_text_view_right"
-            android:paddingBottom="@dimen/settings_text_view_top_bottom"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="@string/theme"
             android:textColor="@color/black"
             android:textSize="16sp" />
 
         <Switch
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingLeft="280dp"
-            android:paddingTop="10dp"
-            android:paddingRight="6dp"
-            android:paddingBottom="11dp" />
+            android:layout_width="56dp"
+            android:layout_height="48dp" />
 
-    </FrameLayout>
+    </LinearLayout>
 
-    <FrameLayout
+    <!-- Поделиться приложением -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/settings_text_view_left"
+        android:paddingEnd="@dimen/settings_image_view_right"
+        android:paddingTop="@dimen/settings_image_view_top"
+        android:paddingBottom="@dimen/settings_image_view_bottom"
+        android:gravity="center_vertical">
 
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="start"
-            android:paddingLeft="@dimen/settings_text_view_left"
-            android:paddingTop="@dimen/settings_text_view_top_bottom"
-            android:paddingRight="@dimen/settings_text_view_right"
-            android:paddingBottom="@dimen/settings_text_view_top_bottom"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="@string/share_app"
             android:textColor="@color/black"
             android:textSize="16sp" />
 
         <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingTop="@dimen/settings_image_view_top"
-            android:paddingBottom="@dimen/settings_image_view_bottom"
-            android:paddingStart="@dimen/settings_image_padding_start"
-            android:src="@drawable/light_mode_4" />
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/light_mode_4"
+            android:contentDescription="@string/share_app" />
+    </LinearLayout>
 
-    </FrameLayout>
-
-    <FrameLayout
+    <!-- Поддержка -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/settings_text_view_left"
+        android:paddingEnd="@dimen/settings_image_view_right"
+        android:paddingTop="@dimen/settings_image_view_top"
+        android:paddingBottom="@dimen/settings_image_view_bottom"
+        android:gravity="center_vertical">
 
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="start"
-            android:paddingLeft="@dimen/settings_text_view_left"
-            android:paddingTop="@dimen/settings_text_view_top_bottom"
-            android:paddingRight="@dimen/settings_text_view_right"
-            android:paddingBottom="@dimen/settings_text_view_top_bottom"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="@string/support"
             android:textColor="@color/black"
             android:textSize="16sp" />
 
         <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingTop="@dimen/settings_image_view_top"
-            android:paddingBottom="@dimen/settings_image_view_bottom"
-            android:paddingStart="@dimen/settings_image_padding_start"
-            android:src="@drawable/light_mode_5" />
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/light_mode_5"
+            android:contentDescription="@string/support" />
+    </LinearLayout>
 
-    </FrameLayout>
-
-    <FrameLayout
+    <!-- Пользовательское соглашение -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/settings_text_view_left"
+        android:paddingEnd="@dimen/settings_image_view_right"
+        android:paddingTop="@dimen/settings_image_view_top"
+        android:paddingBottom="@dimen/settings_image_view_bottom"
+        android:gravity="center_vertical">
 
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="start"
-            android:paddingLeft="@dimen/settings_text_view_left"
-            android:paddingTop="@dimen/settings_text_view_top_bottom"
-            android:paddingRight="@dimen/settings_text_view_right"
-            android:paddingBottom="@dimen/settings_text_view_top_bottom"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="@string/agreement"
             android:textColor="@color/black"
             android:textSize="16sp" />
 
         <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingTop="@dimen/settings_image_view_top"
-            android:paddingBottom="@dimen/settings_image_view_bottom"
-            android:paddingStart="@dimen/settings_image_padding_start"
-            android:src="@drawable/light_mode_6" />
-
-    </FrameLayout>
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/light_mode_6"
+            android:contentDescription="@string/agreement" />
+    </LinearLayout>
 
 </LinearLayout>

@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-   <dimen name="left_right_buttons">10dp</dimen>
-   <dimen name="between_buttons">16dp</dimen>
+   <dimen name="left_right_buttons">16dp</dimen>
+   <dimen name="between_buttons">8dp</dimen>
    <dimen name="between_title_and_actions">24dp</dimen>
    <dimen name="between_icon_and_text">1dp</dimen>
    <dimen name="settings_text_view_top_bottom">21dp</dimen>
-   <dimen name="settings_text_view_right">44dp</dimen>
+   <dimen name="settings_image_view_right">12dp</dimen>
    <dimen name="settings_text_view_left">16dp</dimen>
    <dimen name="settings_image_view_top">19dp</dimen>
    <dimen name="settings_image_view_bottom">18dp</dimen>
    <dimen name="settings_image_padding_start">360dp</dimen>
+   <dimen name="layout_name_settings">4dp</dimen>
 
 </resources>
