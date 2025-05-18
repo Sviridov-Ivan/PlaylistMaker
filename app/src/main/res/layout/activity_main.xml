@@ -32,7 +32,7 @@
         <Button
             android:id="@+id/button_search"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="@dimen/layout_height_main_buttons"
             android:layout_marginLeft="@dimen/left_right_buttons"
             android:layout_marginRight="@dimen/left_right_buttons"
             android:layout_weight="1"
@@ -46,13 +46,13 @@
             app:iconGravity="textStart"
             app:iconPadding="@dimen/between_icon_and_text"
             app:iconTint="@color/black"
-            app:cornerRadius="16dp"
+            app:cornerRadius="@dimen/radius_corner_main_buttons"
             android:foreground="?attr/selectableItemBackground" />
 
         <Button
             android:id="@+id/button_media"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="@dimen/layout_height_main_buttons"
             android:layout_marginTop="@dimen/between_buttons"
             android:layout_marginBottom="@dimen/between_buttons"
             android:layout_marginLeft="@dimen/left_right_buttons"
@@ -68,14 +68,13 @@
             app:iconGravity="textStart"
             app:iconPadding="@dimen/between_icon_and_text"
             app:iconTint="@color/black"
-            app:cornerRadius="16dp"
+            app:cornerRadius="@dimen/radius_corner_main_buttons"
             android:foreground="?attr/selectableItemBackground"/>
 
         <Button
             android:id="@+id/button_settings"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-
+            android:layout_height="@dimen/layout_height_main_buttons"
             android:layout_marginLeft="@dimen/left_right_buttons"
             android:layout_marginRight="@dimen/left_right_buttons"
             android:layout_weight="1"
@@ -89,7 +88,7 @@
             app:iconGravity="textStart"
             app:iconPadding="@dimen/between_icon_and_text"
             app:iconTint="@color/black"
-            app:cornerRadius="16dp"
+            app:cornerRadius="@dimen/radius_corner_main_buttons"
             android:foreground="?attr/selectableItemBackground"/>
     </LinearLayout>
 
