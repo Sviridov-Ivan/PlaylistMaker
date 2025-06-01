@@ -3,12 +3,15 @@
     <style name="Base.Theme.PlaylistMaker" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/black</item> <!-- Основной цвет бренда приложения. -->
-        <item name="colorPrimaryVariant">@color/white</item> <!-- Самый светлый цвет бренда приложения. -->
+        <item name="colorPrimaryVariant">@color/black</item> <!-- Самый светлый цвет бренда приложения. -->
         <item name="colorOnPrimary">@color/white</item> <!-- Используются для задания цвета элементов переднего плана (например, текста и иконок)-->
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/black</item> <!-- Основной (тоже) цвет бренда приложения. -->
         <item name="colorSecondaryVariant">@color/black</item> <!-- Самый темный цвет бренда приложения. -->
         <item name="colorOnSecondary">@color/white</item> <!-- Используются для задания цвета элементов переднего плана (например, текста и иконок)-->
+        <item name="colorForMaterialCardView">@color/white</item> <!-- Использую для цвета MaterialCardView на экране ПОИСКА-->
+        <item name="colorForSettingsIcons">@color/white</item> <!-- Использую для цвета иконок в экране Настройки-->
+
         <!-- Status bar color. -->
         <item name="android:statusBarColor">@color/blue</item>
         <!-- Customize your light theme here. -->

@@ -15,5 +15,9 @@
    <dimen name="settings_text_size">16sp</dimen>
    <dimen name="radius_corner_main_buttons">16dp</dimen>
    <dimen name="layout_height_main_buttons">0dp</dimen>
+   <dimen name="back_arrow_size">48dp</dimen>
+   <dimen name="padding_search_line_1">8.5dp</dimen>
+   <dimen name="padding_search_line_2">8.5dp</dimen>
+
 
 </resources>

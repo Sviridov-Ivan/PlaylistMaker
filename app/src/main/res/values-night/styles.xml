@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="ButtonStyle" parent="Widget.MaterialComponents.Button">
+    <style name="ButtonStyle" parent="Widget.MaterialComponents.Button.UnelevatedButton">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">@dimen/layout_height_main_buttons</item>
         <item name="android:layout_marginLeft">@dimen/left_right_buttons</item>
@@ -27,6 +27,7 @@
     <style name="ImageViewSettingsStyle">
         <item name="android:layout_width">24dp</item>
         <item name="android:layout_height">24dp</item>
+        <item name="android:tint">?attr/colorForSettingsIcons</item>
     </style>
 
 </resources>
