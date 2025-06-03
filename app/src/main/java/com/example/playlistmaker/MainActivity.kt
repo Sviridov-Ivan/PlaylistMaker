@@ -13,7 +13,6 @@ class MainActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_main)
 
-
         val buttonSearch = findViewById<Button>(R.id.button_search) // создание переменной для работы с элементом Button_search из разметки
         val buttonMedia = findViewById<Button>(R.id.button_media) // создание переменной для работы с элементом Button_media из разметки
         val buttonSettings = findViewById<Button>(R.id.button_settings) // создание переменной для работы с элементом Button_settings из разметки

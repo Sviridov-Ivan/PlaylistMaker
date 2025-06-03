@@ -14,4 +14,5 @@
     <string name="agreememt_yap">https://yandex.ru/legal/practicum_offer/</string>
     <string name="search_button">Поиск</string>
     <string name="search_input_hint">Поиск</string>
+    <string name="dialog_choice_title">Поделиться ссылкой на курс Android-разработчик через:</string>
 </resources>

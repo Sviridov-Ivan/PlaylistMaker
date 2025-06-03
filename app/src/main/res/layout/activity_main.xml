@@ -9,7 +9,11 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_margin="@dimen/layout_name_settings"
+        android:paddingStart="@dimen/title_main_start_bottom"
+        android:paddingBottom="@dimen/title_main_start_bottom"
+        android:paddingTop="@dimen/title_main_top">
 
         <TextView
             android:layout_width="wrap_content"
@@ -20,7 +24,6 @@
             android:textSize="22sp"
             android:padding="4sp"
             android:fontFamily="@font/ys_display_medium"/>
-
     </FrameLayout>
 
     <LinearLayout
@@ -62,7 +65,5 @@
             app:cornerRadius="@dimen/radius_corner_main_buttons"
             style="@style/ButtonStyle"/>
     </LinearLayout>
-
-
 
 </LinearLayout>

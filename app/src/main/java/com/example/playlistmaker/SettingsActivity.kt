@@ -14,7 +14,7 @@ import androidx.core.view.WindowInsetsCompat
 class SettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+        //enableEdgeToEdge() // пока не использую, так как работаем оп макетам Figma (потребуется использовать
         setContentView(R.layout.activity_settings)
         /*ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.message)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -40,7 +40,7 @@ class SettingsActivity : AppCompatActivity() {
             shareIntent.type = "text/plain"
             shareIntent.putExtra(Intent.EXTRA_TEXT, linkToTheCourse)
 
-            startActivity(Intent.createChooser(shareIntent, "Поделиться ссылкой на курс Android-разработчик через:")) // если нужно без выбора, тогда оставь startActivity(shareIntent)
+            startActivity(Intent.createChooser(shareIntent, getString(R.string.dialog_choice_title))) // если нужно без выбора, тогда оставь startActivity(shareIntent)
         }
 
         //Реализация нажатия на "Написать в поддержку" с открытием почты с шаблоном адреса, названия письма и текста

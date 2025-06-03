@@ -1,10 +1,12 @@
 package com.example.playlistmaker
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
 import androidx.activity.enableEdgeToEdge
@@ -14,6 +16,10 @@ class SearchActivity : AppCompatActivity() {
 
     private var currentSearchText: String = "" // создание приватной переменной для использования в fun onTextChanged и fun onSaveInstanceState для сохранения введенных данных при развороте экрана (хотя достаточно присвоить id для EditText)
 
+    private fun hideKeyboard(view: View) { // функция для скрытия клавиатуры
+        val keyboardUse = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        keyboardUse.hideSoftInputFromWindow(view.windowToken,0)
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
@@ -22,15 +28,16 @@ class SearchActivity : AppCompatActivity() {
         val viewArrowBackToMain = findViewById<ImageView>(R.id.arrow_back_to_main)
 
         viewArrowBackToMain.setOnClickListener {
-            val backToMainIntent = Intent(this, MainActivity::class.java)
-            startActivity(backToMainIntent)
+            finish() // закрываю текущую активность
         }
 
         val inputEditText = findViewById<EditText>(R.id.inputEditText) // создание переменной для работы с элементом EditText из разметки
         val clearButton = findViewById<ImageView>(R.id.clearIcon) // создание переменной для работы с элементом ImageView из разметки
 
-        clearButton.setOnClickListener { //метод удаления информацции при нажатии на кнопку сброса
+        clearButton.setOnClickListener { //метод удаления информацции при нажатии на кнопку сброса (точнее выводит пустой текст "")
             inputEditText.setText("")
+            inputEditText.clearFocus() // убираю фокус, чтобы клавиатура не появлялась снова
+            hideKeyboard(inputEditText) // функция для скрытия клавиатуры
         }
 
         val simpleTextWatcher = object : TextWatcher {
@@ -61,13 +68,13 @@ class SearchActivity : AppCompatActivity() {
 
     override fun onSaveInstanceState(outState: Bundle) { // переопределение метода onSaveInstanceState, и сохранение в нем текст из EditText в Bundle методом putString.
         super.onSaveInstanceState(outState)
-        outState.putString("SEARCH_TEXT", currentSearchText)
+        outState.putString(KEY_SEARCH_TEXT, currentSearchText)
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) { // переопределение метода onRestoreInstanceState, извлечение данныех из Bundle при помощи метода getString.
         super.onRestoreInstanceState(savedInstanceState)
 
-        val restoredText = savedInstanceState.getString("SEARCH_TEXT", "")
+        val restoredText = savedInstanceState.getString(KEY_SEARCH_TEXT, "")
         val inputEditText = findViewById<EditText>(R.id.inputEditText) // создание переменной для работы с элементом EditText из разметки
         val clearButton = findViewById<ImageView>(R.id.clearIcon) // создание переменной для работы с элементом ImageView из разметки
 
@@ -77,5 +84,9 @@ class SearchActivity : AppCompatActivity() {
         } else {
             View.VISIBLE
         }
+    }
+
+    companion object {
+        private const val KEY_SEARCH_TEXT = "SEARCH_TEXT" //создание константы для ключей хранения данных
     }
 }

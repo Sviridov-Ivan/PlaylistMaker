@@ -18,6 +18,7 @@
    <dimen name="back_arrow_size">48dp</dimen>
    <dimen name="padding_search_line_1">8.5dp</dimen>
    <dimen name="padding_search_line_2">8.5dp</dimen>
-
+   <dimen name="title_main_start_bottom">12dp</dimen>
+   <dimen name="title_main_top">10dp</dimen>
 
 </resources>
