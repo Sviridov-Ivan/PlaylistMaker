@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="colorForMaterialCardView" format="color" />
+    <attr name="colorForSettingsIcons" format="color" />
+    <attr name="colorForThumbSelector" format="color"/>
+    <attr name="colorForTrackSelector" format="color"/>
+</resources>

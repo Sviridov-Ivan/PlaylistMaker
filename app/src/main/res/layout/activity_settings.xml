@@ -3,8 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    android:background="@color/white">
+    android:background="?attr/colorSecondary">
 
     <!-- Настройки + возврат -->
     <LinearLayout
@@ -12,6 +13,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
+        android:layout_margin="@dimen/layout_name_settings"
         android:paddingLeft="@dimen/layout_name_settings"
         android:paddingRight="@dimen/layout_name_settings"
         android:paddingTop="@dimen/layout_name_settings"
@@ -19,19 +21,18 @@
 
         <ImageView
             android:id="@+id/arrow_back_to_main"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="@dimen/back_arrow_size"
+            android:layout_height="@dimen/back_arrow_size"
             android:scaleType="centerCrop"
-            android:src="@drawable/light_mode_3" />
+            android:src="@drawable/light_mode_3"
+            app:tint="?attr/colorOnSecondary"/>
 
         <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:paddingLeft="16dp"
+            android:paddingStart="12dp"
             android:text="@string/settings_button"
-            android:textColor="@color/black"
-            android:textSize="22sp" />
+            android:textSize="@dimen/main_text_size"
+            style="@style/TextViewSettingsStyle"
+            android:fontFamily="@font/ys_display_medium" />
     </LinearLayout>
 
 
@@ -48,24 +49,25 @@
         android:layout_marginTop="24dp">
 
         <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:text="@string/theme"
-            android:textColor="@color/black"
-            android:textSize="@dimen/settings_text_size" />
+            style="@style/TextViewSettingsStyle"/>
 
         <Switch
             android:layout_width="56dp"
-            android:layout_height="48dp" />
-
+            android:layout_height="48dp"
+            android:thumbTint="@color/thumb_color"
+            android:trackTint="@color/track_color"/>
     </LinearLayout>
 
     <!-- Поделиться приложением -->
     <LinearLayout
+        android:id="@+id/share_linear_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?attr/selectableItemBackground"
         android:paddingStart="@dimen/settings_text_view_left"
         android:paddingEnd="@dimen/settings_image_view_right"
         android:paddingTop="@dimen/settings_image_view_top"
@@ -73,25 +75,24 @@
         android:gravity="center_vertical">
 
         <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:text="@string/share_app"
-            android:textColor="@color/black"
-            android:textSize="@dimen/settings_text_size" />
+            style="@style/TextViewSettingsStyle"/>
 
         <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
             android:src="@drawable/light_mode_4"
-            android:contentDescription="@string/share_app" />
+            android:contentDescription="@string/share_app"
+            style="@style/ImageViewSettingsStyle"/>
     </LinearLayout>
 
     <!-- Поддержка -->
     <LinearLayout
+        android:id="@+id/support_linear_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?attr/selectableItemBackground"
         android:paddingStart="@dimen/settings_text_view_left"
         android:paddingEnd="@dimen/settings_image_view_right"
         android:paddingTop="@dimen/settings_image_view_top"
@@ -99,25 +100,25 @@
         android:gravity="center_vertical">
 
         <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:id="@+id/support_icon"
             android:text="@string/support"
-            android:textColor="@color/black"
-            android:textSize="@dimen/settings_text_size" />
+            style="@style/TextViewSettingsStyle"/>
 
         <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
             android:src="@drawable/light_mode_5"
-            android:contentDescription="@string/support" />
+            android:contentDescription="@string/support"
+            style="@style/ImageViewSettingsStyle"/>
     </LinearLayout>
 
     <!-- Пользовательское соглашение -->
     <LinearLayout
+        android:id="@+id/agreement_linear_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?attr/selectableItemBackground"
         android:paddingStart="@dimen/settings_text_view_left"
         android:paddingEnd="@dimen/settings_image_view_right"
         android:paddingTop="@dimen/settings_image_view_top"
@@ -125,18 +126,14 @@
         android:gravity="center_vertical">
 
         <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:id="@+id/agreement_icon"
             android:text="@string/agreement"
-            android:textColor="@color/black"
-            android:textSize="@dimen/settings_text_size" />
+            style="@style/TextViewSettingsStyle"/>
 
         <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
             android:src="@drawable/light_mode_6"
-            android:contentDescription="@string/agreement" />
+            android:contentDescription="@string/agreement"
+            style="@style/ImageViewSettingsStyle"/>
     </LinearLayout>
 
 </LinearLayout>
