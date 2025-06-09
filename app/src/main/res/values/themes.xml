@@ -1,6 +1,21 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Base.Theme.PlaylistMaker" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/blue</item> <!-- Основной цвет бренда приложения. Где использовал - ищи по поиску -->
+        <item name="colorPrimaryVariant">@color/text_gray</item> <!-- Самый светлый цвет бренда приложения. Где использовал - ищи по поиску -->
+        <item name="colorOnPrimary">@color/white</item> <!-- Используются для задания цвета элементов переднего плана (например, текста и иконок) Где использовал - ищи по поиску-->
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/white</item> <!-- Основной (тоже) цвет бренда приложения. Где использовал - ищи по поиску -->
+        <item name="colorSecondaryVariant">@color/black</item> <!-- Самый темный цвет бренда приложения. Где использовал - ищи по поиску-->
+        <item name="colorOnSecondary">@color/black</item> <!-- Используются для задания цвета элементов переднего плана (например, текста и иконок) Где использовал - ищи по поиску-->
+        <item name="colorForMaterialCardView">@color/light_gray</item> <!-- Использую для цвета MaterialCardView на экране ПОИСКА-->
+        <item name="colorForSettingsIcons">@color/text_gray</item> <!-- Использую для цвета иконок в экране Настройки-->
+
+
+
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor">@color/blue</item>
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
     </style>
