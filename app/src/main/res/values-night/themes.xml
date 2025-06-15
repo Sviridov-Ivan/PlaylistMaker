@@ -11,6 +11,7 @@
         <item name="colorOnSecondary">@color/white</item> <!-- Используются для задания цвета элементов переднего плана (например, текста и иконок)-->
         <item name="colorForMaterialCardView">@color/white</item> <!-- Использую для цвета MaterialCardView на экране ПОИСКА-->
         <item name="colorForSettingsIcons">@color/white</item> <!-- Использую для цвета иконок в экране Настройки-->
+        <item name="colorForTrackName">@color/white</item> <!-- Использую для цвета названия трека-->
 
         <!-- Status bar color. -->
         <item name="android:statusBarColor">@color/blue</item>

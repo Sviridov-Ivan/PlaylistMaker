@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingLeft="@dimen/padding_act_track_left"
+    android:paddingTop="@dimen/padding_act_track_top_bottom"
+    android:paddingRight="@dimen/padding_act_track_right"
+    android:paddingBottom="@dimen/padding_act_track_top_bottom"
+    android:gravity="center_vertical"
+    android:background="?attr/colorSecondary">
+
+        <!-- Картинка с лого трека -->
+        <ImageView
+            android:id="@+id/source_track_image"
+            android:layout_width="@dimen/padding_act_track_main_icon_size"
+            android:layout_height="@dimen/padding_act_track_main_icon_size"/>
+
+        <!-- Центр: название трека, исполнитель, тайминг -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:paddingLeft="@dimen/padding_act_track_top_bottom"
+            android:layout_marginTop="@dimen/margin_act_track_top_bottom"
+            android:layout_marginBottom="@dimen/margin_act_track_top_bottom"
+            android:paddingRight="@dimen/padding_act_track_top_bottom">
+
+            <!-- Название трека -->
+            <TextView
+                android:id="@+id/source_track_name"
+                android:layout_width="wrap_content"
+                tools:text="Song"
+                style="@style/TextViewSettingsStyle"
+                android:textColor="?attr/colorForTrackName"
+                android:maxLines="1"
+                android:ellipsize="end"/>
+
+            <!-- Нижняя строка: текст + картинка + текст -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin2_act_track_top"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <!-- Название исполнителя -->
+                <TextView
+                    android:id="@+id/source_artist_name"
+                    android:text="Artist"
+                    style="@style/TextViewArtistAndTime"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"/>
+
+                <!-- Точка -->
+                <ImageView
+                    android:id="@+id/inline_icon"
+                    android:layout_width="@dimen/icon_dot_size_act_track_size"
+                    android:layout_height="@dimen/icon_dot_size_act_track_size"
+                    android:src="@drawable/ic_dot_artist_time"/>
+
+                <!-- Время трека -->
+                <TextView
+                    android:id="@+id/source_track_time"
+                    android:text="Time"
+                    style="@style/TextViewArtistAndTime"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <ImageView
+            android:src="@drawable/light_mode_6"
+            style="@style/ImageViewSettingsStyle"/>
+</LinearLayout>
