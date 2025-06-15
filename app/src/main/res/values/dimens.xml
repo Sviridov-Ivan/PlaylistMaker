@@ -20,5 +20,15 @@
    <dimen name="padding_search_line_2">8.5dp</dimen>
    <dimen name="title_main_start_bottom">12dp</dimen>
    <dimen name="title_main_top">10dp</dimen>
+   <dimen name="padding_top_recycler_view">16dp</dimen>
+   
+   <dimen name="padding_act_track_left">13dp</dimen>
+   <dimen name="padding_act_track_right">12dp</dimen>
+   <dimen name="padding_act_track_top_bottom">8dp</dimen>
+   <dimen name="padding_act_track_main_icon_size">45dp</dimen>
+   <dimen name="margin_act_track_top_bottom">6dp</dimen>
+   <dimen name="margin2_act_track_top">1dp</dimen>
+   <dimen name="artist_name_act_track_text_size">11sp</dimen>
+   <dimen name="icon_dot_size_act_track_size">13dp</dimen>
 
 </resources>
