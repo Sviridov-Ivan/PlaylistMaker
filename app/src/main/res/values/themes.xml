@@ -11,7 +11,7 @@
         <item name="colorOnSecondary">@color/black</item> <!-- Используются для задания цвета элементов переднего плана (например, текста и иконок) Где использовал - ищи по поиску-->
         <item name="colorForMaterialCardView">@color/light_gray</item> <!-- Использую для цвета MaterialCardView на экране ПОИСКА-->
         <item name="colorForSettingsIcons">@color/text_gray</item> <!-- Использую для цвета иконок в экране Настройки-->
-
+        <item name="colorForTrackName">@color/black_2</item> <!-- Использую для цвета названия трека-->
 
 
         <!-- Status bar color. -->
