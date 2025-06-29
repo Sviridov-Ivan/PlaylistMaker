@@ -27,7 +27,7 @@ class TracksViewHolder(parent:ViewGroup) : RecyclerView.ViewHolder(
     fun bind(model: Track) {
         sourceTrackName.text = model.trackName
         sourceArtistName.text = model.artistName
-        sourceTrackTime.text = model.trackTime
+        sourceTrackTime.text = formatDuration(model.trackTimeMillis) // используем отформатированное значение времени функция в файле TimeUtils
         Glide.with(itemView)
             .load(model.artworkUrl100)
             .centerCrop()

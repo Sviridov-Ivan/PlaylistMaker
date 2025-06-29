@@ -15,4 +15,7 @@
     <string name="search_button">Поиск</string>
     <string name="search_input_hint">Поиск</string>
     <string name="dialog_choice_title">Поделиться ссылкой на курс Android-разработчик через:</string>
+    <string name="refresh">Обновить</string>
+    <string name="nothing_found">Ничего не нашлось</string>
+    <string name="something_went_wrong">Проблемы со связью\n\nЗагрузка не удалась. Проверьте подключение к интернету</string>
 </resources>
