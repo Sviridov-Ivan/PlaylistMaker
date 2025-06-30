@@ -31,4 +31,14 @@
    <dimen name="artist_name_act_track_text_size">11sp</dimen>
    <dimen name="icon_dot_size_act_track_size">13dp</dimen>
 
+   <!-- Контейнер для плейсхолдера -->
+   <dimen name="p_h_ll_padding_top">86dp</dimen>
+   <dimen name="p_h_image_size">120dp</dimen>
+   <dimen name="p_h_text_view_margin_top">16dp</dimen>
+   <dimen name="p_h_text_view_padding_start_end">24dp</dimen>
+   <dimen name="p_h_text_view_text_size">19sp</dimen>
+   <dimen name="p_h_button_margin_top">24dp</dimen>
+   <dimen name="p_h_text_button_text_size">16sp</dimen>
+
+
 </resources>
