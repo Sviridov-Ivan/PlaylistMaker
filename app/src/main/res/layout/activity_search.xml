@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    android:id="@+id/searchLayout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -58,6 +60,8 @@
                 android:id="@+id/inputEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:imeOptions="actionDone"
+                android:singleLine="true"
                 android:layout_gravity="center_vertical"
                 android:background="@null"
                 android:drawableStart="@drawable/light_mode"
@@ -86,11 +90,63 @@
         </FrameLayout>
     </com.google.android.material.card.MaterialCardView>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        android:layout_marginTop="@dimen/padding_top_recycler_view"/>
+        android:layout_marginTop="@dimen/padding_top_recycler_view">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+        <!-- Контейнер для плейсхолдера -->
+        <LinearLayout
+            android:id="@+id/placeholderContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:paddingTop="@dimen/p_h_ll_padding_top">
+
+            <ImageView
+                android:id="@+id/placeholderImage"
+                android:layout_width="@dimen/p_h_image_size"
+                android:layout_height="@dimen/p_h_image_size"
+                android:scaleType="centerInside"
+                android:src="@drawable/error_nothing" />
+
+            <TextView
+                android:id="@+id/placeholderText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/p_h_text_view_margin_top"
+                android:paddingStart="@dimen/p_h_text_view_padding_start_end"
+                android:paddingEnd="@dimen/p_h_text_view_padding_start_end"
+                android:textAlignment="center"
+                android:textSize="@dimen/p_h_text_view_text_size"
+                android:textColor="?attr/colorOnSecondary"
+                android:fontFamily="@font/ys_display_medium"
+                android:text="Ничего не нашлось" />
+
+            <Button
+                android:id="@+id/placeholderButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/p_h_button_margin_top"
+                android:text="@string/refresh"
+                android:textColor="?attr/colorSecondary"
+                android:background="@drawable/refresh_search_button"
+                android:fontFamily="@font/ys_display_medium"
+                android:textAllCaps="false"
+                android:textSize="@dimen/p_h_text_button_text_size"
+                android:letterSpacing="0"
+                app:backgroundTint="@null"
+                android:visibility="gone" />
+
+        </LinearLayout>
+    </FrameLayout>
 
 </LinearLayout>

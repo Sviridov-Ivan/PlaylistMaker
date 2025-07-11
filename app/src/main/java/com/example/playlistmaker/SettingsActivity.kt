@@ -14,13 +14,13 @@ import androidx.core.view.WindowInsetsCompat
 class SettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //enableEdgeToEdge() // пока не использую, так как работаем оп макетам Figma (потребуется использовать
+        enableEdgeToEdge() // поддержка EdgeToEdge режима
         setContentView(R.layout.activity_settings)
-        /*ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.message)) { v, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.settingsLayout)) { v, insets -> // присваиваю id для головного layout в верстке
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
-        }*/
+        }
         val viewArrowBackToMain = findViewById<ImageView>(R.id.arrow_back_to_main)
 
         //Реализация возврата на стартовый экран

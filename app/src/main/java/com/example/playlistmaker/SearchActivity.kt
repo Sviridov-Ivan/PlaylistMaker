@@ -6,15 +6,97 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
+import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 class SearchActivity : AppCompatActivity() {
+
+    private val iTunesService = ITunesService.api // переменная для работы с ITunesService (ранее был описан здесь в активити)
+    // Вынес весь ретрофит клиента в файл
+    /*
+    private val iTunesBaseUrl = "https://itunes.apple.com" // базовый Url для запроса треков с itunes
+
+    private val retrofit = Retrofit.Builder() // переменная для библиотеки Retrofit, которая преобразовывает запросы от сервера из Json в Kotlin
+        .baseUrl(iTunesBaseUrl)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+
+    private val iTunesService = retrofit.create(ITunesApi::class.java) // создание переменной для обработки от инетрфейса API*/
+
+    private lateinit var inputEditText: EditText // создание переменной для определения типа XML activity_search Edit text
+    private lateinit var tracksList: RecyclerView // создание переменной для определения типа с XML activity_search RecyclerView
+    private lateinit var placeholderContainer: LinearLayout // создание переменной для определения типа с XML activity_search placeholderContainer
+    private lateinit var placeholderImage: ImageView // создание переменной для определения типа с XML activity_search placeholderImage
+    private lateinit var placeholderText: TextView // создание переменной для определения типа с XML activity_search placeholderText
+    private lateinit var placeholderButton: Button // определения типа
+
+    //private val tracks = ArrayList<Track>() // создаем переменную для списка данных из дата класса Track !!! закомментил, так как создал функцию в Адаптере, чтобы не напутать со списками
+
+    private val adapter = TracksAdapter() // создаем переменную для адаптера с пустым конструктором (там есть пометка)
+
+    private fun performSearch(query:String) { // функция для реализации запроса. сделал отдельно, так как понадобится для кнопки в плейсхолдере
+        if (query.isEmpty()) return
+
+        iTunesService.search(query).enqueue(object : Callback<TracksResponse> {
+            override fun onResponse(call: Call<TracksResponse>,response: Response<TracksResponse>
+            ) {
+                if (response.code() == 200) { // статус запроса успешный
+                    val results = response.body()?.results.orEmpty() // безопасный вывод, если results будут пустые
+                    if (results.isNotEmpty()) {
+                        adapter.updateTracks(results) // использую функцию из Адаптера для обновления списка треков
+                        hidePlaceholder()
+                    } else {
+                        showEmptyState() // картинка и текст НИЧЕГО НЕ НАЙДЕНО
+                    }
+                } else {
+                    showErrorState() // картинка, текст и кнопка для "ПРОБЛЕМА СО СВЯЗЬЮ"
+                }
+            }
+
+            override fun onFailure(call: Call<TracksResponse>, t: Throwable) {
+                showErrorState()
+            }
+        })
+    }
+
+    private fun hidePlaceholder() { // функция для скрытия плейсхолдера, сделал отдельно для возможного использования еще где-то, но вообще можно и напрямую включить в fun performSearch спользую в performSearch
+        placeholderContainer.visibility = View.GONE
+    }
+
+    private fun showEmptyState() { // функция для реализации условия, если ничего не найдено (ни одного трека) использую в performSearch
+        placeholderContainer.visibility = View.VISIBLE // отобразить placeholderContainer из XML
+        placeholderImage.setImageResource(R.drawable.error_nothing) // отобразить картинку НИЧЕГО НЕ НАШЛОСЬ
+        placeholderText.setText(R.string.nothing_found) // отобразить текст НИЧЕГО НЕ НАШЛОСЬ
+        placeholderButton.visibility = View.GONE // кнопку НЕ отображать
+        adapter.clearTracks() // использую функцию из Адаптера для очистки списка треков
+    }
+
+    private fun showErrorState() { // функция для реализации условия, если что-то не так со связью (или статус отличный от 200) использую в performSearch
+        placeholderContainer.visibility = View.VISIBLE  // отобразить placeholderContainer из XML
+        placeholderImage.setImageResource(R.drawable.error_nonet) // отобразить картинку ПРОБЛЕМЫ СО СВЯЗЬЮ
+        placeholderText.setText(R.string.something_went_wrong) // отобразить текст ПРОБЛЕМЫ СО СВЯЗЬЮ
+        placeholderButton.visibility = View.VISIBLE // кнопку для Обновить Отображать
+        adapter.clearTracks() // использую функцию из Адаптера для очистки списка треков
+    }
+
 
     private var currentSearchText: String = "" // создание приватной переменной для использования в fun onTextChanged и fun onSaveInstanceState для сохранения введенных данных при развороте экрана (хотя достаточно присвоить id для EditText)
 
@@ -25,8 +107,45 @@ class SearchActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_search)
 
+        enableEdgeToEdge() // поддержка EdgeToEdge режима
+        setContentView(R.layout.activity_search)
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.searchLayout)) { v, insets -> // присваиваю id для головного layout в верстке
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            insets
+        }
+
+
+        tracksList = findViewById(R.id.recyclerView) // передача данных от переменной в XML
+        placeholderContainer = findViewById(R.id.placeholderContainer) //передача данных от переменной в XML
+        placeholderImage = findViewById(R.id.placeholderImage) // передача данных от переменной в XML
+        placeholderText = findViewById(R.id.placeholderText) // передача данных от переменной в XML
+        placeholderButton = findViewById(R.id.placeholderButton) // передача данных от переменной в XML
+        inputEditText = findViewById(R.id.inputEditText) // создание переменной для работы с элементом EditText из разметки (для строки поиска)
+
+
+        tracksList.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false) // вызываем адаптер для LinearLayoutManager (составляющий элемент RecyclerView помимо адаптера и вьюхолдера)
+        tracksList.adapter = adapter // адаптер для RecyclerView
+
+        inputEditText.setOnEditorActionListener() {_, actionId, _ -> // вызываем функцию performSearch для обработки запроса от iTunesBaseUrl, но через галочку IME_ACTION_DONE на клавиатуре по условию 11 спринта
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                val query = inputEditText.text.toString()
+                if (query.isNotEmpty()) {
+                    performSearch(query)
+                }
+                true
+            } else {
+                false
+            }
+        }
+
+        placeholderButton.setOnClickListener { // повторный вызов функции performSearch через кнопку плейсхолдера при ошибке загрузки, она только тогда появляется
+            performSearch(inputEditText.text.toString())
+        }
+
+
+        /*
         // РАБОТА С RecyclerView до 58 строки ВКЛЮЧИТЕЛЬНО
         // RecyclerView в коде (для составления списка треков), указав его в соответствующей разметке (activity_search.xml) и добавили LinearLayoutManager
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
@@ -55,7 +174,7 @@ class SearchActivity : AppCompatActivity() {
 
         // передача переменной с общим списком в recyclerView.adapter (в xml)
         val tracksAdapter = TracksAdapter(tracks)
-        recyclerView.adapter = tracksAdapter
+        recyclerView.adapter = tracksAdapter */ // ЭТО БЫЛА ЗАГЛУШКА ДЛЯ 10 СПРИНТА!!! ЛОГКАЛЬНО ПОЛУЧАЛИ СПИСОК ТРЕКОВ!!!
         
 
         //Реализация возврата на стартовый экран
@@ -65,13 +184,14 @@ class SearchActivity : AppCompatActivity() {
             finish() // закрываю текущую активность
         }
 
-        val inputEditText = findViewById<EditText>(R.id.inputEditText) // создание переменной для работы с элементом EditText из разметки (для строки поиска)
+
         val clearButton = findViewById<ImageView>(R.id.clearIcon) // создание переменной для работы с элементом ImageView из разметки (для строки поиска)
 
         clearButton.setOnClickListener { //метод удаления информацции при нажатии на кнопку сброса (точнее выводит пустой текст "") (для строки поиска)
             inputEditText.setText("")
             inputEditText.clearFocus() // убираю фокус, чтобы клавиатура не появлялась снова (для строки поиска)
             hideKeyboard(inputEditText) // функция для скрытия клавиатуры (для строки поиска)
+            adapter.clearTracks()// использую функцию из Адаптера для очистки списка треков
         }
 
         val simpleTextWatcher = object : TextWatcher {
@@ -83,6 +203,11 @@ class SearchActivity : AppCompatActivity() {
                 // empty
                 currentSearchText = s.toString() // производим преобразование CharSequence → String с помощью toString(), так как функция onTextChanged имеет тип CharSequence? а Bundle.putString() и setText() работают с типом String. (для строки поиска)
                 clearButton.visibility = clearButtonVisibility(s) // (для строки поиска)
+
+                if (s.isNullOrEmpty()) { // !!! ПОКА ИСТОРИЮ ОТОБРАЖАТЬ НЕ УМЕЮ. В ДАННОМ СПРИНТЕ НЕ ИЗУЧАЛОСЬ!!! ВОЗМОЖНО, в следующих будет изучаться
+                    adapter.clearTracks() // использую функцию из Адаптера для очистки списка треков
+                    placeholderContainer.visibility = View.GONE // убираю плейсхолдер, пока не нужно
+                }
             }
 
             override fun afterTextChanged(s: Editable?) {  //(для строки поиска)
