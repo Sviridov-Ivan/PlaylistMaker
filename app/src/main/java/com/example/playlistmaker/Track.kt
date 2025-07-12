@@ -4,6 +4,7 @@ import android.icu.text.SimpleDateFormat
 import java.util.Locale
 
 data class Track(
+    val trackId: Long,
     val trackName: String, // Название композиции
     val artistName: String, // Имя исполнителя
     val trackTimeMillis: Long, // Продолжительность трека миллисекундах, так приходит от база iTunes Search API.

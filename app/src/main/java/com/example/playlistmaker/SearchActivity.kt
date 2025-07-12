@@ -46,10 +46,14 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var placeholderContainer: LinearLayout // создание переменной для определения типа с XML activity_search placeholderContainer
     private lateinit var placeholderImage: ImageView // создание переменной для определения типа с XML activity_search placeholderImage
     private lateinit var placeholderText: TextView // создание переменной для определения типа с XML activity_search placeholderText
-    private lateinit var placeholderButton: Button // определения типа
+    private lateinit var placeholderButton: Button // определения типа с XML activity_search placeholderButton
+
+    private lateinit var historyTitle: TextView // создание переменной для опредения типа с с XML activity_search @+id/historyTitle (Спринт 12)
+    private lateinit var clearHistoryButton: Button // создание переменной для опредения типа с с XML activity_search @+id/clearHistoryButton (Спринт 12)
 
     //private val tracks = ArrayList<Track>() // создаем переменную для списка данных из дата класса Track !!! закомментил, так как создал функцию в Адаптере, чтобы не напутать со списками
 
+    private lateinit var searchHistory: SearchHistory // определяем переменную для работы с классом SearchHistory (история поиска, Спринт 12)
     private val adapter = TracksAdapter() // создаем переменную для адаптера с пустым конструктором (там есть пометка)
 
     private fun performSearch(query:String) { // функция для реализации запроса. сделал отдельно, так как понадобится для кнопки в плейсхолдере
@@ -77,7 +81,7 @@ class SearchActivity : AppCompatActivity() {
         })
     }
 
-    private fun hidePlaceholder() { // функция для скрытия плейсхолдера, сделал отдельно для возможного использования еще где-то, но вообще можно и напрямую включить в fun performSearch спользую в performSearch
+    private fun hidePlaceholder() { // функция для скрытия плейсхолдера, сделал отдельно для возможного использования еще где-то, но вообще можно и напрямую включить в fun performSearch использую в performSearch
         placeholderContainer.visibility = View.GONE
     }
 
@@ -97,7 +101,6 @@ class SearchActivity : AppCompatActivity() {
         adapter.clearTracks() // использую функцию из Адаптера для очистки списка треков
     }
 
-
     private var currentSearchText: String = "" // создание приватной переменной для использования в fun onTextChanged и fun onSaveInstanceState для сохранения введенных данных при развороте экрана (хотя достаточно присвоить id для EditText)
 
     private fun hideKeyboard(view: View) { // функция для скрытия клавиатуры
@@ -116,6 +119,7 @@ class SearchActivity : AppCompatActivity() {
             insets
         }
 
+        searchHistory = SearchHistory(getSharedPreferences("search_prefs", Context.MODE_PRIVATE)) // переменная для работы с классом SearchHistory и получением данных из SharedPreferences
 
         tracksList = findViewById(R.id.recyclerView) // передача данных от переменной в XML
         placeholderContainer = findViewById(R.id.placeholderContainer) //передача данных от переменной в XML
@@ -124,6 +128,13 @@ class SearchActivity : AppCompatActivity() {
         placeholderButton = findViewById(R.id.placeholderButton) // передача данных от переменной в XML
         inputEditText = findViewById(R.id.inputEditText) // создание переменной для работы с элементом EditText из разметки (для строки поиска)
 
+        historyTitle = findViewById(R.id.historyTitle) // передача данных от переменной в XML - закголовок истории
+        clearHistoryButton = findViewById(R.id.clearHistoryButton) // передача данных от переменной в XML - очистка истории
+
+        // Обработка клика по элементу списка RecyclerView треков и сохранение в историю
+        adapter.setOnItemClickListener { track ->
+            searchHistory.saveTrack(track) // сохраняю трек в историю по клику на отображенном списке поиска (вызывается до tracksList.adapter = adapter // адаптер для RecyclerView) (в классе TrackAdapter)
+        }
 
         tracksList.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false) // вызываем адаптер для LinearLayoutManager (составляющий элемент RecyclerView помимо адаптера и вьюхолдера)
         tracksList.adapter = adapter // адаптер для RecyclerView
@@ -177,7 +188,7 @@ class SearchActivity : AppCompatActivity() {
         recyclerView.adapter = tracksAdapter */ // ЭТО БЫЛА ЗАГЛУШКА ДЛЯ 10 СПРИНТА!!! ЛОГКАЛЬНО ПОЛУЧАЛИ СПИСОК ТРЕКОВ!!!
         
 
-        //Реализация возврата на стартовый экран
+        //Реализация возврата на стартовый экран (а точнее закрытие текущей активности и возврат к предыдущей, а именно к main)
         val viewArrowBackToMain = findViewById<ImageView>(R.id.arrow_back_to_main)
 
         viewArrowBackToMain.setOnClickListener {
@@ -192,9 +203,10 @@ class SearchActivity : AppCompatActivity() {
             inputEditText.clearFocus() // убираю фокус, чтобы клавиатура не появлялась снова (для строки поиска)
             hideKeyboard(inputEditText) // функция для скрытия клавиатуры (для строки поиска)
             adapter.clearTracks()// использую функцию из Адаптера для очистки списка треков
+            showHistory() // функция отображения истории, создана ниже вне onCreate (Спринт 12)
         }
 
-        val simpleTextWatcher = object : TextWatcher {
+        val simpleTextWatcher = object : TextWatcher { // переменная для работы с отслеживанием введенного текста
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { //(для строки поиска)
                 // empty
             }
@@ -202,19 +214,74 @@ class SearchActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 // empty
                 currentSearchText = s.toString() // производим преобразование CharSequence → String с помощью toString(), так как функция onTextChanged имеет тип CharSequence? а Bundle.putString() и setText() работают с типом String. (для строки поиска)
-                clearButton.visibility = clearButtonVisibility(s) // (для строки поиска)
+                clearButton.visibility = clearButtonVisibility(s) // отображение кнопочки R.id.clearIcon для очистки строки поиска
 
-                if (s.isNullOrEmpty()) { // !!! ПОКА ИСТОРИЮ ОТОБРАЖАТЬ НЕ УМЕЮ. В ДАННОМ СПРИНТЕ НЕ ИЗУЧАЛОСЬ!!! ВОЗМОЖНО, в следующих будет изучаться
-                    adapter.clearTracks() // использую функцию из Адаптера для очистки списка треков
-                    placeholderContainer.visibility = View.GONE // убираю плейсхолдер, пока не нужно
+                if (s.isNullOrEmpty()) {
+                    adapter.clearTracks() // использую функцию из Адаптера для очистки списка треков (только из области видимости, не из SharedPreferences)
+                    //placeholderContainer.visibility = View.GONE // убираю плейсхолдер, пока не нужно
+                    hidePlaceholder() // вызов функции для скрытия плейсхолдера
+                    //showHistory() // функция отображения истории, создана ниже вне onCreate (Спринт 12) !!! закоментил, так как буду показывать исторю, если поле в фокусе
+
+                    // показываем историю только если поле в фокусе
+                    if (inputEditText.hasFocus()) {
+                        showHistory() // функция отображения истории, создана ниже вне onCreate (Спринт 12)
+                    } else {
+                        historyTitle.visibility = View.GONE
+                        clearHistoryButton.visibility = View.GONE
+                    }
+                } else {
+                    // скрытие и очистка (из видимости) элементов истории при начале ввода
+                    adapter.clearTracks()
+                    historyTitle.visibility = View.GONE
+                    clearHistoryButton.visibility = View.GONE
                 }
             }
-
             override fun afterTextChanged(s: Editable?) {  //(для строки поиска)
                 // empty
             }
         }
         inputEditText.addTextChangedListener(simpleTextWatcher) // добавление TextWatcherа (для строки поиска)
+
+        clearHistoryButton.setOnClickListener { // обработка нажатия на кнопки Очистить историю (Спринт 12)
+            searchHistory.clearHistory() // вызов функции clearHistory() из экземпляра класса searchHistory
+            showHistory() // функция отображения истории, создана ниже вне onCreate (Спринт 12)
+        }
+
+        // для отслеживания СОСТОЯНИЯ фокуса и пустоты поля ввода - если начат ввод, тогда историю скрыть (Спринт 12)
+        inputEditText.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus && inputEditText.text.isEmpty()) {
+                showHistory()
+            } else if (!hasFocus) {
+                historyTitle.visibility = View.GONE
+                clearHistoryButton.visibility = View.GONE
+
+                if (inputEditText.text.isEmpty()) {
+                    adapter.clearTracks() // скрываю историю из списка (только из области видимости, не из SharedPreferences)
+                }
+            }
+        }
+
+        // Восстановление поиска текста (доп. Спринт 12)
+        if (savedInstanceState != null) {
+            currentSearchText = savedInstanceState.getString(KEY_SEARCH_TEXT, "")
+            inputEditText.setText(currentSearchText)
+        }
+        if (currentSearchText.isEmpty()) {
+            showHistory() // функция отображения истории, создана ниже вне onCreate (Спринт 12)
+        }
+    }
+
+    private fun showHistory() { // функция для работы с экземпляром класса searchHistory для получения истории из SharedPreferences и соответствующей разработки
+        val history = searchHistory.getHistory()
+        if (history.isNotEmpty()) {
+            adapter.updateTracks(history)
+            historyTitle.visibility = View.VISIBLE
+            clearHistoryButton.visibility = View.VISIBLE
+        } else {
+            adapter.clearTracks()
+            historyTitle.visibility = View.GONE
+            clearHistoryButton.visibility = View.GONE
+        }
     }
 
     private fun clearButtonVisibility(s: CharSequence?): Int { // функция для обработки видимости кнопки сбороса введенных данных (для строки поиска)
