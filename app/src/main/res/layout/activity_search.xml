@@ -92,14 +92,56 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:layout_marginTop="@dimen/padding_top_recycler_view">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView"
+        <!-- RecyclerView и заголовок истории -->
+        <LinearLayout
+            android:id="@+id/listContainer"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/historyTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/h_title_marging_top"
+                android:layout_marginBottom="@dimen/h_title_marging_bottom"
+                android:paddingTop="@dimen/h_titile_padding_top"
+                android:paddingBottom="@dimen/h_title_padding_bottom"
+                android:textAlignment="center"
+                android:textSize="@dimen/p_h_text_view_text_size"
+                android:textColor="?attr/colorOnSecondary"
+                android:fontFamily="@font/ys_display_medium"
+                android:text="@string/history_title"
+                />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+            <Button
+                android:id="@+id/clearHistoryButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/p_h_button_margin_top"
+                android:text="@string/clear_history_button"
+                android:textColor="?attr/colorSecondary"
+                android:background="@drawable/refresh_search_button"
+                android:fontFamily="@font/ys_display_medium"
+                android:textAllCaps="false"
+                android:textSize="@dimen/p_h_text_button_text_size"
+                android:letterSpacing="0"
+                app:backgroundTint="@null"
+                android:visibility="gone"/>
+
+        </LinearLayout>
 
         <!-- Контейнер для плейсхолдера -->
         <LinearLayout
@@ -129,7 +171,7 @@
                 android:textSize="@dimen/p_h_text_view_text_size"
                 android:textColor="?attr/colorOnSecondary"
                 android:fontFamily="@font/ys_display_medium"
-                android:text="Ничего не нашлось" />
+                android:text="@string/nothing_found" />
 
             <Button
                 android:id="@+id/placeholderButton"
