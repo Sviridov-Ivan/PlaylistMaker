@@ -30,16 +30,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 class SearchActivity : AppCompatActivity() {
 
     private val iTunesService = ITunesService.api // переменная для работы с ITunesService (ранее был описан здесь в активити)
-    // Вынес весь ретрофит клиента в файл
-    /*
-    private val iTunesBaseUrl = "https://itunes.apple.com" // базовый Url для запроса треков с itunes
-
-    private val retrofit = Retrofit.Builder() // переменная для библиотеки Retrofit, которая преобразовывает запросы от сервера из Json в Kotlin
-        .baseUrl(iTunesBaseUrl)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-
-    private val iTunesService = retrofit.create(ITunesApi::class.java) // создание переменной для обработки от инетрфейса API*/
 
     private lateinit var inputEditText: EditText // создание переменной для определения типа XML activity_search Edit text
     private lateinit var tracksList: RecyclerView // создание переменной для определения типа с XML activity_search RecyclerView
@@ -137,7 +127,7 @@ class SearchActivity : AppCompatActivity() {
 
             // обработка вызова экрана AudioPlayerActivity при нажатии на элемент списка RecyclerView из адаптера (Спринт 13)
             val intent = Intent(this, AudioPlayerActivity::class.java)
-            intent.putExtra("track",track)
+            intent.putExtra(IntentKeys.EXTRA_TRACK,track)
             startActivity(intent)
         }
 
@@ -161,38 +151,6 @@ class SearchActivity : AppCompatActivity() {
         }
 
 
-        /*
-        // РАБОТА С RecyclerView до 58 строки ВКЛЮЧИТЕЛЬНО
-        // RecyclerView в коде (для составления списка треков), указав его в соответствующей разметке (activity_search.xml) и добавили LinearLayoutManager
-        val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
-        recyclerView.layoutManager = LinearLayoutManager(this)
-
-        // создание переменных и списков из названий треков, артистов, и таймингов
-        val trackNames = listOf("Smells Like Teen Spirit", "Billie Jean", "Stayin' Alive", "Whole Lotta Love", "Sweet Child O'Mine") // создание списков имен для трэков для мок-объекта
-        val artistNames = listOf("Nirvana", "Michael Jackson", "Bee Gees", "Led Zeppelin", "Guns N' Roses") // создание списков имен авторов для трэков для мок-объекта
-        val trackTimes = listOf("5:01", "4:35", "4:10", "5:33", "5:03") // создание списков времен проигрывания для трэков для мок-объекта
-        val artworkUrl100s = listOf(
-            "https://is5-ssl.mzstatic.com/image/thumb/Music115/v4/7b/58/c2/7b58c21a-2b51-2bb2-e59a-9bb9b96ad8c3/00602567924166.rgb.jpg/100x100bb.jpg", // создание списков ссылок для загрузки картинок для трэков
-            "https://is5-ssl.mzstatic.com/image/thumb/Music125/v4/3d/9d/38/3d9d3811-71f0-3a0e-1ada-3004e56ff852/827969428726.jpg/100x100bb.jpg", // создание списков ссылок для загрузки картинок для трэков
-            "https://is4-ssl.mzstatic.com/image/thumb/Music115/v4/1f/80/1f/1f801fc1-8c0f-ea3e-d3e5-387c6619619e/16UMGIM86640.rgb.jpg/100x100bb.jpg", // создание списков ссылок для загрузки картинок для трэков
-            "https://is2-ssl.mzstatic.com/image/thumb/Music62/v4/7e/17/e3/7e17e33f-2efa-2a36-e916-7f808576cf6b/mzm.fyigqcbs.jpg/100x100bb.jpg", // создание списков ссылок для загрузки картинок для трэков
-            "https://is5-ssl.mzstatic.com/image/thumb/Music125/v4/a0/4d/c4/a04dc484-03cc-02aa-fa82-5334fcb4bc16/18UMGIM24878.rgb.jpg/100x100bb.jpg") // создание списков ссылок для загрузки картинок для трэков
-
-        // создание переменной и общего списка из выщеуказанных списков и дата класса
-        val tracks = trackNames.indices.map { i ->
-            Track(
-                trackName = trackNames[i],
-                artistName = artistNames[i],
-                trackTime = trackTimes[i],
-                artworkUrl100 = artworkUrl100s[i]
-            )
-        }
-
-        // передача переменной с общим списком в recyclerView.adapter (в xml)
-        val tracksAdapter = TracksAdapter(tracks)
-        recyclerView.adapter = tracksAdapter */ // ЭТО БЫЛА ЗАГЛУШКА ДЛЯ 10 СПРИНТА!!! ЛОГКАЛЬНО ПОЛУЧАЛИ СПИСОК ТРЕКОВ!!!
-        
-
         //Реализация возврата на стартовый экран (а точнее открытие активити main)
         val viewArrowBackToMain = findViewById<ImageView>(R.id.arrow_back_to_main)
 
@@ -200,11 +158,6 @@ class SearchActivity : AppCompatActivity() {
             val backToMainIntent = Intent(this, MainActivity::class.java)
             startActivity(backToMainIntent)
         }
-
-        // с 13 спринта не использую, поскольку возвращает назад на экран Аудиоплейера использую код выше
-        /*viewArrowBackToMain.setOnClickListener {
-            finish() // закрываю текущую активность
-        }*/
 
 
         val clearButton = findViewById<ImageView>(R.id.clearIcon) // создание переменной для работы с элементом ImageView из разметки (для строки поиска)

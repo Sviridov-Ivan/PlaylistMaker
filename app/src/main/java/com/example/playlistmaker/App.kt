@@ -25,7 +25,7 @@ class App : Application() { // класс, созданный для смены 
         if (sharedPrefs.contains(KEY_DARK_THEME)) { // код для синхронизации темы приложения с темой системы при первом запуске при получении данных из SharedPreferences
             darkTheme = sharedPrefs.getBoolean(KEY_DARK_THEME, false)
         } else {
-            val isSystemInDarkMode = (resources.configuration.uiMode // Первый запуск — берутему системы (далее, уже данные попадают в SharedPreferences и при самостоятельно смене темы приложения, чтобы получить соответствие, необхоимо удалять инфу в SharedPreferences
+            val isSystemInDarkMode = (resources.configuration.uiMode // Первый запуск — используется тема системы (далее, уже данные попадают в SharedPreferences и при самостоятельно смене темы приложения, чтобы получить соответствие, необхоимо удалять инфу в SharedPreferences
                     and android.content.res.Configuration.UI_MODE_NIGHT_MASK) ==
                     android.content.res.Configuration.UI_MODE_NIGHT_YES
 

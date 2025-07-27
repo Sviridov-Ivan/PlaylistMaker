@@ -86,7 +86,7 @@
                 android:layout_gravity="end|center_vertical"
                 android:src="@drawable/clear"
                 android:visibility="gone"
-                app:tint="@color/text_gray" />
+                app:tint="?attr/colorPrimaryVariant" />
         </FrameLayout>
     </com.google.android.material.card.MaterialCardView>
 

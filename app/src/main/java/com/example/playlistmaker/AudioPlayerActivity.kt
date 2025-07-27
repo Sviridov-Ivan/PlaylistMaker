@@ -27,15 +27,8 @@ class AudioPlayerActivity : AppCompatActivity() {
             insets
         }
 
-        /*val track: Track? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) { // получаем Parcelable данные из дата класса Track + проходим проверку на версию в новых используется intent.getParcelableExtra("track", Track::class.java)
-            intent.getParcelableExtra("track", Track::class.java)
-        } else {
-            @Suppress("DEPRECATION")
-            intent.getParcelableExtra("track") // в версиях до  Android 13 до API 33
-        }*/
 
-        val track = intent.getParcelableExtra<Track>("track")
-
+        val track = intent.getParcelableExtra<Track>(IntentKeys.EXTRA_TRACK)
 
         // переменные для связи активити и ХМЛ (сделал сверху вниз)
 
@@ -109,12 +102,6 @@ class AudioPlayerActivity : AppCompatActivity() {
         viewArrowBackToSearchActivity.setOnClickListener {
             finish()
         }
-
-        //Реализация возврата на экран SearchActivity // finish() не использовал, так как требуется возврат на предыдущий экран + сохранить экран !!! ушел от этого, так как не сохраняется строка поиска в SearchActivity
-        /*viewArrowBackToSearchActivity.setOnClickListener {
-            val backToSearchIntent = Intent(this, SearchActivity::class.java)
-            startActivity(backToSearchIntent)
-        }*/
 
     }
 }
