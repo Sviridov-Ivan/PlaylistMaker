@@ -20,7 +20,21 @@ class App : Application() { // класс, созданный для смены 
 
         sharedPrefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE) // присваивание переменной для SharedPreferences
 
-        darkTheme = sharedPrefs.getBoolean(KEY_DARK_THEME, false) // Загружаем/считываем сохранённое значение из SharedPreferences по ключу KEY_DARK_THEME, false значит, по умполчанию светлая тема
+        //darkTheme = sharedPrefs.getBoolean(KEY_DARK_THEME, false) // Загружаем/считываем сохранённое значение из SharedPreferences по ключу KEY_DARK_THEME, false значит, по умполчанию светлая тема (закомментил т.к. использую код ниже для синхронизации с темой Системы при первом запуске)
+
+        if (sharedPrefs.contains(KEY_DARK_THEME)) { // код для синхронизации темы приложения с темой системы при первом запуске при получении данных из SharedPreferences
+            darkTheme = sharedPrefs.getBoolean(KEY_DARK_THEME, false)
+        } else {
+            val isSystemInDarkMode = (resources.configuration.uiMode // Первый запуск — берутему системы (далее, уже данные попадают в SharedPreferences и при самостоятельно смене темы приложения, чтобы получить соответствие, необхоимо удалять инфу в SharedPreferences
+                    and android.content.res.Configuration.UI_MODE_NIGHT_MASK) ==
+                    android.content.res.Configuration.UI_MODE_NIGHT_YES
+
+            darkTheme = isSystemInDarkMode
+
+            sharedPrefs.edit {
+                putBoolean(KEY_DARK_THEME, darkTheme)
+            }
+        }
 
         // Применяем тему (которую извлекли из SharedPreferences)
         AppCompatDelegate.setDefaultNightMode(

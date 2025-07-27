@@ -51,7 +51,7 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var historyTitle: TextView // создание переменной для опредения типа с с XML activity_search @+id/historyTitle (Спринт 12)
     private lateinit var clearHistoryButton: Button // создание переменной для опредения типа с с XML activity_search @+id/clearHistoryButton (Спринт 12)
 
-    //private val tracks = ArrayList<Track>() // создаем переменную для списка данных из дата класса Track !!! закомментил, так как создал функцию в Адаптере, чтобы не напутать со списками
+    //private val tracks = ArrayList<Track>() // создаем переменную для списка данных из дата класса Track !!! закомментил, так как создал функцию в Адаптере, чтобы не напутать со списками Спринт 11
 
     private lateinit var searchHistory: SearchHistory // определяем переменную для работы с классом SearchHistory (история поиска, Спринт 12)
     private val adapter = TracksAdapter() // создаем переменную для адаптера с пустым конструктором (там есть пометка)
@@ -119,7 +119,7 @@ class SearchActivity : AppCompatActivity() {
             insets
         }
 
-        searchHistory = SearchHistory(getSharedPreferences("search_prefs", Context.MODE_PRIVATE)) // переменная для работы с классом SearchHistory и получением данных из SharedPreferences
+        searchHistory = SearchHistory(getSharedPreferences("search_prefs", Context.MODE_PRIVATE)) // переменная для работы с классом SearchHistory и получением данных из SharedPreferences (Спринт 12)
 
         tracksList = findViewById(R.id.recyclerView) // передача данных от переменной в XML
         placeholderContainer = findViewById(R.id.placeholderContainer) //передача данных от переменной в XML
@@ -128,12 +128,17 @@ class SearchActivity : AppCompatActivity() {
         placeholderButton = findViewById(R.id.placeholderButton) // передача данных от переменной в XML
         inputEditText = findViewById(R.id.inputEditText) // создание переменной для работы с элементом EditText из разметки (для строки поиска)
 
-        historyTitle = findViewById(R.id.historyTitle) // передача данных от переменной в XML - закголовок истории
-        clearHistoryButton = findViewById(R.id.clearHistoryButton) // передача данных от переменной в XML - очистка истории
+        historyTitle = findViewById(R.id.historyTitle) // передача данных от переменной в XML - закголовок истории (Спринт 12)
+        clearHistoryButton = findViewById(R.id.clearHistoryButton) // передача данных от переменной в XML - очистка истории (Спринт 12)
 
-        // Обработка клика по элементу списка RecyclerView треков и сохранение в историю
+        // Обработка клика по элементу списка RecyclerView треков и сохранение в историю (Спринт 12 + 13)
         adapter.setOnItemClickListener { track ->
             searchHistory.saveTrack(track) // сохраняю трек в историю по клику на отображенном списке поиска (вызывается до tracksList.adapter = adapter // адаптер для RecyclerView) (в классе TrackAdapter)
+
+            // обработка вызова экрана AudioPlayerActivity при нажатии на элемент списка RecyclerView из адаптера (Спринт 13)
+            val intent = Intent(this, AudioPlayerActivity::class.java)
+            intent.putExtra("track",track)
+            startActivity(intent)
         }
 
         tracksList.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false) // вызываем адаптер для LinearLayoutManager (составляющий элемент RecyclerView помимо адаптера и вьюхолдера)
@@ -188,12 +193,18 @@ class SearchActivity : AppCompatActivity() {
         recyclerView.adapter = tracksAdapter */ // ЭТО БЫЛА ЗАГЛУШКА ДЛЯ 10 СПРИНТА!!! ЛОГКАЛЬНО ПОЛУЧАЛИ СПИСОК ТРЕКОВ!!!
         
 
-        //Реализация возврата на стартовый экран (а точнее закрытие текущей активности и возврат к предыдущей, а именно к main)
+        //Реализация возврата на стартовый экран (а точнее открытие активити main)
         val viewArrowBackToMain = findViewById<ImageView>(R.id.arrow_back_to_main)
 
         viewArrowBackToMain.setOnClickListener {
-            finish() // закрываю текущую активность
+            val backToMainIntent = Intent(this, MainActivity::class.java)
+            startActivity(backToMainIntent)
         }
+
+        // с 13 спринта не использую, поскольку возвращает назад на экран Аудиоплейера использую код выше
+        /*viewArrowBackToMain.setOnClickListener {
+            finish() // закрываю текущую активность
+        }*/
 
 
         val clearButton = findViewById<ImageView>(R.id.clearIcon) // создание переменной для работы с элементом ImageView из разметки (для строки поиска)
@@ -271,7 +282,7 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
-    private fun showHistory() { // функция для работы с экземпляром класса searchHistory для получения истории из SharedPreferences и соответствующей разработки
+    private fun showHistory() { // функция для работы с экземпляром класса searchHistory для получения истории из SharedPreferences и соответствующей разработки (Спринт 12)
         val history = searchHistory.getHistory()
         if (history.isNotEmpty()) {
             adapter.updateTracks(history)

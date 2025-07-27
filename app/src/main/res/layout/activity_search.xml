@@ -117,7 +117,7 @@
                 android:textColor="?attr/colorOnSecondary"
                 android:fontFamily="@font/ys_display_medium"
                 android:text="@string/history_title"
-                />
+                android:visibility="gone"/>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerView"

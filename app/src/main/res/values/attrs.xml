@@ -5,4 +5,5 @@
     <attr name="colorForThumbSelector" format="color"/>
     <attr name="colorForTrackSelector" format="color"/>
     <attr name="colorForTrackName" format="color" />
+    <attr name="colorForTitlesNameAudioPlayer" format="color" />
 </resources>
