@@ -46,12 +46,12 @@
                 android:orientation="horizontal"
                 android:gravity="center_vertical">
 
-                <!-- Название исполнителя -->
+                <!-- Название исполнителя."layout_width было 0dp  -->
                 <TextView
                     android:id="@+id/source_artist_name"
                     android:text="Artist"
                     style="@style/TextViewArtistAndTime"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_weight="1"/>
 
                 <!-- Точка -->

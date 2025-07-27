@@ -50,15 +50,14 @@
         android:gravity="center_vertical"
         android:layout_marginTop="24dp">
 
-        <TextView
-            android:text="@string/theme"
-            style="@style/TextViewSettingsStyle"/>
-
-        <Switch
-            android:layout_width="56dp"
-            android:layout_height="48dp"
-            android:thumbTint="@color/thumb_color"
-            android:trackTint="@color/track_color"/>
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/themeSwitcher"
+            android:text="Темная тема"
+            android:layout_gravity="start"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:thumbTint="@color/thumb_color"
+            app:trackTint="@color/track_color"/>
     </LinearLayout>
 
     <!-- Поделиться приложением -->

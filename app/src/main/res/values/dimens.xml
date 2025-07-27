@@ -40,5 +40,11 @@
    <dimen name="p_h_button_margin_top">24dp</dimen>
    <dimen name="p_h_text_button_text_size">16sp</dimen>
 
+   <!-- Контейнер для истории -->
+   <dimen name="h_title_marging_bottom">8dp</dimen>
+   <dimen name="h_title_marging_top">24dp</dimen>
+   <dimen name="h_titile_padding_top">18dp</dimen>
+   <dimen name="h_title_padding_bottom">12dp</dimen>
+
 
 </resources>

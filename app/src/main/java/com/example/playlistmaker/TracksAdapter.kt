@@ -1,12 +1,14 @@
 package com.example.playlistmaker
 
+import android.location.GnssAntennaInfo.Listener
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 
 class TracksAdapter() : RecyclerView.Adapter<TracksViewHolder> () { // убрал private val tracks: List<Track> из конструктора (было нужно для заглушки 10 спринта)
 
-    private val tracks = ArrayList<Track>() // var tracks = ArrayList<Track>() до создания fun updateTracks
+    private val tracks = ArrayList<Track>() // var tracks = ArrayList<Track>() до создания fun updateTracks (до 11 спринта)
+    private var onItemClickListener: ((Track) -> Unit)? = null // для добавления обработчика кликов на элементы треков для открытия трека, и для сохранения его в ИСТОРИЮ (спринт 12)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TracksViewHolder {
         // val view = LayoutInflater.from(parent.context).inflate(R.layout.activity_track, parent, false) // традиционно inflate размещается здесь, но так необходимо по заданию
@@ -14,7 +16,12 @@ class TracksAdapter() : RecyclerView.Adapter<TracksViewHolder> () { // убра�
     }
 
     override fun onBindViewHolder(holder: TracksViewHolder, position: Int) {
-        holder.bind(tracks[position])
+        //holder.bind(tracks[position]) 11 спринт
+        val track = tracks[position]
+        holder.bind(track)
+        holder.itemView.setOnClickListener { // для добавления обработчика кликов на элементы треков для открытия трека, и для сохранения его в ИСТОРИЮ (спринт 12)
+            onItemClickListener?.invoke(track)
+        }
     }
 
     override fun getItemCount(): Int {
@@ -30,5 +37,9 @@ class TracksAdapter() : RecyclerView.Adapter<TracksViewHolder> () { // убра�
     fun clearTracks() {
         tracks.clear()
         notifyDataSetChanged()
+    }
+
+    fun setOnItemClickListener(listener: (Track) -> Unit) { // для добавления обработчика кликов на элементы треков для открытия трека, и для сохранения его в ИСТОРИЮ (спринт 12)
+        onItemClickListener = listener
     }
 }
