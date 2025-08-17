@@ -40,4 +40,28 @@
         <item name="android:ellipsize">end</item>
     </style>
 
+    <style name="TitlesPlayer">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingBottom">@dimen/padding_bottom_title_country_player</item>
+        <item name="android:paddingTop">@dimen/padding_top_title_country_player</item>
+        <item name="android:textColor">@color/text_gray</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:textSize">@dimen/text_size_title_country_player</item>
+    </style>
+
+    <style name="SourcesPlayer">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingBottom">@dimen/padding_bottom_source_country_player</item>
+        <item name="android:paddingTop">@dimen/padding_top_source_country_player</item>
+        <item name="android:textColor">?attr/colorOnSecondary</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:textSize">@dimen/text_size_source_country_player</item>
+        <item name="android:gravity">end</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:maxLines">1</item>
+
+    </style>
+
 </resources>

@@ -46,5 +46,39 @@
    <dimen name="h_titile_padding_top">18dp</dimen>
    <dimen name="h_title_padding_bottom">12dp</dimen>
 
+   <!-- Аудиоплейер описание сверху вниз по верстке -->
+   <dimen name="guideline_small_player">16dp</dimen>
+   <dimen name="guideline_large_player">24dp</dimen>
+
+   <dimen name="margin_arrow_player">4dp</dimen>
+
+   <dimen name="margin_top_image_player">26dp</dimen>
+   <dimen name="margin_bottom_image_player">24dp</dimen>
+
+   <dimen name="margin_bottom_source_track_name_player">12dp</dimen>
+   <dimen name="text_size_source_track_name_player">22sp</dimen>
+
+   <dimen name="margin_bottom_source_artist_name_player">54dp</dimen>
+   <dimen name="text_size_source_artist_name_player">14sp</dimen>
+
+   <dimen name="size_image_button_not_play_player">51dp</dimen>
+   <dimen name="margin_bottom_button_add_top_pl_player">29dp</dimen>
+
+   <dimen name="size_image_button_play_player">100dp</dimen>
+   <dimen name="margin_bottom_button_button_play_player">5dp</dimen>
+
+   <dimen name="margin_bottom_title_country_player">20dp</dimen>
+   <dimen name="padding_bottom_title_country_player">8dp</dimen>
+   <dimen name="padding_top_title_country_player">9dp</dimen>
+   <dimen name="text_size_title_country_player">13sp</dimen>
+
+   <dimen name="margin_bottom_source_country_player">20dp</dimen>
+   <dimen name="padding_bottom_source_country_player">8dp</dimen>
+   <dimen name="padding_top_source_country_player">9dp</dimen>
+   <dimen name="text_size_source_country_player">13sp</dimen>
+
+   <dimen name="margin_top_source_track_time_mills_player">4dp</dimen>
+   <dimen name="margin_bottom_source_track_time_mills_player">30dp</dimen>
+   <dimen name="text_size_source_track_time_mills_player">14sp</dimen>
 
 </resources>

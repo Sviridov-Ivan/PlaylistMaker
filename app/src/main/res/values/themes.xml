@@ -12,6 +12,8 @@
         <item name="colorForMaterialCardView">@color/light_gray</item> <!-- Использую для цвета MaterialCardView на экране ПОИСКА-->
         <item name="colorForSettingsIcons">@color/text_gray</item> <!-- Использую для цвета иконок в экране Настройки-->
         <item name="colorForTrackName">@color/black_2</item> <!-- Использую для цвета названия трека-->
+        <item name="colorForTitlesNameAudioPlayer">@color/white</item> <!-- Использую для надписей в экране Аудиоплейер, сам attr находится в res/values/attrs-->
+        <item name="playerBackground">@color/white</item> <!-- Использую для фона activity_audio_player-->
 
 
         <!-- Status bar color. -->

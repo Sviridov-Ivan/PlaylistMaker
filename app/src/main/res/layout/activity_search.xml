@@ -86,7 +86,7 @@
                 android:layout_gravity="end|center_vertical"
                 android:src="@drawable/clear"
                 android:visibility="gone"
-                app:tint="@color/text_gray" />
+                app:tint="?attr/colorPrimaryVariant" />
         </FrameLayout>
     </com.google.android.material.card.MaterialCardView>
 
@@ -117,7 +117,7 @@
                 android:textColor="?attr/colorOnSecondary"
                 android:fontFamily="@font/ys_display_medium"
                 android:text="@string/history_title"
-                />
+                android:visibility="gone"/>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerView"
