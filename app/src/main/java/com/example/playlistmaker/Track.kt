@@ -12,6 +12,7 @@ data class Track(
     val artistName: String, // Имя исполнителя
     val trackTimeMillis: Long, // Продолжительность трека миллисекундах, так приходит от база iTunes Search API.
     val artworkUrl100: String, // Ссылка на изображение обложки
+    val previewUrl: String?, // Ссылка на бесплатный отрывок
     val collectionName: String?, // название альбома (может отсутствовать)
     val releaseDate: String?, // дата релиза (опционально)
     val primaryGenreName: String?, // жанр

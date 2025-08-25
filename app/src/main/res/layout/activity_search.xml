@@ -23,6 +23,7 @@
 
         <ImageView
             android:id="@+id/arrow_back_to_main"
+            android:contentDescription="@string/contentDescription_arrow_back"
             android:layout_width="@dimen/back_arrow_size"
             android:layout_height="@dimen/back_arrow_size"
             android:scaleType="centerCrop"
@@ -33,6 +34,7 @@
             style="@style/TextViewSettingsStyle"
             android:fontFamily="@font/ys_display_medium"
             android:paddingLeft="16dp"
+            android:paddingRight="16dp"
             android:text="@string/search_button"
             android:textSize="@dimen/main_text_size" />
     </LinearLayout>
@@ -81,6 +83,7 @@
 
             <ImageView
                 android:id="@+id/clearIcon"
+                android:contentDescription="@string/contentDescription_clear_icon"
                 android:layout_width="40dp"
                 android:layout_height="36dp"
                 android:layout_gravity="end|center_vertical"
@@ -89,6 +92,16 @@
                 app:tint="?attr/colorPrimaryVariant" />
         </FrameLayout>
     </com.google.android.material.card.MaterialCardView>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="140dp"
+        android:indeterminate="true"
+        android:indeterminateTint="@color/blue"
+        android:visibility="gone" />
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -155,6 +168,7 @@
 
             <ImageView
                 android:id="@+id/placeholderImage"
+                android:contentDescription="@string/contentDescription_place_holder"
                 android:layout_width="@dimen/p_h_image_size"
                 android:layout_height="@dimen/p_h_image_size"
                 android:scaleType="centerInside"

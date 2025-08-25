@@ -1,11 +1,17 @@
 package com.example.playlistmaker
 
 import android.content.Intent
+import android.media.MediaPlayer
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.View
+
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -13,8 +19,39 @@ import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.formatDuration
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class AudioPlayerActivity : AppCompatActivity() {
+
+    private var previewUrlView: String? = null // переменная для доступа к previewUrl вне let{}
+
+    companion object { // текущее состояние медиаплеера и четыре константы для каждого из состояний
+        private const val STATE_DEFAULT = 0
+        private const val STATE_PREPARED = 1
+        private const val STATE_PLAYING = 2
+        private const val STATE_PAUSED = 3
+    }
+
+    private var playerState = STATE_DEFAULT // текущее состояние медиаплеера
+    private lateinit var play: ImageButton
+    private var mediaPlayer = MediaPlayer() // инициализация класс медиаплейер для работы с его методами далее
+
+    // переменные для работы с временем проигрывания
+    private lateinit var timeTextView: TextView
+    private val handler = Handler(Looper.getMainLooper())
+    private val timeFormat = SimpleDateFormat("mm:ss", Locale.getDefault())
+
+    // Runnable для обновления времени - экземпляр для внедрения в основной поток
+    private val updateTimeRunnable = object : Runnable {
+        override fun run() {
+            if (playerState == STATE_PLAYING) {
+                val currentTime = timeFormat.format(mediaPlayer.currentPosition)
+                timeTextView.text = currentTime
+                handler.postDelayed(this, 300) // повтор каждые 300 мс
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,10 +88,12 @@ class AudioPlayerActivity : AppCompatActivity() {
             trackNameView.text = it.trackName
             artistNameView.text = it.artistName
             trackTimeView.text = formatDuration(it.trackTimeMillis) // используем отформатированное значение времени функция в файле TimeUtils
+            previewUrlView = it.previewUrl //
             //albumView.text = it.collectionName // обработка отображения ниже, в зависимости от наличия к треку
             //releaseYearView.text = it.releaseDate // обработка отображения ниже, в зависимости от наличия к треку
             //genreView.text = it.primaryGenreName
             //countryView.text = it.country
+
 
             //если есть данные по альбому, тогда отображаем Вью, если нет данных то нет
             if (!it.collectionName.isNullOrEmpty()) {
@@ -95,13 +134,93 @@ class AudioPlayerActivity : AppCompatActivity() {
                 .transform(RoundedCorners(radiusPx)) // скугления углов картинки до 8dp(px Figma)
                 .placeholder(R.drawable.placeholder)
                 .into(artworkView)
+
         }
 
+        // АудиоПлейер
+        play = findViewById(R.id.button_play) // кнопка Плей
+
+        preparePlayer(previewUrlView) // размещается здесь, так как функцию подготовки нужно сделать только раз
+
+        // Вызов функции выбора подходящего действия по нажатию на кнопку Плей
+        play.setOnClickListener {
+            playbackControl()
+        }
+
+        // Инициализация строки состояния проигрывания через текст вью
+        timeTextView = findViewById(R.id.source_track_time_mills_player)
+        timeTextView.text = getString(R.string.temporary_source_track_time_mills_player) //00:00
 
         // Реализация возврата назад на экран SearchActivity, путем завершения AudioPlayerActivity
         viewArrowBackToSearchActivity.setOnClickListener {
             finish()
         }
+    }
+
+    private fun preparePlayer(previewUrl: String?) {
+        if (previewUrl.isNullOrEmpty()) { // проверка на наличие отрывка трека
+            Toast.makeText(
+                this@AudioPlayerActivity,
+                "Отрывок отсутствует для этого трека",
+                Toast.LENGTH_SHORT).show()
+            return
+        }
+        mediaPlayer.setDataSource(previewUrl) // источник воспроизведения перед вызовом метода подготовки
+        mediaPlayer.prepareAsync() // prepareAsync так как из Интернета, следовательно может быть дольше и используем НЕ главный поток
+        mediaPlayer.setOnPreparedListener {
+            play.isEnabled = true // кнопка стала активной после подготовки
+            playerState = STATE_PREPARED // ввели состояние плейера в состояние "готов"
+        }
+        mediaPlayer.setOnCompletionListener { // вызывается после завершения воспроизведения. Кнопка с надписью ПЛЕЙ и состояние ГОТОВ
+            play.setImageResource(R.drawable.button_play) // отображается иконка кнопки Play
+            playerState = STATE_PREPARED
+            handler.removeCallbacks(updateTimeRunnable) // остановка таймера при завершении трека
+            timeTextView.text = getString(R.string.temporary_source_track_time_mills_player) //00:00
+        }
 
     }
+
+    // Функция запуска Аудиоплейера
+    private fun startPlayer() {
+        mediaPlayer.start() // вызывает метод Старт медиаплейера
+        play.setImageResource(R.drawable.button_pause) // // отображается иконка кнопки Pause
+        playerState = STATE_PLAYING // меняем состояние плейера на STATE_PLAYING
+        handler.post(updateTimeRunnable) // запуск обновления времени проигрывания
+    }
+
+    // Функция паузы Аудиоплейера
+    private fun pausePlayer() {
+        mediaPlayer.pause() // вызываем метода Пауза
+        play.setImageResource(R.drawable.button_play) // отображается иконка кнопки Play
+        playerState = STATE_PAUSED // // меняем состояние плейера на STATE_PAUSED
+        handler.removeCallbacks(updateTimeRunnable) // остановка обновления проигрывания
+    }
+
+    // Функция выбора подходящего действия
+    private fun playbackControl() {
+        when(playerState) {
+            STATE_PLAYING -> {
+                pausePlayer() // eсли текущее состояние медиаплеера равно STATE_PLAYING, то нажатие на кнопку должно ставить воспроизведение на паузу (вызываем функцию pausePlayer())
+            }
+            STATE_PREPARED, STATE_PAUSED -> {
+                startPlayer() // если текущее состояние STATE_PAUSED или STATE_PREPARED, то нажатие на кнопку должно запускать воспроизведение (вызываем функцию startPlayer())
+            }
+        }
+    }
+
+    // Функции для корректной работы плейера в соответсвии с жизненным циклом Активити
+
+    // Если пользователь НЕ на экране плейера (свернул активити через кнопку Home или запускает другое приложение), то проигрывание на ПАУЗУ
+    override fun onPause() {
+        super.onPause()
+        pausePlayer()
+    }
+
+    // Если пользователь закрыл активити и медиаплеер и его возможности больше не нужны чтобы освободить память и ресурсы процессора, выделенные системой при подготовке медиаплеера
+    override fun onDestroy() {
+        super.onDestroy()
+        handler.removeCallbacks(updateTimeRunnable) // остановка таймера
+        mediaPlayer.release() // вывод плейера из подготовки
+    }
+
 }

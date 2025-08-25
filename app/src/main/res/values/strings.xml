@@ -27,7 +27,7 @@
     <string name="title_year_player">Год</string>
     <string name="title_album_player">Альбом</string>
     <string name="title_time_player">Длительность</string>
-    <string name="temporary_source_track_time_mills_player">0:30</string>
+    <string name="temporary_source_track_time_mills_player">0:00</string>
 
     <!-- Аудиоплейер contentDescription -->
     <string name="contentDescription_arrow_back">Возврат на предыдущий экран</string>
@@ -35,6 +35,11 @@
     <string name="contentDescription_button_add_top_pl_player">Добавить в избранные</string>
     <string name="contentDescription_button_play_player">Проиграть трек</string>
     <string name="contentDescription_button_like_player">Добавить трек в избранные</string>
+
+    <!-- Поиск contentDescription -->
+    <string name="contentDescription_clear_icon">Кнопка очистки ввода</string>
+    <string name="contentDescription_place_holder">Плейсхолдер</string>
+
 
 
 </resources>
