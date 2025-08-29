@@ -56,7 +56,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingStart="@dimen/settings_text_view_left"
-            tools:context=".SearchActivity">
+            tools:context=".presentation.activity.SearchActivity">
 
             <EditText
                 android:id="@+id/inputEditText"

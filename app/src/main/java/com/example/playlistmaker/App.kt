@@ -4,8 +4,40 @@ import android.app.Application
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.edit
+import com.example.playlistmaker.data.repository.SettingsRepositoryImpl
+import com.example.playlistmaker.domain.interactor.SettingsInteractor
+import com.example.playlistmaker.domain.repository.SettingsRepository
 
-class App : Application() { // класс, созданный для смены темы через Switch и запоминания этого действия в SharedPreferences. Вызывается в SettingsActivity
+class App : Application() {
+
+    lateinit var settingsInteractor: SettingsInteractor
+        private set // только считывание, без изменений извне на другой интерактор
+
+
+    override fun onCreate() {
+        super.onCreate()
+
+        val sharedPreferences = getSharedPreferences("app_prefs", MODE_PRIVATE)
+        val repository = SettingsRepositoryImpl(sharedPreferences)
+        settingsInteractor = SettingsInteractor(repository)
+
+        switchTheme(settingsInteractor.isDarkModeEnable())
+    }
+
+    fun switchTheme(darkThemeEnabled: Boolean) {
+
+        // Применяем тему (без этого не меняет тему через свитч)
+        AppCompatDelegate.setDefaultNightMode(
+            if (darkThemeEnabled) {
+                AppCompatDelegate.MODE_NIGHT_YES
+            } else {
+                AppCompatDelegate.MODE_NIGHT_NO
+            }
+        )
+    }
+
+}
+    /*// класс, созданный для смены темы через Switch и запоминания этого действия в SharedPreferences. Вызывается в SettingsActivity
 
     companion object { // постоянные решил определить здесь, не вне App (выше class App : Application()), так как планирую использовать только в этом классе
         const val PREFS_NAME = "settings" // сохранённые данные-значения с помощью Shared Preferences
@@ -65,5 +97,4 @@ class App : Application() { // класс, созданный для смены 
             .putBoolean(KEY_DARK_THEME, darkTheme)
             .apply()
 
-    }
-}
+    }*/

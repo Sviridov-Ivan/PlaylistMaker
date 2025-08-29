@@ -1,13 +1,10 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.presentation.activity
 
-import android.content.Intent
 import android.media.MediaPlayer
-import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.View
-
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
@@ -18,7 +15,11 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.example.playlistmaker.formatDuration
+import com.example.playlistmaker.presentation.util.IntentKeys
+import com.example.playlistmaker.R
+import com.example.playlistmaker.domain.model.Track
+import com.example.playlistmaker.presentation.util.dpToPx
+import com.example.playlistmaker.presentation.util.formatDuration
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -35,7 +36,8 @@ class AudioPlayerActivity : AppCompatActivity() {
 
     private var playerState = STATE_DEFAULT // текущее состояние медиаплеера
     private lateinit var play: ImageButton
-    private var mediaPlayer = MediaPlayer() // инициализация класс медиаплейер для работы с его методами далее
+    private var mediaPlayer =
+        MediaPlayer() // инициализация класс медиаплейер для работы с его методами далее
 
     // переменные для работы с временем проигрывания
     private lateinit var timeTextView: TextView
@@ -80,14 +82,18 @@ class AudioPlayerActivity : AppCompatActivity() {
         val genreView = findViewById<TextView>(R.id.source_primaryGenreName_player)
         val countryView = findViewById<TextView>(R.id.source_country_player)
 
-        val radiusPx = dpToPx(8f, artworkView.context) // пребразование радиуса закругления углов картинок, указанных в Фигеме в рх для Glide для элемента artworkView
+        val radiusPx = dpToPx(
+            8f,
+            artworkView.context
+        ) // пребразование радиуса закругления углов картинок, указанных в Фигеме в рх для Glide для элемента artworkView
 
 
         // получение данных из @Parcelize дата класса Track
         track?.let {
             trackNameView.text = it.trackName
             artistNameView.text = it.artistName
-            trackTimeView.text = formatDuration(it.trackTimeMillis) // используем отформатированное значение времени функция в файле TimeUtils
+            trackTimeView.text =
+                formatDuration(it.trackTimeMillis) // используем отформатированное значение времени функция в файле TimeUtils
             previewUrlView = it.previewUrl //
             //albumView.text = it.collectionName // обработка отображения ниже, в зависимости от наличия к треку
             //releaseYearView.text = it.releaseDate // обработка отображения ниже, в зависимости от наличия к треку

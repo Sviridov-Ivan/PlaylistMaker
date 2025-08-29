@@ -1,8 +1,6 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.domain.model
 
-import android.icu.text.SimpleDateFormat
 import android.os.Parcelable
-import java.util.Locale
 import kotlinx.parcelize.Parcelize
 
 @Parcelize // для возможности передачи данных не только в RecyclerView, но и в class AudioPlayerActivity
@@ -18,9 +16,3 @@ data class Track(
     val primaryGenreName: String?, // жанр
     val country: String? // страна
 ) : Parcelable // для возможности передачи данных не только в RecyclerView, но и в class AudioPlayerActivity
-
-
-/*{
-    val formattedTime: String
-        get() = SimpleDateFormat("mm:ss", Locale.getDefault()).format(trackTime) // функция для преобразования продолжительности трека из миллисекунд в необходимый формат, наверняка можно и в другой
-}*/ // что-то не сработало, поэтому создаю отдельный файл кт
