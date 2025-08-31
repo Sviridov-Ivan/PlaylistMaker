@@ -25,11 +25,6 @@ class SettingsActivity : AppCompatActivity() {
         }
         val viewArrowBackToMain = findViewById<ImageView>(R.id.arrow_back_to_main)
 
-        //Реализация возврата на стартовый экран
-        /*viewArrowBackToMain.setOnClickListener { // работал возврат до 12 спринта, теперь из-за активации switch и класса App из-за данной реализации начинается "мерцание экрана" после повторного изменения темы (вышел-зашел)
-            val backToMainIntent = Intent(this, MainActivity::class.java)
-            startActivity(backToMainIntent)
-        }*/
         viewArrowBackToMain.setOnClickListener {
             finish() // закрываю текущую активность
         }

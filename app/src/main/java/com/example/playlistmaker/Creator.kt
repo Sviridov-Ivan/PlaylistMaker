@@ -1,14 +1,18 @@
 package com.example.playlistmaker
 
 import android.content.Context
+import android.media.MediaPlayer
 import android.preference.PreferenceManager
 import com.example.playlistmaker.data.network.ITunesService
+import com.example.playlistmaker.data.repository.AudioPlayerRepositoryImpl
 import com.example.playlistmaker.data.repository.SearchHistoryRepositoryImpl
 import com.example.playlistmaker.data.repository.SettingsRepositoryImpl
 import com.example.playlistmaker.data.repository.TracksRepositoryImpl
+import com.example.playlistmaker.domain.interactor.AudioPlayerInteractor
 import com.example.playlistmaker.domain.interactor.SearchInteractor
 import com.example.playlistmaker.domain.interactor.SettingsInteractor
 import com.example.playlistmaker.domain.interactor.TracksInteractor
+import com.example.playlistmaker.domain.repository.AudioPlayerRepository
 import com.example.playlistmaker.domain.repository.SearchHistoryRepository
 import com.example.playlistmaker.domain.repository.SettingsRepository
 import com.example.playlistmaker.domain.repository.TracksRepository
@@ -30,6 +34,10 @@ object Creator {
         return SettingsRepositoryImpl(sharedPreferences)
     }
 
+    fun provideAudioPlayerRepository(): AudioPlayerRepository {
+        return AudioPlayerRepositoryImpl()
+    }
+
     fun provideTrackInteractor(): TracksInteractor {
         return TracksInteractor(provideTrackRepository())
     }
@@ -40,6 +48,10 @@ object Creator {
 
     fun provideSettingsInteractor(context: Context): SettingsInteractor {
         return SettingsInteractor(provideSettingsRepository(context))
+    }
+
+    fun provideAudioPlayerInteractor(): AudioPlayerInteractor {
+        return AudioPlayerInteractor(provideAudioPlayerRepository())
     }
 
 

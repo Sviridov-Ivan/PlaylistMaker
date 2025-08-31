@@ -7,9 +7,7 @@ class SettingsRepositoryImpl(
     private val sharedPreferences: SharedPreferences
 ) : SettingsRepository {
 
-    companion object {
-        private const val KEY_DARK_THEME = "dark_theme" // ключ для Shared Preferences
-    }
+
 
     override fun isDarkThemeEnable(): Boolean {
         return sharedPreferences.getBoolean(KEY_DARK_THEME, false)
@@ -18,4 +16,8 @@ class SettingsRepositoryImpl(
     override fun setDarkThemeEnabled(enabled: Boolean) {
         sharedPreferences.edit().putBoolean(KEY_DARK_THEME, enabled).apply()
     }
+    companion object {
+        private const val KEY_DARK_THEME = "dark_theme" // ключ для Shared Preferences
+    }
+
 }
