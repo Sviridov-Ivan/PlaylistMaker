@@ -1,8 +1,7 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.data.network
 
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.create
 
 object ITunesService {
     private const val iTunesBaseUrl = "https://itunes.apple.com" // базовый Url для запроса треков с itunes

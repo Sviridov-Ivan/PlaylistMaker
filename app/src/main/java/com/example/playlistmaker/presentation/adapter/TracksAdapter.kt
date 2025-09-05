@@ -1,9 +1,8 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.presentation.adapter
 
-import android.location.GnssAntennaInfo.Listener
-import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.playlistmaker.domain.model.Track
 
 class TracksAdapter() : RecyclerView.Adapter<TracksViewHolder> () { // убрал private val tracks: List<Track> из конструктора (было нужно для заглушки 10 спринта)
 

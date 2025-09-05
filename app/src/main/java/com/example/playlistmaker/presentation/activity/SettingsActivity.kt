@@ -1,17 +1,16 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.presentation.activity
 
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.playlistmaker.App
+import com.example.playlistmaker.R
 import com.google.android.material.switchmaterial.SwitchMaterial
 
 class SettingsActivity : AppCompatActivity() {
@@ -26,11 +25,6 @@ class SettingsActivity : AppCompatActivity() {
         }
         val viewArrowBackToMain = findViewById<ImageView>(R.id.arrow_back_to_main)
 
-        //Реализация возврата на стартовый экран
-        /*viewArrowBackToMain.setOnClickListener { // работал возврат до 12 спринта, теперь из-за активации switch и класса App из-за данной реализации начинается "мерцание экрана" после повторного изменения темы (вышел-зашел)
-            val backToMainIntent = Intent(this, MainActivity::class.java)
-            startActivity(backToMainIntent)
-        }*/
         viewArrowBackToMain.setOnClickListener {
             finish() // закрываю текущую активность
         }
@@ -82,6 +76,22 @@ class SettingsActivity : AppCompatActivity() {
 
         // РЕАЛИЗАЦИЯ ПЕРКЛЮЧАТЕЛЯ темы через Switch (т.к. ко всему приложению, то создал отдельный класс App)
         val themeSwitcher = findViewById<SwitchMaterial>(R.id.themeSwitcher)
+
+        // 15 Спринт
+        // Переключатель темы
+        val app = applicationContext as App
+        val settingsInteractor = app.settingsInteractor
+
+        // Установить состояние при запуске
+        themeSwitcher.isChecked = settingsInteractor.isDarkModeEnable()
+
+        //
+        themeSwitcher.setOnCheckedChangeListener { _, isChecked ->
+            settingsInteractor.setDarkThemeEnabled(isChecked) // сохраняем
+            app.switchTheme(isChecked) // применяем
+        }
+
+        /*// (до 15 Спринта)
         //themeSwitcher.thumbTintList = ContextCompat.getColorStateList(this, R.color.thumb_color) // управлением цветом переключателя из кода (тест)
         //themeSwitcher.trackTintList = ContextCompat.getColorStateList(this, R.color.track_color) // управлением цветом переключателя из кода (тест)
 
@@ -100,6 +110,6 @@ class SettingsActivity : AppCompatActivity() {
         // Обработка переключение темы через switch
         themeSwitcher.setOnCheckedChangeListener { switcher, isChecked ->
                 app.switchTheme(isChecked)
-        }*/
+        }*/ */
     }
 }

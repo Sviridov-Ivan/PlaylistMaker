@@ -1,6 +1,5 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.presentation.activity
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -22,15 +21,23 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.playlistmaker.Creator
+import com.example.playlistmaker.presentation.util.IntentKeys
+import com.example.playlistmaker.R
+import com.example.playlistmaker.presentation.adapter.TracksAdapter
+import com.example.playlistmaker.data.dto.TracksResponseDTO
+import com.example.playlistmaker.data.network.ITunesService
+import com.example.playlistmaker.domain.interactor.SearchInteractor
+import com.example.playlistmaker.domain.interactor.TracksInteractor
+import com.example.playlistmaker.domain.model.Track
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-
 class SearchActivity : AppCompatActivity() {
 
     companion object {
-        private const val KEY_SEARCH_TEXT = "SEARCH_TEXT" //создание константы для ключей хранения данных (для строки поиска)
+        private const val KEY_SEARCH_TEXT = "SEARCH_TEXT" //создание константы для ключей хранения данных (для строки поиска) (Спринт 15)
 
         private const val CLICK_DEBOUNCE_DELAY = 1000L // задержка на открытия активити AudioPlayerActivity (Спринт 14)
 
@@ -39,10 +46,9 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private var isClickAllowed = true // глобальная переменная для использования в Debounce (Спринт 14)
-    private val handler = Handler(Looper.getMainLooper()) // переменная для доступа к Handler и Looper основного потока UI и внесение в него корректировки (Спринт 14)
+    private val handler =
+        Handler(Looper.getMainLooper()) // переменная для доступа к Handler и Looper основного потока UI и внесение в него корректировки (Спринт 14)
     private val searchRunnable = Runnable { performSearch(inputEditText.text.toString()) } // переменная для дальнейшего использования в функции для отложенного отслеживания ввода для автопоиска (Спринт 14)
-
-    private val iTunesService = ITunesService.api // переменная для работы с ITunesService (ранее был описан здесь в активити)
 
     private lateinit var inputEditText: EditText // создание переменной для определения типа XML activity_search Edit text
     private lateinit var tracksList: RecyclerView // создание переменной для определения типа с XML activity_search RecyclerView
@@ -56,85 +62,16 @@ class SearchActivity : AppCompatActivity() {
 
     //private val tracks = ArrayList<Track>() // создаем переменную для списка данных из дата класса Track !!! закомментил, так как создал функцию в Адаптере, чтобы не напутать со списками Спринт 11
 
-    private lateinit var searchHistory: SearchHistory // определяем переменную для работы с классом SearchHistory (история поиска, Спринт 12)
-    private val adapter = TracksAdapter() // создаем переменную для адаптера с пустым конструктором (там есть пометка)
-
+    //private lateinit var searchHistory: SearchHistory // определяем переменную для работы с классом SearchHistory (история поиска, Спринт 12) (убрал Спринт 15)
     private lateinit var progressBar: ProgressBar // инициализация ProgressBar'a (Спринт 14)
-
-    private fun performSearch(query:String) { // функция для реализации запроса. сделал отдельно, так как понадобится для кнопки в плейсхолдере (+14 Спринт)
-        if (query.isEmpty()) return
-
-        progressBar.visibility = View.VISIBLE // отображаем прогресс бар (14 Спринт)
-
-        iTunesService.search(query).enqueue(object : Callback<TracksResponse> {
-            override fun onResponse(call: Call<TracksResponse>,response: Response<TracksResponse>
-            ) {
-                if (response.code() == 200) { // статус запроса успешный
-                    val results = response.body()?.results.orEmpty() // безопасный вывод, если results будут пустые
-                    if (results.isNotEmpty()) {
-                        adapter.updateTracks(results) // использую функцию из Адаптера для обновления списка треков
-                        hidePlaceholder()
-                    } else {
-                        showEmptyState() // картинка и текст НИЧЕГО НЕ НАЙДЕНО
-                    }
-                } else {
-                    showErrorState() // картинка, текст и кнопка для "ПРОБЛЕМА СО СВЯЗЬЮ"
-                }
-            }
-
-            override fun onFailure(call: Call<TracksResponse>, t: Throwable) {
-                showErrorState()
-            }
-        })
-    }
-
-    private fun hidePlaceholder() { // функция для скрытия плейсхолдера, сделал отдельно для возможного использования еще где-то, но вообще можно и напрямую включить в fun performSearch использую в performSearch
-        progressBar.visibility = View.GONE // скрываем прогресс бар (14 спринт)
-        placeholderContainer.visibility = View.GONE
-    }
-
-    private fun showEmptyState() { // функция для реализации условия, если ничего не найдено (ни одного трека) использую в performSearch
-        progressBar.visibility = View.GONE // скрываем прогресс бар (14 спринт)
-        placeholderContainer.visibility = View.VISIBLE // отобразить placeholderContainer из XML
-        placeholderImage.setImageResource(R.drawable.error_nothing) // отобразить картинку НИЧЕГО НЕ НАШЛОСЬ
-        placeholderText.setText(R.string.nothing_found) // отобразить текст НИЧЕГО НЕ НАШЛОСЬ
-        placeholderButton.visibility = View.GONE // кнопку НЕ отображать
-        adapter.clearTracks() // использую функцию из Адаптера для очистки списка треков
-    }
-
-    private fun showErrorState() { // функция для реализации условия, если что-то не так со связью (или статус отличный от 200) использую в performSearch
-        progressBar.visibility = View.GONE // скрываем прогресс бар (14 спринт)
-        placeholderContainer.visibility = View.VISIBLE  // отобразить placeholderContainer из XML
-        placeholderImage.setImageResource(R.drawable.error_nonet) // отобразить картинку ПРОБЛЕМЫ СО СВЯЗЬЮ
-        placeholderText.setText(R.string.something_went_wrong) // отобразить текст ПРОБЛЕМЫ СО СВЯЗЬЮ
-        placeholderButton.visibility = View.VISIBLE // кнопку для Обновить Отображать
-        adapter.clearTracks() // использую функцию из Адаптера для очистки списка треков
-    }
+    private val adapter =
+        TracksAdapter() // создаем переменную для адаптера с пустым конструктором (там есть пометка)
 
     private var currentSearchText: String = "" // создание приватной переменной для использования в fun onTextChanged и fun onSaveInstanceState для сохранения введенных данных при развороте экрана (хотя достаточно присвоить id для EditText)
 
-    private fun hideKeyboard(view: View) { // функция для скрытия клавиатуры
-        val keyboardUse = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        keyboardUse.hideSoftInputFromWindow(view.windowToken,0)
-    }
+    private val trackInteractor: TracksInteractor by lazy { Creator.provideTrackInteractor() } // инициализация TracksInteractor через Creator.provideTrackInteractor() только при первом обращении (Спринт 15)
+    private val searchInteractor: SearchInteractor by lazy { Creator.provideSearchInteractor(this) }
 
-    // функция для реализации Debounce - задержки открытия активити Poster Activity воизбежании многократного открытия одного и того же экрана (Спринт 14)
-    // если isClickAllowed тру, меняем на фолс и через handler с задержкой меняем назад на тру
-    // используется в обработке нажатия
-    private fun clickDebounce() : Boolean {
-        val current = isClickAllowed
-        if (isClickAllowed) {
-            isClickAllowed = false
-            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
-        }
-        return current
-    }
-
-    // функция для реализации отложенного на SEARCH_DEBOUNCE_DELAY отправики запроса от введенных символов в едит текст. Вызвана в override fun onTextChanged для TextWatcher
-    private fun searchDebounce() {
-        handler.removeCallbacks(searchRunnable) // мы удаляем последнюю запланированную отправку запроса и тут же
-        handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY) // используя метод postDelayed(), планируем запуск этого же Runnable через две секунды.
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -147,8 +84,7 @@ class SearchActivity : AppCompatActivity() {
             insets
         }
 
-        searchHistory = SearchHistory(getSharedPreferences("search_prefs", Context.MODE_PRIVATE)) // переменная для работы с классом SearchHistory и получением данных из SharedPreferences (Спринт 12)
-
+        //searchHistory = SearchHistory(getSharedPreferences("search_prefs",MODE_PRIVATE)) // переменная для работы с классом SearchHistory и получением данных из SharedPreferences (Спринт 12)
         tracksList = findViewById(R.id.recyclerView) // передача данных от переменной в XML
         placeholderContainer = findViewById(R.id.placeholderContainer) //передача данных от переменной в XML
         placeholderImage = findViewById(R.id.placeholderImage) // передача данных от переменной в XML
@@ -161,10 +97,11 @@ class SearchActivity : AppCompatActivity() {
 
         progressBar = findViewById(R.id.progressBar) // передача данных от переменной в XML - progressBar (Спринт 14)
 
-        // Обработка клика по элементу списка RecyclerView треков и сохранение в историю (Спринт 12 + 13 + 14)
+
+        // Обработка клика по элементу списка RecyclerView треков и сохранение в историю (Спринт 12 + 13 + 14 + замена в 15)
         adapter.setOnItemClickListener { track ->
             if (clickDebounce()) { // реализация дебонса - задержки на открытие активити на CLICK_DEBOUNCE_DELAY при нажатии (спринт 14)
-                searchHistory.saveTrack(track) // сохраняю трек в историю по клику на отображенном списке поиска (вызывается до tracksList.adapter = adapter // адаптер для RecyclerView) (в классе TrackAdapter)
+                searchInteractor.saveTrack(track) // сохраняю трек в историю по клику на отображенном списке поиска (вызывается до tracksList.adapter = adapter // адаптер для RecyclerView) (в классе TrackAdapter)
 
                 // обработка вызова экрана AudioPlayerActivity при нажатии на элемент списка RecyclerView из адаптера (Спринт 13)
                 val intent = Intent(this, AudioPlayerActivity::class.java)
@@ -173,8 +110,9 @@ class SearchActivity : AppCompatActivity() {
             }
         }
 
-        tracksList.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false) // вызываем адаптер для LinearLayoutManager (составляющий элемент RecyclerView помимо адаптера и вьюхолдера)
+        tracksList.layoutManager = LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false) // вызываем адаптер для LinearLayoutManager (составляющий элемент RecyclerView помимо адаптера и вьюхолдера)
         tracksList.adapter = adapter // адаптер для RecyclerView
+
 
         // в 14 спринте уже используется код в TextWatcher в onTextChanged для отправки запроса, но данный вариант пока оставил
         inputEditText.setOnEditorActionListener() {_, actionId, _ -> // вызываем функцию performSearch для обработки запроса от iTunesBaseUrl, но через галочку IME_ACTION_DONE на клавиатуре по условию 11 спринта
@@ -196,12 +134,10 @@ class SearchActivity : AppCompatActivity() {
 
         //Реализация возврата на стартовый экран (а точнее открытие активити main)
         val viewArrowBackToMain = findViewById<ImageView>(R.id.arrow_back_to_main)
-
         viewArrowBackToMain.setOnClickListener {
             val backToMainIntent = Intent(this, MainActivity::class.java)
             startActivity(backToMainIntent)
         }
-
 
         val clearButton = findViewById<ImageView>(R.id.clearIcon) // создание переменной для работы с элементом ImageView из разметки (для строки поиска)
 
@@ -251,7 +187,7 @@ class SearchActivity : AppCompatActivity() {
         inputEditText.addTextChangedListener(simpleTextWatcher) // добавление TextWatcherа (для строки поиска)
 
         clearHistoryButton.setOnClickListener { // обработка нажатия на кнопки Очистить историю (Спринт 12)
-            searchHistory.clearHistory() // вызов функции clearHistory() из экземпляра класса searchHistory
+            searchInteractor.clearHistory() // вызов функции clearHistory() из экземпляра класса searchHistory
             showHistory() // функция отображения истории, создана ниже вне onCreate (Спринт 12)
         }
 
@@ -279,8 +215,73 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
-    private fun showHistory() { // функция для работы с экземпляром класса searchHistory для получения истории из SharedPreferences и соответствующей разработки (Спринт 12)
-        val history = searchHistory.getHistory()
+    private fun performSearch(query:String) { // функция для реализации запроса (Спринт 15 сам запрос в TracksRepositoryImpl)
+        if (query.isEmpty()) return
+        progressBar.visibility = View.VISIBLE // отображаем прогресс бар (14 Спринт)
+
+        trackInteractor.searchTracks(
+            query,
+            onSuccess = { tracks ->
+
+                    if (tracks.isNotEmpty()) {
+                        adapter.updateTracks(tracks) // использую функцию из Адаптера для обновления списка треков
+                        hidePlaceholder()
+                    } else showEmptyState() // картинка и текст НИЧЕГО НЕ НАЙДЕНО
+                    },
+            onError = {
+                showErrorState()
+            }
+        )
+    }
+    private fun hidePlaceholder() { // функция для скрытия плейсхолдера, сделал отдельно для возможного использования еще где-то, но вообще можно и напрямую включить в fun performSearch использую в performSearch
+        progressBar.visibility = View.GONE // скрываем прогресс бар (14 спринт)
+        placeholderContainer.visibility = View.GONE
+    }
+
+    private fun showEmptyState() { // функция для реализации условия, если ничего не найдено (ни одного трека) использую в performSearch
+        progressBar.visibility = View.GONE // скрываем прогресс бар (14 спринт)
+        placeholderContainer.visibility = View.VISIBLE // отобразить placeholderContainer из XML
+        placeholderImage.setImageResource(R.drawable.error_nothing) // отобразить картинку НИЧЕГО НЕ НАШЛОСЬ
+        placeholderText.setText(R.string.nothing_found) // отобразить текст НИЧЕГО НЕ НАШЛОСЬ
+        placeholderButton.visibility = View.GONE // кнопку НЕ отображать
+        adapter.clearTracks() // использую функцию из Адаптера для очистки списка треков
+    }
+
+    private fun showErrorState() { // функция для реализации условия, если что-то не так со связью (или статус отличный от 200) использую в performSearch
+        progressBar.visibility = View.GONE // скрываем прогресс бар (14 спринт)
+        placeholderContainer.visibility = View.VISIBLE  // отобразить placeholderContainer из XML
+        placeholderImage.setImageResource(R.drawable.error_nonet) // отобразить картинку ПРОБЛЕМЫ СО СВЯЗЬЮ
+        placeholderText.setText(R.string.something_went_wrong) // отобразить текст ПРОБЛЕМЫ СО СВЯЗЬЮ
+        placeholderButton.visibility = View.VISIBLE // кнопку для Обновить Отображать
+        adapter.clearTracks() // использую функцию из Адаптера для очистки списка треков
+    }
+
+    // !!!
+    private fun hideKeyboard(view: View) { // функция для скрытия клавиатуры
+        val keyboardUse = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        keyboardUse.hideSoftInputFromWindow(view.windowToken,0)
+    }
+
+    // функция для реализации Debounce - задержки открытия активити Poster Activity воизбежании многократного открытия одного и того же экрана (Спринт 14)
+    // если isClickAllowed тру, меняем на фолс и через handler с задержкой меняем назад на тру
+    // используется в обработке нажатия
+    private fun clickDebounce() : Boolean {
+        val current = isClickAllowed
+        if (isClickAllowed) {
+            isClickAllowed = false
+            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
+        }
+        return current
+    }
+
+    // функция для реализации отложенного на SEARCH_DEBOUNCE_DELAY отправики запроса от введенных символов в едит текст. Вызвана в override fun onTextChanged для TextWatcher
+    private fun searchDebounce() {
+        handler.removeCallbacks(searchRunnable) // мы удаляем последнюю запланированную отправку запроса и тут же
+        handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY) // используя метод postDelayed(), планируем запуск этого же Runnable через две секунды.
+    }
+
+    private fun showHistory() { // функция для работы с экземпляром класса searchHistory для получения истории из SharedPreferences и TracksRepositoryImpl и соответствующей разработки (Спринт 12 + 15)
+        val history = searchInteractor.getHistory()
         if (history.isNotEmpty()) {
             adapter.updateTracks(history)
             historyTitle.visibility = View.VISIBLE

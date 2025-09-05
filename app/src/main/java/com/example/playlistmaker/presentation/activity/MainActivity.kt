@@ -1,14 +1,16 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.presentation.activity
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import android.widget.Button
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.playlistmaker.presentation.activity.MediaActivity
+import com.example.playlistmaker.R
+import com.example.playlistmaker.presentation.activity.SearchActivity
+import com.example.playlistmaker.presentation.activity.SettingsActivity
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -96,7 +98,3 @@ class MainActivity : AppCompatActivity() {
 
     }
 }
-
-
-
-
