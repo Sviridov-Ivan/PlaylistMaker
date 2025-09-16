@@ -1,4 +1,4 @@
-package com.example.playlistmaker.sharing.domain.impl
+package com.example.playlistmaker.sharing.data.impl
 
 import android.content.Context
 import com.example.playlistmaker.R

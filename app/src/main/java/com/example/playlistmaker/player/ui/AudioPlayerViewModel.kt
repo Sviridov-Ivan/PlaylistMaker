@@ -2,6 +2,7 @@ package com.example.playlistmaker.player.ui
 
 import androidx.lifecycle.*
 import com.example.playlistmaker.player.domain.interactor.AudioPlayerInteractor
+
 import com.example.playlistmaker.player.domain.model.PlayerState
 import com.example.playlistmaker.util.formatDuration
 
@@ -13,7 +14,7 @@ class AudioPlayerViewModel(
     val playerStateLiveData = MutableLiveData<PlayerState>() // убрал private - использую в onPause AudioPlayerActivity
     fun observePlayerState(): LiveData<PlayerState> = playerStateLiveData
 
-    private val currentTimeLiveData = MutableLiveData("0:00")
+    private val currentTimeLiveData = MutableLiveData(formatDuration(0L))
     fun observeCurrentTime(): LiveData<String> = currentTimeLiveData
 
     private val toastMessageLiveData = MutableLiveData<String?>()
@@ -27,7 +28,7 @@ class AudioPlayerViewModel(
             },
             onCompletion = {
                 playerStateLiveData.postValue(PlayerState.PREPARED)
-                currentTimeLiveData.postValue("0:00")
+                currentTimeLiveData.postValue(formatDuration(0L))
             }
         )
     }

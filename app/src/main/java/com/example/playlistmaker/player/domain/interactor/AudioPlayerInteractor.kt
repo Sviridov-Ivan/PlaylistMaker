@@ -1,52 +1,12 @@
 package com.example.playlistmaker.player.domain.interactor
 
 import com.example.playlistmaker.player.domain.model.PlayerState
-import com.example.playlistmaker.player.domain.repository.AudioPlayerRepository
 
-class AudioPlayerInteractor(
-    private val repository: AudioPlayerRepository
-) {
-    private var state: PlayerState = PlayerState.DEFAULT
-
-
-    // перенес логику во ViewModel
-    /*fun prepare(url: String, onPrepared: () -> Unit, onCompletion: () -> Unit) {
-        repository.prepare(url, {
-            state = PlayerState.PREPARED
-            onPrepared()
-        }, {
-            state = PlayerState.PREPARED  // после окончания снова "готов"
-            onCompletion()
-        })
-    }
-
-    fun playbackControl() {
-        when (state) {
-            PlayerState.PLAYING -> {
-                repository.pause()
-                state = PlayerState.PAUSED // eсли текущее состояние медиаплеера равно STATE_PLAYING, то нажатие на кнопку должно ставить воспроизведение на паузу (вызываем функцию pausePlayer())
-            }
-            PlayerState.PREPARED, PlayerState.PAUSED -> {
-                repository.start()
-                state = PlayerState.PLAYING // если текущее состояние STATE_PAUSED или STATE_PREPARED, то нажатие на кнопку должно запускать воспроизведение (вызываем функцию startPlayer())
-            }
-            else -> {}
-        }
-    }*/
-
-    fun prepare(url: String, onPrepared: () -> Unit, onCompletion: () -> Unit) {
-        repository.prepare(url, onPrepared, onCompletion)
-    }
-
-    fun play() = repository.start()
-
-    fun pause() = repository.pause()
-    fun release() {
-        repository.release()
-        state = PlayerState.DEFAULT
-    }
-
-    fun getState(): PlayerState = state
-
-    fun currentPosition(): Int = repository.currentPosition()
+interface AudioPlayerInteractor {
+    fun prepare(url: String, onPrepared: () -> Unit, onCompletion: () -> Unit)
+    fun play()
+    fun pause()
+    fun release()
+    fun getState(): PlayerState
+    fun currentPosition(): Int
 }

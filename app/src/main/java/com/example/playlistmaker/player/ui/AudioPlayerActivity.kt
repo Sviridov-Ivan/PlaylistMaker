@@ -3,10 +3,6 @@ package com.example.playlistmaker.player.ui
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.view.View
-import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
@@ -20,10 +16,8 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivityAudioPlayerBinding
 import com.example.playlistmaker.player.domain.model.PlayerState
 import com.example.playlistmaker.search.domain.model.Track
-import com.example.playlistmaker.player.domain.interactor.AudioPlayerInteractor
 import com.example.playlistmaker.util.IntentKeys
 import com.example.playlistmaker.util.dpToPx
-import com.example.playlistmaker.util.formatDuration
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -42,7 +36,7 @@ class AudioPlayerActivity : AppCompatActivity() {
     private val updateTimeRunnable = object : Runnable {
         override fun run() {
             viewModel.updateTime()
-            handler.postDelayed(this, 300) // повтор каждые 300 мс
+            handler.postDelayed(this, DELAY_MILLIS) // повтор каждые 300 мс
         }
     }
 
@@ -58,7 +52,6 @@ class AudioPlayerActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-
 
         val track = intent.getParcelableExtra<Track>(IntentKeys.EXTRA_TRACK)
         track?.let { bindTrack(it) }
@@ -142,7 +135,6 @@ class AudioPlayerActivity : AppCompatActivity() {
                     .placeholder(R.drawable.placeholder)
                     .into(sourceTrackImagePlayer)
             }
-
         }
     }
 
@@ -163,4 +155,7 @@ class AudioPlayerActivity : AppCompatActivity() {
         viewModel.release() // вывод плейера из подготовки
     }
 
+    companion object {
+        private const val DELAY_MILLIS = 300L
+    }
 }

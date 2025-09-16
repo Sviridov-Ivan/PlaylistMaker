@@ -4,6 +4,6 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 fun formatDuration(durationMs: Long): String {
-    val dateFormat = SimpleDateFormat("mm:ss", Locale.getDefault())
+    val dateFormat = SimpleDateFormat("m:ss", Locale.getDefault())
     return dateFormat.format(durationMs)
 }

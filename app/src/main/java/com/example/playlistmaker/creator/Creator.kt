@@ -4,6 +4,7 @@ import android.content.Context
 import android.preference.PreferenceManager
 import com.example.playlistmaker.player.data.AudioPlayerRepositoryImpl
 import com.example.playlistmaker.player.domain.interactor.AudioPlayerInteractor
+import com.example.playlistmaker.player.domain.interactor.AudioPlayerInteractorImpl
 import com.example.playlistmaker.player.domain.repository.AudioPlayerRepository
 import com.example.playlistmaker.search.data.network.ITunesService
 import com.example.playlistmaker.search.data.repository.SearchHistoryRepositoryImpl
@@ -15,6 +16,8 @@ import com.example.playlistmaker.search.domain.repository.TracksRepository
 import com.example.playlistmaker.settings.data.SettingsRepositoryImpl
 import com.example.playlistmaker.settings.domain.interactor.SettingsInteractor
 import com.example.playlistmaker.settings.domain.repository.SettingsRepository
+import com.example.playlistmaker.sharing.data.impl.SharingInteractorImpl
+import com.example.playlistmaker.sharing.domain.interactor.SharingInteractor
 import com.google.gson.Gson
 
 object Creator {
@@ -50,7 +53,11 @@ object Creator {
     }
 
     fun provideAudioPlayerInteractor(): AudioPlayerInteractor {
-        return AudioPlayerInteractor(provideAudioPlayerRepository())
+        return AudioPlayerInteractorImpl(provideAudioPlayerRepository())
+    }
+
+    fun provideSharingInteractor(context: Context): SharingInteractor {
+        return SharingInteractorImpl(context)
     }
 
 

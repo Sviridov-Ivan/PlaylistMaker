@@ -1,10 +1,5 @@
 package com.example.playlistmaker.settings.ui
-
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
-import android.widget.ImageView
-import android.widget.LinearLayout
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -12,9 +7,10 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
 import com.example.playlistmaker.App
 import com.example.playlistmaker.R
+import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.databinding.ActivitySettingsBinding
 import com.example.playlistmaker.sharing.data.ExternalNavigatorImpl
-import com.google.android.material.switchmaterial.SwitchMaterial
+
 
 class SettingsActivity : AppCompatActivity() {
 
@@ -37,10 +33,9 @@ class SettingsActivity : AppCompatActivity() {
             insets
         }
 
-        // Интеракторы из App
-        val app = applicationContext as App
-        val settingsInteractor = app.settingsInteractor
-        val sharingInteractor = app.sharingInteractor
+        // Интеракторы из Creator
+        val settingsInteractor = Creator.provideSettingsInteractor(this)
+        val sharingInteractor = Creator.provideSharingInteractor(this)
         navigator = ExternalNavigatorImpl(this)
 
         // ViewModel через фабрику
@@ -60,21 +55,9 @@ class SettingsActivity : AppCompatActivity() {
         // Подписка на LiveData (тема)
         viewModel.observeIsDarkTheme().observe(this) { enabled ->
             binding.themeSwitcher.isChecked = enabled
-            app.switchTheme(enabled)
+            App.switchTheme(enabled)
         }
 
-        // Подписка на события навигации
-        /*viewModel.observeShareAppEvent().observe(this) {
-            sharingInteractor.getShareAppLink()
-        }
-
-        viewModel.observeOpenTermsEvent().observe(this) {
-            sharingInteractor.getTermsLink()
-        }
-
-        viewModel.observeSupportEmailEvent().observe(this) {
-            sharingInteractor.getSupportEmailData()
-        }*/
         viewModel.observeShareAppEvent().observe(this) { link ->
             navigator.shareLink(link) // ← используем ExternalNavigatorImpl
         }
