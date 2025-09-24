@@ -13,15 +13,14 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.R
 import com.example.playlistmaker.main.ui.MainActivity
 import com.example.playlistmaker.player.ui.AudioPlayerActivity
 import com.example.playlistmaker.adapter.TracksAdapter
 import com.example.playlistmaker.databinding.ActivitySearchBinding
 import com.example.playlistmaker.util.IntentKeys
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchActivity : AppCompatActivity() {
 
@@ -35,7 +34,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private lateinit var binding: ActivitySearchBinding // биндинг для доступа к layout
-    private lateinit var viewModel: SearchViewModel
+    private val viewModel: SearchViewModel by viewModel() // vieModel через SearchModule.kt с исп.Koin
 
     private var isClickAllowed = true // глобальная переменная для использования в Debounce (Спринт 14) флаг защиты от повторных кликов
     private val handler =
@@ -60,14 +59,6 @@ class SearchActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-
-        // инициализация интеракторов через Creator
-        val trackInteractor = Creator.provideTrackInteractor()
-        val searchInteractor = Creator.provideSearchInteractor(this)
-
-        // инициализация ViewModel через фабрику
-        viewModel = ViewModelProvider(this, SearchViewModel.provideFactory(trackInteractor, searchInteractor)
-        )[SearchViewModel::class.java]
 
         // настройка RecyclerView
         binding.recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false) // вызываем адаптер для LinearLayoutManager (составляющий элемент RecyclerView помимо адаптера и вьюхолдера)

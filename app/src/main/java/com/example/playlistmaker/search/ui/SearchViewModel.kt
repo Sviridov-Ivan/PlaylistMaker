@@ -3,7 +3,6 @@ package com.example.playlistmaker.search.ui
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import com.example.playlistmaker.search.domain.interactor.SearchInteractor
 import com.example.playlistmaker.search.domain.interactor.TracksInteractor
 import com.example.playlistmaker.search.domain.model.Track
@@ -81,20 +80,5 @@ class SearchViewModel(
         object Empty : PlaceholderState() // "ничего не найдено"
         object Error : PlaceholderState() // ошибка сети / сервера
         object History : PlaceholderState() // показать историю поиска
-    }
-
-    // Фабрика для создания SearchViewModel с передачей зависимостей вручную
-    companion object {
-        fun provideFactory(
-            trackInteractor: TracksInteractor,
-            searchInteractor: SearchInteractor
-        ): ViewModelProvider.Factory {
-            return object : ViewModelProvider.Factory {
-                @Suppress("UNCHECKED_CAST")
-                override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    return SearchViewModel(trackInteractor, searchInteractor) as T
-                }
-            }
-        }
     }
 }

@@ -49,19 +49,4 @@ class SettingsViewModel(
     fun onSupportClicked() {
         supportEmailEvent.value = sharingInteractor.getSupportEmailData()
     }
-
-    companion object {
-        fun provideFactory(
-            sharingInteractor: SharingInteractor,
-            settingsInteractor: SettingsInteractor
-        ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
-            @Suppress("UNCHECKED_CAST")
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                if (modelClass.isAssignableFrom(SettingsViewModel::class.java)) {
-                    return SettingsViewModel(sharingInteractor, settingsInteractor) as T
-                }
-                throw IllegalArgumentException("Unknown ViewModel class: $modelClass")
-            }
-        }
-    }
 }

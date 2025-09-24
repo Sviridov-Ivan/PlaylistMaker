@@ -55,16 +55,4 @@ class AudioPlayerViewModel(
         interactor.release()
         playerStateLiveData.postValue(PlayerState.DEFAULT)
     }
-
-    // Factory для ViewModel
-    companion object {
-        fun getFactory(interactor: AudioPlayerInteractor): ViewModelProvider.Factory {
-            return object : ViewModelProvider.Factory {
-                @Suppress("UNCHECKED_CAST")
-                override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    return AudioPlayerViewModel(interactor) as T
-                }
-            }
-        }
-    }
 }
