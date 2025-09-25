@@ -5,7 +5,6 @@ import android.os.Handler
 import android.os.Looper
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -30,10 +29,6 @@ class AudioPlayerActivity : AppCompatActivity() {
 
     //ViewModel внедряется через Koin
     private val viewModel: AudioPlayerViewModel by viewModel()
-
-//    private val viewModel: AudioPlayerViewModel by viewModels { //создаем переменную для ViewModel
-//        AudioPlayerViewModel.getFactory(Creator.provideAudioPlayerInteractor())
-//    }
 
     // Runnable для обновления времени - экземпляр для внедрения в основной поток
     private val updateTimeRunnable = object : Runnable {

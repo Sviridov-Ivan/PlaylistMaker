@@ -34,16 +34,7 @@ class SettingsActivity : AppCompatActivity() {
             insets
         }
 
-        // Интеракторы из Creator
-//        val settingsInteractor = Creator.provideSettingsInteractor(this)
-//        val sharingInteractor = Creator.provideSharingInteractor(this)
         navigator = ExternalNavigatorImpl(this)
-
-        // ViewModel через фабрику
-        /*viewModel = ViewModelProvider(
-            this,
-            SettingsViewModel.provideFactory(sharingInteractor, settingsInteractor)
-        )[SettingsViewModel::class.java]*/
 
         // Навигация назад
         binding.arrowBackToMain.setOnClickListener { finish() } // закрываю текущую активность

@@ -1,5 +1,6 @@
 package com.example.playlistmaker.player.di
 
+import android.media.MediaPlayer
 import com.example.playlistmaker.player.data.AudioPlayerRepositoryImpl
 import com.example.playlistmaker.player.domain.interactor.AudioPlayerInteractor
 import com.example.playlistmaker.player.domain.interactor.AudioPlayerInteractorImpl
@@ -10,11 +11,14 @@ import org.koin.dsl.module
 
 val playerModule = module { // вызов в Арр
 
+    // MediaPlayer как зависимость
+    factory { MediaPlayer() }
+
     // data
-    single<AudioPlayerRepository> { AudioPlayerRepositoryImpl() }
+    factory<AudioPlayerRepository> { AudioPlayerRepositoryImpl(get()) }
 
     // Domain
-    single<AudioPlayerInteractor> { AudioPlayerInteractorImpl(get()) }
+    factory<AudioPlayerInteractor> { AudioPlayerInteractorImpl(get()) }
 
     // UI (ViewModel)
     viewModel { AudioPlayerViewModel(get()) }
