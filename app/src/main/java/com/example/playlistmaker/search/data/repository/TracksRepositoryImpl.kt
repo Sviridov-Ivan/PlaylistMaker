@@ -5,18 +5,17 @@ import com.example.playlistmaker.search.domain.repository.TracksRepository
 import com.example.playlistmaker.search.data.dto.TrackDTO
 import com.example.playlistmaker.search.data.dto.TracksResponseDTO
 import com.example.playlistmaker.search.data.network.ITunesApi
-import com.example.playlistmaker.search.data.network.ITunesService
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class TracksRepositoryImpl(api: ITunesApi) : TracksRepository { // параметр в конструктор (api: ITunesApi) добавил АС
+class TracksRepositoryImpl(private val api: ITunesApi) : TracksRepository { // параметр в конструктор (api: ITunesApi) добавил АС
     override fun searchTracks(
         query: String,
         onSuccess: (List<Track>) -> Unit,
         onError: () -> Unit
     ) {
-        ITunesService.api.search(query).enqueue(object : Callback<TracksResponseDTO> {
+        api.search(query).enqueue(object : Callback<TracksResponseDTO> {
             override fun onResponse(
                 call: Call<TracksResponseDTO>,
                 response: Response<TracksResponseDTO>

@@ -7,14 +7,15 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
 import com.example.playlistmaker.App
 import com.example.playlistmaker.R
-import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.databinding.ActivitySettingsBinding
 import com.example.playlistmaker.sharing.data.ExternalNavigatorImpl
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class SettingsActivity : AppCompatActivity() {
 
-    private lateinit var viewModel: SettingsViewModel
+    //private lateinit var viewModel: SettingsViewModel
+    private val viewModel: SettingsViewModel by viewModel() // vieModel через SearchModule.kt с исп.Koin
     private lateinit var binding: ActivitySettingsBinding
     private lateinit var navigator: ExternalNavigatorImpl // для связи с ExternalNavigatorImpl
 
@@ -33,16 +34,7 @@ class SettingsActivity : AppCompatActivity() {
             insets
         }
 
-        // Интеракторы из Creator
-        val settingsInteractor = Creator.provideSettingsInteractor(this)
-        val sharingInteractor = Creator.provideSharingInteractor(this)
         navigator = ExternalNavigatorImpl(this)
-
-        // ViewModel через фабрику
-        viewModel = ViewModelProvider(
-            this,
-            SettingsViewModel.provideFactory(sharingInteractor, settingsInteractor)
-        )[SettingsViewModel::class.java]
 
         // Навигация назад
         binding.arrowBackToMain.setOnClickListener { finish() } // закрываю текущую активность

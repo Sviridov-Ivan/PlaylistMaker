@@ -3,38 +3,33 @@ package com.example.playlistmaker.player.data
 import android.media.MediaPlayer
 import com.example.playlistmaker.player.domain.repository.AudioPlayerRepository
 
-class AudioPlayerRepositoryImpl : AudioPlayerRepository {
-
-    private var mediaPlayer: MediaPlayer? = null // переменная типа MediaPlayer
+class AudioPlayerRepositoryImpl(private val mediaPlayer: MediaPlayer) : AudioPlayerRepository {
 
     override fun prepare(url: String, onPrepared: () -> Unit, onCompletion: () -> Unit) {
-        mediaPlayer = MediaPlayer().apply {  // инициализация класс медиаплейер для работы с его методами далее
-            setDataSource(url)
-            prepareAsync()
-            setOnPreparedListener { onPrepared() }
-            setOnCompletionListener { onCompletion() }
-
-        }
+        mediaPlayer.reset()  // очищаем перед новым setDataSource
+        mediaPlayer.setDataSource(url)
+        mediaPlayer.prepareAsync()
+        mediaPlayer.setOnPreparedListener { onPrepared() }
+        mediaPlayer.setOnCompletionListener { onCompletion() }
     }
 
     override fun start() {
-        mediaPlayer?.start()
+        mediaPlayer.start()
     }
 
     override fun pause() {
-        mediaPlayer?.pause()
+        mediaPlayer.pause()
     }
 
     override fun release() {
-        mediaPlayer?.release()
-        mediaPlayer = null
+        mediaPlayer.release()
     }
 
     override fun isPlaying(): Boolean {
-        return mediaPlayer?.isPlaying == true
+        return mediaPlayer.isPlaying
     }
 
     override fun currentPosition(): Int {
-        return mediaPlayer?.currentPosition ?: 0
+        return mediaPlayer.currentPosition
     }
 }
