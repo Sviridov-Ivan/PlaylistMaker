@@ -9,7 +9,7 @@ android {
     compileSdk = 35
 
     buildFeatures {
-        viewBinding = true
+        viewBinding = true // binding
     }
 
     defaultConfig {
@@ -57,4 +57,7 @@ dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("io.insert-koin:koin-android:3.3.0") // Koin
+    implementation("androidx.fragment:fragment-ktx:1.8.4") // fragments
+    implementation("androidx.viewpager2:viewpager2:1.0.0") // viewpager2
+    implementation("com.google.android.material:material:1.8.0")
 }

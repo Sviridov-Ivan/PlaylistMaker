@@ -10,7 +10,7 @@ import com.example.playlistmaker.search.domain.model.Track
 // управление состоянием экрана поиска
 class SearchViewModel(
     private val trackInteractor: TracksInteractor, // интерактор для работы с API поиска треков
-    private val searchInterator: SearchInteractor // интерактор для работы с историей поиска
+    private val searchInteractor: SearchInteractor // интерактор для работы с историей поиска
 ) : ViewModel() {
 
     // LiveData со списком треков (результаты поиска или история)
@@ -53,12 +53,12 @@ class SearchViewModel(
 
     // Сохранить трек в историю поиска
     fun saveTrack(track: Track) {
-        searchInterator.saveTrack(track)
+        searchInteractor.saveTrack(track)
     }
 
     // Показать историю поиска
     fun showHistory() {
-        val history = searchInterator.getHistory()
+        val history = searchInteractor.getHistory()
         if (history.isNotEmpty()) {
             tracksLiveData.postValue(history) // показываем историю
             placeholderStateLiveData.postValue(PlaceholderState.History)
@@ -70,7 +70,7 @@ class SearchViewModel(
 
     // Очистить историю поиска
     fun clearHistory() {
-        searchInterator.clearHistory()
+        searchInteractor.clearHistory()
         showHistory() // сразу обновляем UI
     }
 

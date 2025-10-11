@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:id="@+id/fragmentFavouriteTracksLayout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/colorSecondary"
+    android:orientation="vertical">
+
+    <!-- Контейнер для плейсхолдера -->
+    <LinearLayout
+        android:id="@+id/placeholderContainerFavouriteTracks"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+
+        android:paddingTop="@dimen/p_h_media_favourite_padding_top">
+
+        <ImageView
+            android:id="@+id/placeholderImageFavouriteTracks"
+            android:contentDescription="@string/contentDescription_place_holder"
+            android:layout_width="@dimen/p_h_image_size"
+            android:layout_height="@dimen/p_h_image_size"
+            android:scaleType="centerInside"
+            android:src="@drawable/error_nothing" />
+
+        <TextView
+            android:id="@+id/placeholderTextFavouriteTracks"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/p_h_text_view_margin_top"
+            android:paddingStart="@dimen/p_h_text_view_padding_start_end"
+            android:paddingEnd="@dimen/p_h_text_view_padding_start_end"
+            android:textAlignment="center"
+            android:textSize="@dimen/p_h_text_view_text_size"
+            android:textColor="?attr/colorOnSecondary"
+            android:fontFamily="@font/ys_display_medium"
+            android:text="@string/media_is_empty" />
+
+    </LinearLayout>
+
+</LinearLayout>

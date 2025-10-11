@@ -40,6 +40,16 @@
     <string name="contentDescription_clear_icon">Кнопка очистки ввода</string>
     <string name="contentDescription_place_holder">Плейсхолдер</string>
 
+    <!-- Медиатека -->
+    <string name="media_is_empty">Ваша медиатека пуста</string>
+    <string name="new_playlist">Новый плейлист</string>
+    <string name="playlists_is_empty">Вы не создали\n\ни одного плейлиста</string>
+
+    <!-- Tabs for MediaActivity (Медиатека)-->
+    <string name="tab_favourite_tracks">Избранные треки</string>
+    <string name="tab_playlist">Плейлисты</string>
+
+
 
 
 </resources>

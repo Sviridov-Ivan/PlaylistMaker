@@ -31,7 +31,7 @@
    <dimen name="artist_name_act_track_text_size">11sp</dimen>
    <dimen name="icon_dot_size_act_track_size">13dp</dimen>
 
-   <!-- Контейнер для плейсхолдера -->
+   <!-- Контейнер для плейсхолдера для поиска -->
    <dimen name="p_h_ll_padding_top">86dp</dimen>
    <dimen name="p_h_image_size">120dp</dimen>
    <dimen name="p_h_text_view_margin_top">16dp</dimen>
@@ -80,5 +80,14 @@
    <dimen name="margin_top_source_track_time_mills_player">4dp</dimen>
    <dimen name="margin_bottom_source_track_time_mills_player">30dp</dimen>
    <dimen name="text_size_source_track_time_mills_player">14sp</dimen>
+
+   <!-- Медиатека -->
+   <dimen name="section_margin">24dp</dimen>
+   <!-- Контейнер для плейсхолдера для медиатеки избранные треки-->
+   <dimen name="p_h_media_favourite_padding_top">106dp</dimen>
+   <dimen name="p_h_media_playlists_button_margin_top">24dp</dimen>
+   <dimen name="p_h_media_playlists_button_margin_bottom">46dp</dimen>
+   <dimen name="title_media_padding_left_right">16dp</dimen>
+   <dimen name="p_h_text_button_text_size_playlist">14sp</dimen>
 
 </resources>
