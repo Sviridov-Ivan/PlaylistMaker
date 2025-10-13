@@ -1,8 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<LinearLayout
     android:id="@+id/mediaLayout"
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="?attr/colorSecondary"
+    android:orientation="vertical">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <!-- Медиатека + возврат -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/layout_name_settings"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/layout_name_settings"
+        android:paddingTop="@dimen/layout_name_settings"
+        android:paddingRight="@dimen/layout_name_settings"
+        android:paddingBottom="@dimen/layout_name_settings">
+
+        <ImageView
+            android:id="@+id/arrow_back_to_main"
+            android:contentDescription="@string/contentDescription_arrow_back"
+            android:layout_width="@dimen/back_arrow_size"
+            android:layout_height="@dimen/back_arrow_size"
+            android:scaleType="centerCrop"
+            android:src="@drawable/light_mode_3"
+            app:tint="?attr/colorOnSecondary" />
+
+        <TextView
+            style="@style/TextViewSettingsStyle"
+            android:fontFamily="@font/ys_display_medium"
+            android:paddingLeft="@dimen/title_media_padding_left_right"
+            android:paddingRight="@dimen/title_media_padding_left_right"
+            android:text="@string/media"
+            android:textSize="@dimen/main_text_size" />
+    </LinearLayout>
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/section_margin"
+        android:layout_marginRight="@dimen/section_margin"
+        android:background="?attr/colorSecondary"
+        app:tabTextAppearance="@style/TabTextStyle"
+        app:tabRippleColor="@color/light_gray"
+        app:tabTextColor="?attr/colorOnSecondary"
+        app:tabSelectedTextColor="?attr/colorOnSecondary"
+        app:tabIndicatorColor="?attr/colorOnSecondary"
+        app:tabMode="fixed"/>
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewPager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</LinearLayout>
