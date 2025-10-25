@@ -1,43 +1,47 @@
 package com.example.playlistmaker.media.ui
 
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.fragment.app.Fragment
 import com.example.playlistmaker.R
-import com.example.playlistmaker.databinding.ActivityMediaBinding
+import com.example.playlistmaker.databinding.FragmentMediaBinding
 import com.google.android.material.tabs.TabLayoutMediator
 
-class MediaActivity : AppCompatActivity() {
+class MediaFragment : Fragment() {
 
-    private lateinit var binding: ActivityMediaBinding
+    private var _binding: FragmentMediaBinding? = null
+    private val binding get() = _binding!!
+
     private lateinit var tabMediator: TabLayoutMediator
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge() // поддержка EdgeToEdge режима
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        _binding = FragmentMediaBinding.inflate(inflater, container,false)
+        return binding.root
+    }
 
-        binding = ActivityMediaBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        enableEdgeToEdge() // поддержка EdgeToEdge режима
-
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.mediaLayout)) { v, insets -> // присваиваю id для головного layout в верстке
+        // Edge-to-Edge
+        ViewCompat.setOnApplyWindowInsetsListener(view.findViewById(R.id.mediaLayout)) { v, insets -> // присваиваю id для головного layout в верстке
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
 
-
         setupViewPager() // функция для работы с медиатором для tabLayout и viewPager)
-
-        // Навигация назад (закрываю текущую активность)
-        binding.arrowBackToMain.setOnClickListener { finish() }
     }
 
     private fun setupViewPager() {
-        val adapter = MediaViewPagerAdapter(this)
+        val adapter = MediaViewPagerAdapter(childFragmentManager, lifecycle)
         binding.viewPager.adapter = adapter
 
         // TabLayoutMediator
@@ -50,9 +54,10 @@ class MediaActivity : AppCompatActivity() {
         tabMediator.attach()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         // Освобождаем медиатор, чтобы не было утечек
         tabMediator.detach()
+        _binding = null
     }
 }

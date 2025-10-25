@@ -1,28 +1,29 @@
 package com.example.playlistmaker.search.ui
 
-import android.content.Intent
+import android.content.Context.INPUT_METHOD_SERVICE
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.R
-import com.example.playlistmaker.main.ui.MainActivity
-import com.example.playlistmaker.player.ui.AudioPlayerActivity
 import com.example.playlistmaker.adapter.TracksAdapter
-import com.example.playlistmaker.databinding.ActivitySearchBinding
-import com.example.playlistmaker.util.IntentKeys
+import com.example.playlistmaker.databinding.FragmentSearchBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import kotlin.getValue
+import kotlin.toString
 
-class SearchActivity : AppCompatActivity() {
+class SearchFragment : Fragment() {
 
     companion object {
         private const val KEY_SEARCH_TEXT = "SEARCH_TEXT" //создание константы для ключей хранения данных (для строки поиска) (Спринт 15)
@@ -32,8 +33,8 @@ class SearchActivity : AppCompatActivity() {
         private const val SEARCH_DEBOUNCE_DELAY = 2000L // задержка для начала отправки запроса после введенного текста в строке поиска (Спринт 14)
 
     }
+    private lateinit var binding: FragmentSearchBinding
 
-    private lateinit var binding: ActivitySearchBinding // биндинг для доступа к layout
     private val viewModel: SearchViewModel by viewModel() // vieModel через SearchModule.kt с исп.Koin
 
     private var isClickAllowed = true // глобальная переменная для использования в Debounce (Спринт 14) флаг защиты от повторных кликов
@@ -47,22 +48,27 @@ class SearchActivity : AppCompatActivity() {
     private var currentSearchText: String = "" // создание приватной переменной для использования в fun onTextChanged и fun onSaveInstanceState для сохранения введенных данных при развороте экрана (хотя достаточно присвоить id для EditText)
 
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        binding = FragmentSearchBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-        enableEdgeToEdge() // поддержка EdgeToEdge режима
-        binding = ActivitySearchBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.searchLayout)) { v, insets -> // присваиваю id для головного layout в верстке
+        ViewCompat.setOnApplyWindowInsetsListener(view.findViewById(R.id.searchLayout)) { v, insets -> // присваиваю id для головного layout в верстке
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
 
         // настройка RecyclerView
-        binding.recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false) // вызываем адаптер для LinearLayoutManager (составляющий элемент RecyclerView помимо адаптера и вьюхолдера)
-        //binding.recyclerView.layoutManager = LinearLayoutManager(this)
+        // поправил использование Context
+        binding.recyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false) // вызываем адаптер для LinearLayoutManager (составляющий элемент RecyclerView помимо адаптера и вьюхолдера)
         binding.recyclerView.adapter = adapter
 
         // oбработка клика по элементу списка RecyclerView треков и сохранение в историю (Спринт 12 + 13 + 14 + замена в 15)
@@ -70,10 +76,14 @@ class SearchActivity : AppCompatActivity() {
             if (clickDebounce()) { // реализация дебонса - задержки на открытие активити на CLICK_DEBOUNCE_DELAY при нажатии (спринт 14)
                 viewModel.saveTrack(track) // сохраняю трек в историю по клику на отображенном списке поиска (вызывается до tracksList.adapter = adapter // адаптер для RecyclerView) (в классе TrackAdapter)
 
-                // обработка вызова экрана AudioPlayerActivity при нажатии на элемент списка RecyclerView из адаптера (Спринт 13)
-                val intent = Intent(this, AudioPlayerActivity::class.java)
-                intent.putExtra(IntentKeys.EXTRA_TRACK, track)
-                startActivity(intent)
+                val bundle = Bundle().apply {
+                    putParcelable("track", track)
+                }
+
+             // переход на экрна AudioPlayer
+                findNavController().navigate(
+                    R.id.action_searchFragment_to_audioPlayerFragment, bundle
+                )
             }
         }
 
@@ -94,12 +104,6 @@ class SearchActivity : AppCompatActivity() {
         // кнопка "повторить" на экране ошибки
         binding.placeholderButton.setOnClickListener { // повторный вызов функции performSearch через кнопку плейсхолдера при ошибке загрузки, она только тогда появляется
             performSearch(binding.inputEditText.text.toString())
-        }
-
-        // стрелка "назад" → возврат в MainActivity
-        binding.arrowBackToMain.setOnClickListener {
-            val backToMainIntent = Intent(this, MainActivity::class.java)
-            startActivity(backToMainIntent)
         }
 
         // иконка очистки строки поиска
@@ -181,19 +185,19 @@ class SearchActivity : AppCompatActivity() {
     }
 
     // Подписка на LiveData из ViewModel
-    private fun observeViewModel() {
+    private fun observeViewModel() { // заменил LifecycleOwner на ViewLifecycleOwner
         // список треков
-        viewModel.observeTracks().observe(this) { tracks ->
+        viewModel.observeTracks().observe(viewLifecycleOwner) { tracks ->
             adapter.updateTracks(tracks)
         }
 
         // загрузка (показать/скрыть ProgressBar)
-        viewModel.observeLoading().observe(this) { isLoading ->
+        viewModel.observeLoading().observe(viewLifecycleOwner) { isLoading ->
             binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
         }
 
         // состояние плейсхолдеров (ошибка, пусто, история, обычный список)
-        viewModel.observePlaceholderState().observe(this) { state ->
+        viewModel.observePlaceholderState().observe(viewLifecycleOwner) { state ->
             when (state) {
                 is SearchViewModel.PlaceholderState.None -> {
                     binding.placeholderContainer.visibility = View.GONE
@@ -229,8 +233,9 @@ class SearchActivity : AppCompatActivity() {
     }
 
     // скрытие клавиатуры
+    // поправил использование Context
     private fun hideKeyboard(view: View) { // функция для скрытия клавиатуры
-        val keyboardUse = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        val keyboardUse = requireContext().getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         keyboardUse.hideSoftInputFromWindow(view.windowToken,0)
     }
 
@@ -241,7 +246,9 @@ class SearchActivity : AppCompatActivity() {
         val current = isClickAllowed
         if (isClickAllowed) {
             isClickAllowed = false
-            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
+            handler.postDelayed({ isClickAllowed = true },
+                CLICK_DEBOUNCE_DELAY
+            )
         }
         return current
     }
@@ -267,16 +274,10 @@ class SearchActivity : AppCompatActivity() {
         outState.putString(KEY_SEARCH_TEXT, currentSearchText)
     }
 
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) { // переопределение метода onRestoreInstanceState, извлечение данныех из Bundle при помощи метода getString. (для строки поиска)
-        super.onRestoreInstanceState(savedInstanceState)
-
-        val restoredText = savedInstanceState.getString(KEY_SEARCH_TEXT, "") //(для строки поиска)
-
-        binding.inputEditText.setText(restoredText) // установление восстановленных данных обратно в EditText при помощи функции .setText(value). (для строки поиска)
-        binding.clearIcon.visibility = if (restoredText.isNullOrEmpty()) { // то же с кнопкой сброса (для строки поиска)
-            View.GONE
-        } else {
-            View.VISIBLE
-        }
+    override fun onResume() {
+        super.onResume()
+        isClickAllowed = true
     }
+
+    // Не стал реализовывать override fun onRestoreInstanceState(savedInstanceState: Bundle)
 }

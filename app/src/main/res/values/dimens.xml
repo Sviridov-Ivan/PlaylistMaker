@@ -87,7 +87,14 @@
    <dimen name="p_h_media_favourite_padding_top">106dp</dimen>
    <dimen name="p_h_media_playlists_button_margin_top">24dp</dimen>
    <dimen name="p_h_media_playlists_button_margin_bottom">46dp</dimen>
-   <dimen name="title_media_padding_left_right">16dp</dimen>
+   <dimen name="title_media_padding_left_right">12dp</dimen>
+   <dimen name="title_media_padding_top">10dp</dimen>
    <dimen name="p_h_text_button_text_size_playlist">14sp</dimen>
 
+   <!-- Поиск дополнение -->
+   <dimen name="title_search_padding_left_right_bottom">12dp</dimen>
+   <dimen name="title_search_padding_top">10dp</dimen>
+   <!-- Настройки дополнение -->
+   <dimen name="title_settings_padding_left_right_bottom">12dp</dimen>
+   <dimen name="title_settings_padding_top">10dp</dimen>
 </resources>

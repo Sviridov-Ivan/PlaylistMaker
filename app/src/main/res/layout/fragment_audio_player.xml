@@ -5,7 +5,8 @@
     android:id="@+id/player"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/playerBackground">
+    android:background="?attr/playerBackground"
+    tools:context="com.example.playlistmaker.player.ui.AudioPlayerFragment">
     <!-- tools:context=".MainActivity" добавь соответствующий контекст-->
 
     <!-- Добавил по 2 Guideline с каждой стороны, так разные отступы у объектов-->

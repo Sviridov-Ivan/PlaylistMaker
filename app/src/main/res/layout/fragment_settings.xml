@@ -7,7 +7,8 @@
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    android:background="?attr/colorSecondary">
+    android:background="?attr/colorSecondary"
+    tools:context="com.example.playlistmaker.settings.ui.SettingsFragment">
 
     <!-- Настройки + возврат -->
     <LinearLayout
@@ -21,16 +22,11 @@
         android:paddingTop="@dimen/layout_name_settings"
         android:paddingBottom="@dimen/layout_name_settings">
 
-        <ImageView
-            android:id="@+id/arrow_back_to_main"
-            android:layout_width="@dimen/back_arrow_size"
-            android:layout_height="@dimen/back_arrow_size"
-            android:scaleType="centerCrop"
-            android:src="@drawable/light_mode_3"
-            app:tint="?attr/colorOnSecondary"/>
-
         <TextView
-            android:paddingStart="12dp"
+            android:paddingStart="@dimen/title_settings_padding_left_right_bottom"
+            android:paddingEnd="@dimen/title_settings_padding_left_right_bottom"
+            android:paddingTop="@dimen/title_settings_padding_top"
+            android:paddingBottom="@dimen/title_settings_padding_left_right_bottom"
             android:text="@string/settings_button"
             android:textSize="@dimen/main_text_size"
             style="@style/TextViewSettingsStyle"
