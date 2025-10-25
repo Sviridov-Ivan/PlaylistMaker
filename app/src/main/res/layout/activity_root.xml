@@ -31,5 +31,6 @@
         app:itemTextAppearanceActive="@style/BottomNavTextAppearance"
         app:itemTextAppearanceInactive="@style/BottomNavTextAppearance"
         app:itemIconTint="@color/bottom_nav_item_color"
-        app:itemTextColor="@color/bottom_nav_item_color"/>
+        app:itemTextColor="@color/bottom_nav_item_color"
+        android:background="?attr/colorSecondary" />
 </androidx.constraintlayout.widget.ConstraintLayout>

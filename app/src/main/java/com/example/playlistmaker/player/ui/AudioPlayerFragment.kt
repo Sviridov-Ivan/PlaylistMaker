@@ -26,10 +26,6 @@ import kotlin.getValue
 
 class AudioPlayerFragment : Fragment() {
 
-    companion object {
-        private const val DELAY_MILLIS = 300L
-
-    }
     private var _binding: FragmentAudioPlayerBinding? = null
     private val binding get() = _binding!!
 
@@ -108,7 +104,7 @@ class AudioPlayerFragment : Fragment() {
             }
         }
 
-        // закрытие активити
+        // возврат на фрагмент Поиск
         binding.arrowBackToMainPlayer.setOnClickListener {
             //parentFragmentManager.popBackStack() // не работает! крашится с ошибкой невозможности перехода на фрагмент повторно
             findNavController().navigateUp()
@@ -170,4 +166,10 @@ class AudioPlayerFragment : Fragment() {
         viewModel.release() // вывод плейера из подготовки
         _binding = null
     }
+
+    companion object {
+        private const val DELAY_MILLIS = 300L
+
+    }
+
 }
