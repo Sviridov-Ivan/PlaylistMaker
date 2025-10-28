@@ -13,7 +13,7 @@ import com.example.playlistmaker.util.formatDuration
 import com.example.playlistmaker.search.domain.model.Track
 
 class TracksViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
-    LayoutInflater.from(parent.context).inflate(R.layout.activity_track, parent, false) // по заданию, но не типичный подход, возможно для инкапсуляции логики создания View внутрь ViewHolder
+    LayoutInflater.from(parent.context).inflate(R.layout.item_track, parent, false) // по заданию, но не типичный подход, возможно для инкапсуляции логики создания View внутрь ViewHolder
 ) {
 
     private val sourceTrackImage: ImageView = itemView.findViewById(R.id.source_track_image) // переменная для работы с картинкой трека из XML

@@ -1,11 +1,17 @@
 package com.example.playlistmaker.media.ui
 
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.example.playlistmaker.media.ui.fragments.FavouriteTracksFragment
 import com.example.playlistmaker.media.ui.fragments.PlaylistsFragment
 
-class MediaViewPagerAdapter(activity: MediaActivity) : FragmentStateAdapter(activity) { // стандартный адаптер для ViewPager2
+
+class MediaViewPagerAdapter(
+    fragmentManager: FragmentManager,
+    lifecycle: Lifecycle
+) : FragmentStateAdapter(fragmentManager, lifecycle) { // стандартный адаптер для ViewPager2
 
     override fun getItemCount(): Int = 2 // количество вкладок (фрагментов)
 

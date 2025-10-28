@@ -7,7 +7,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?attr/colorSecondary"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context="com.example.playlistmaker.search.ui.SearchFragment">
 
     <!-- Поиск + возврат -->
     <LinearLayout
@@ -21,20 +22,13 @@
         android:paddingRight="@dimen/layout_name_settings"
         android:paddingBottom="@dimen/layout_name_settings">
 
-        <ImageView
-            android:id="@+id/arrow_back_to_main"
-            android:contentDescription="@string/contentDescription_arrow_back"
-            android:layout_width="@dimen/back_arrow_size"
-            android:layout_height="@dimen/back_arrow_size"
-            android:scaleType="centerCrop"
-            android:src="@drawable/light_mode_3"
-            app:tint="?attr/colorOnSecondary" />
-
         <TextView
             style="@style/TextViewSettingsStyle"
             android:fontFamily="@font/ys_display_medium"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
+            android:paddingLeft="@dimen/title_search_padding_left_right_bottom"
+            android:paddingRight="@dimen/title_search_padding_left_right_bottom"
+            android:paddingBottom="@dimen/title_search_padding_left_right_bottom"
+            android:paddingTop="@dimen/title_search_padding_top"
             android:text="@string/search_button"
             android:textSize="@dimen/main_text_size" />
     </LinearLayout>
@@ -66,7 +60,7 @@
                 android:singleLine="true"
                 android:layout_gravity="center_vertical"
                 android:background="@null"
-                android:drawableStart="@drawable/light_mode"
+                android:drawableStart="@drawable/ic_search"
                 android:drawablePadding="@dimen/padding_search_line_1"
                 android:drawableTint="?attr/colorPrimaryVariant"
                 android:fontFamily="@font/ys_display_regular"
