@@ -3,9 +3,12 @@ package com.example.playlistmaker.search.ui
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.search.domain.interactor.SearchInteractor
 import com.example.playlistmaker.search.domain.interactor.TracksInteractor
 import com.example.playlistmaker.search.domain.model.Track
+import com.example.playlistmaker.util.Resource
+import kotlinx.coroutines.launch
 
 // управление состоянием экрана поиска
 class SearchViewModel(
@@ -25,30 +28,39 @@ class SearchViewModel(
     private val placeholderStateLiveData = MutableLiveData<PlaceholderState>()
     fun observePlaceholderState(): LiveData<PlaceholderState> = placeholderStateLiveData
 
-    //  Поиск треков по запросу
+    //  Поиск треков по запросу с использованием корутин и FLow
     fun searchTracks(query: String) {
         if (query.isEmpty()) return // если строка пустая, возращаем
 
-        isLoadingLiveData.postValue(true) // прогресс
+        viewModelScope.launch { // запуск потока
+            trackInteractor.searchTracks(query).collect { result ->
+                when (result) {
 
-        trackInteractor.searchTracks(
-            query,
-            onSuccess = { tracks ->
-                isLoadingLiveData.postValue(false) // скрываем прогресс
-                if (tracks.isNotEmpty()) {
-                    tracksLiveData.postValue(tracks) // обновляем список треков
-                    placeholderStateLiveData.postValue(PlaceholderState.None) // убираем плейсхолдер
-                } else {
-                    tracksLiveData.postValue(emptyList()) // список пустой
-                    placeholderStateLiveData.postValue(PlaceholderState.Empty) // показываем "ничего не найдено"
+                    is Resource.Loading -> {
+                        isLoadingLiveData.postValue(true)
+                        placeholderStateLiveData.postValue(PlaceholderState.None)
+                    }
+
+                    is Resource.Success -> {
+                        isLoadingLiveData.postValue(false)
+                        val tracks = result.data
+                        if (tracks.isNotEmpty()) {
+                            tracksLiveData.postValue(tracks)
+                            placeholderStateLiveData.postValue(PlaceholderState.None)
+                        } else {
+                            tracksLiveData.postValue(emptyList())
+                            placeholderStateLiveData.postValue(PlaceholderState.Empty)
+                        }
+                    }
+
+                    is Resource.Error -> {
+                        isLoadingLiveData.postValue(false)
+                        tracksLiveData.postValue(emptyList())
+                        placeholderStateLiveData.postValue(PlaceholderState.Error)
+                    }
                 }
-            },
-            onError = {
-                isLoadingLiveData.postValue(false) // скрываем прогресс
-                tracksLiveData.postValue(emptyList()) // очищаем список
-                placeholderStateLiveData.postValue(PlaceholderState.Error) // показываем ошибку
             }
-        )
+        }
     }
 
     // Сохранить трек в историю поиска

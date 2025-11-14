@@ -2,9 +2,13 @@ package com.example.playlistmaker.player.ui
 
 import androidx.lifecycle.*
 import com.example.playlistmaker.player.domain.interactor.AudioPlayerInteractor
-
 import com.example.playlistmaker.player.domain.model.PlayerState
 import com.example.playlistmaker.util.formatDuration
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
+
 
 class AudioPlayerViewModel(
     private val interactor: AudioPlayerInteractor
@@ -20,6 +24,8 @@ class AudioPlayerViewModel(
     private val toastMessageLiveData = MutableLiveData<String?>()
     fun observeToastMessage(): LiveData<String?> = toastMessageLiveData
 
+    private var timerJob: Job? = null // переменная-ссылка на запущенную корутину, выполняющую обновление таймера
+
     fun prepare(url: String) {
         interactor.prepare(
             url,
@@ -27,6 +33,7 @@ class AudioPlayerViewModel(
                 playerStateLiveData.postValue(PlayerState.PREPARED)
             },
             onCompletion = {
+                stopTimerUpdates() // завершаю работу корутин
                 playerStateLiveData.postValue(PlayerState.PREPARED)
                 currentTimeLiveData.postValue(formatDuration(0L))
             }
@@ -35,16 +42,37 @@ class AudioPlayerViewModel(
 
     fun playbackControl() {
         when (playerStateLiveData.value) {
-            PlayerState.PLAYING -> {
-                interactor.pause()
-                playerStateLiveData.postValue(PlayerState.PAUSED)
-            }
-            PlayerState.PREPARED, PlayerState.PAUSED -> {
-                interactor.play()
-                playerStateLiveData.postValue(PlayerState.PLAYING)
-            }
+            PlayerState.PLAYING -> pausePlayback()
+            PlayerState.PREPARED, PlayerState.PAUSED -> startPlayback()
             else -> {}
         }
+    }
+
+    private fun startPlayback() {
+        interactor.play()
+        playerStateLiveData.postValue(PlayerState.PLAYING)
+        startTimerUpdates()
+    }
+
+    private fun pausePlayback() {
+        interactor.play()
+        playerStateLiveData.postValue(PlayerState.PAUSED)
+        stopTimerUpdates()
+    }
+
+    private fun startTimerUpdates() {
+        stopTimerUpdates() // воизбежании дублирования запуска корутин
+
+        timerJob = viewModelScope.launch { // запуск таймера в потоке (Dispatchers.Main)
+            while (isActive) { // свойство медиаплейера
+                currentTimeLiveData.value = formatDuration(interactor.currentPosition().toLong())
+                delay(DELAY_MILLIS)
+            }
+        }
+    }
+    private fun stopTimerUpdates() {
+        timerJob?.cancel() // отмена
+        timerJob = null
     }
 
     fun updateTime(){
@@ -52,7 +80,13 @@ class AudioPlayerViewModel(
     }
 
     fun release() {
+        stopTimerUpdates()
         interactor.release()
         playerStateLiveData.postValue(PlayerState.DEFAULT)
+    }
+
+    companion object {
+        private const val DELAY_MILLIS = 300L
+
     }
 }
