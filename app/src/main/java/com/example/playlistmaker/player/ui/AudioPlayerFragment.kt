@@ -1,8 +1,6 @@
 package com.example.playlistmaker.player.ui
 
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,8 +17,6 @@ import com.example.playlistmaker.player.domain.model.PlayerState
 import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.util.dpToPx
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.text.SimpleDateFormat
-import java.util.Locale
 import kotlin.getValue
 
 
@@ -29,20 +25,8 @@ class AudioPlayerFragment : Fragment() {
     private var _binding: FragmentAudioPlayerBinding? = null
     private val binding get() = _binding!!
 
-    //работа с потоком
-    private val handler = Handler(Looper.getMainLooper())
-    private val timeFormat = SimpleDateFormat("mm:ss", Locale.getDefault())
-
     //ViewModel внедряется через Koin
     private val viewModel: AudioPlayerViewModel by viewModel()
-
-    // Runnable для обновления времени - экземпляр для внедрения в основной поток
-    private val updateTimeRunnable = object : Runnable {
-        override fun run() {
-            viewModel.updateTime()
-            handler.postDelayed(this, DELAY_MILLIS) // повтор каждые 300 мс
-        }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -65,20 +49,12 @@ class AudioPlayerFragment : Fragment() {
         val track = arguments?.getParcelable<Track>("track")
         track?.let { bindTrack(it) }
 
-
         // подписка на State
         viewModel.observePlayerState().observe(viewLifecycleOwner) { state ->
             when (state) {
-                PlayerState.PLAYING -> {
-                    binding.buttonPlay.setImageResource(R.drawable.button_pause)
-                    handler.post(updateTimeRunnable)
-                }
-
-                PlayerState.PAUSED, PlayerState.PREPARED -> {
+                PlayerState.PLAYING -> binding.buttonPlay.setImageResource(R.drawable.button_pause)
+                PlayerState.PAUSED, PlayerState.PREPARED ->
                     binding.buttonPlay.setImageResource(R.drawable.button_play)
-                    handler.removeCallbacks(updateTimeRunnable)
-                }
-
                 else -> {}
             }
         }
@@ -155,21 +131,13 @@ class AudioPlayerFragment : Fragment() {
         if (viewModel.playerStateLiveData.value == PlayerState.PLAYING) {
             viewModel.playbackControl() // поставить на паузу
         }
-        handler.removeCallbacks(updateTimeRunnable) // остановка обновления проигрывания
-
     }
 
     // Если пользователь закрыл активити и медиаплеер и его возможности больше не нужны чтобы освободить память и ресурсы процессора, выделенные системой при подготовке медиаплеера
     override fun onDestroyView() {
         super.onDestroyView()
-        handler.removeCallbacks(updateTimeRunnable) // остановка таймера
         viewModel.release() // вывод плейера из подготовки
         _binding = null
-    }
-
-    companion object {
-        private const val DELAY_MILLIS = 300L
-
     }
 
 }

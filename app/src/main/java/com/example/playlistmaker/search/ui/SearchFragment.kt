@@ -2,8 +2,6 @@ package com.example.playlistmaker.search.ui
 
 import android.content.Context.INPUT_METHOD_SERVICE
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -14,39 +12,37 @@ import android.view.inputmethod.InputMethodManager
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.R
 import com.example.playlistmaker.adapter.TracksAdapter
 import com.example.playlistmaker.databinding.FragmentSearchBinding
+import com.example.playlistmaker.search.domain.model.Track
+import com.example.playlistmaker.util.debounce
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.getValue
 import kotlin.toString
 
 class SearchFragment : Fragment() {
 
-    companion object {
-        private const val KEY_SEARCH_TEXT = "SEARCH_TEXT" //создание константы для ключей хранения данных (для строки поиска) (Спринт 15)
-
-        private const val CLICK_DEBOUNCE_DELAY = 1000L // задержка на открытия активити AudioPlayerActivity (Спринт 14)
-
-        private const val SEARCH_DEBOUNCE_DELAY = 2000L // задержка для начала отправки запроса после введенного текста в строке поиска (Спринт 14)
-
-    }
     private lateinit var binding: FragmentSearchBinding
 
     private val viewModel: SearchViewModel by viewModel() // vieModel через SearchModule.kt с исп.Koin
 
-    private var isClickAllowed = true // глобальная переменная для использования в Debounce (Спринт 14) флаг защиты от повторных кликов
-    private val handler =
-        Handler(Looper.getMainLooper()) // переменная для доступа к Handler и Looper основного потока UI и внесение в него корректировки (Спринт 14)
-    private val searchRunnable = Runnable { performSearch(binding.inputEditText.text.toString()) } // переменная для дальнейшего использования в функции для отложенного отслеживания ввода для автопоиска (Спринт 14)
-
     private val adapter =
         TracksAdapter() // создаем переменную для адаптера с пустым конструктором (там есть пометка)
 
-    private var currentSearchText: String = "" // создание приватной переменной для использования в fun onTextChanged и fun onSaveInstanceState для сохранения введенных данных при развороте экрана (хотя достаточно присвоить id для EditText)
+    private var currentSearchText: String = "" // ( всегда инициализирована) создание приватной переменной для использования в fun onTextChanged и fun onSaveInstanceState для сохранения введенных данных при развороте экрана (хотя достаточно присвоить id для EditText)
 
+    private lateinit var onTrackClickDebounce: (Track) -> Unit // объявление функции для работы с Debounce.kt для задержки и исключения многократного нажатия при переходе на Аудиоплейер
+
+    // переменная для реализации Debounce при отправке поискового запроса с использованием Debounce.kt
+    private val trackSearchDebounce by lazy {
+        debounce<String>(SEARCH_DEBOUNCE_DELAY, viewLifecycleOwner.lifecycleScope, true) { query ->
+            viewModel.searchTracks(query)
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -71,20 +67,24 @@ class SearchFragment : Fragment() {
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false) // вызываем адаптер для LinearLayoutManager (составляющий элемент RecyclerView помимо адаптера и вьюхолдера)
         binding.recyclerView.adapter = adapter
 
+        // инициализация переменной для работы с корутинами (работа с потоком) с использованием функции из файла Debounce.kt
+        onTrackClickDebounce = debounce<Track>(CLICK_DEBOUNCE_DELAY, viewLifecycleOwner.lifecycleScope, false) { track ->  // реализация дебонса - задержки на открытие активити на CLICK_DEBOUNCE_DELAY при нажатии (спринт 14)
+            viewModel.saveTrack(track) // сохраняю трек в историю по клику на отображенном списке поиска (вызывается до tracksList.adapter = adapter // адаптер для RecyclerView) (в классе TrackAdapter)
+
+            // парсинг track
+            val bundle = Bundle().apply {
+                putParcelable("track", track)
+            }
+
+            // переход на экрна AudioPlayer
+            findNavController().navigate(
+                R.id.action_searchFragment_to_audioPlayerFragment, bundle
+            )
+        }
+
         // oбработка клика по элементу списка RecyclerView треков и сохранение в историю (Спринт 12 + 13 + 14 + замена в 15)
         adapter.setOnItemClickListener { track ->
-            if (clickDebounce()) { // реализация дебонса - задержки на открытие активити на CLICK_DEBOUNCE_DELAY при нажатии (спринт 14)
-                viewModel.saveTrack(track) // сохраняю трек в историю по клику на отображенном списке поиска (вызывается до tracksList.adapter = adapter // адаптер для RecyclerView) (в классе TrackAdapter)
-
-                val bundle = Bundle().apply {
-                    putParcelable("track", track)
-                }
-
-             // переход на экрна AudioPlayer
-                findNavController().navigate(
-                    R.id.action_searchFragment_to_audioPlayerFragment, bundle
-                )
-            }
+            onTrackClickDebounce(track)
         }
 
         // поиск при нажатии на кнопку "Поиск" на клавиатуре
@@ -144,7 +144,8 @@ class SearchFragment : Fragment() {
                     adapter.clearTracks()
                     binding.historyTitle.visibility = View.GONE
                     binding.clearHistoryButton.visibility = View.GONE
-                    searchDebounce() // функция для реализации отложенного на SEARCH_DEBOUNCE_DELAY отправки запроса (Спринт 14)
+
+                    trackSearchDebounce(currentSearchText) // функция для реализации отложенного на SEARCH_DEBOUNCE_DELAY отправки запроса (Спринт 20)
                 }
             }
             override fun afterTextChanged(s: Editable?) {  //(для строки поиска)
@@ -239,26 +240,6 @@ class SearchFragment : Fragment() {
         keyboardUse.hideSoftInputFromWindow(view.windowToken,0)
     }
 
-    // функция для реализации Debounce - задержки открытия активити Poster Activity воизбежании многократного открытия одного и того же экрана (Спринт 14)
-    // если isClickAllowed тру, меняем на фолс и через handler с задержкой меняем назад на тру
-    // используется в обработке нажатия
-    private fun clickDebounce() : Boolean {
-        val current = isClickAllowed
-        if (isClickAllowed) {
-            isClickAllowed = false
-            handler.postDelayed({ isClickAllowed = true },
-                CLICK_DEBOUNCE_DELAY
-            )
-        }
-        return current
-    }
-
-    // функция для реализации отложенного на SEARCH_DEBOUNCE_DELAY отправики запроса от введенных символов в едит текст. Вызвана в override fun onTextChanged для TextWatcher
-    private fun searchDebounce() {
-        handler.removeCallbacks(searchRunnable) // мы удаляем последнюю запланированную отправку запроса и тут же
-        handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY) // используя метод postDelayed(), планируем запуск этого же Runnable через две секунды.
-    }
-
     // скрытие кнопки очистки ввода
     private fun clearButtonVisibility(s: CharSequence?): Int { // функция для обработки видимости кнопки сбороса введенных данных (для строки поиска)
         return if (s.isNullOrEmpty()) {
@@ -276,7 +257,14 @@ class SearchFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        isClickAllowed = true
+    }
+    companion object {
+        private const val KEY_SEARCH_TEXT = "SEARCH_TEXT" // создание константы для ключей хранения данных (для строки поиска) (Спринт 15)
+
+        private const val CLICK_DEBOUNCE_DELAY = 1000L // задержка на открытия активити AudioPlayerActivity (Спринт 14)
+
+        private const val SEARCH_DEBOUNCE_DELAY = 2000L // задержка для начала отправки запроса после введенного текста в строке поиска (Спринт 14)
+
     }
 
     // Не стал реализовывать override fun onRestoreInstanceState(savedInstanceState: Bundle)
