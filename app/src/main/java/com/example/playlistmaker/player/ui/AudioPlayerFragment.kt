@@ -17,6 +17,7 @@ import com.example.playlistmaker.player.domain.model.PlayerState
 import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.util.dpToPx
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 import kotlin.getValue
 
 
@@ -25,8 +26,13 @@ class AudioPlayerFragment : Fragment() {
     private var _binding: FragmentAudioPlayerBinding? = null
     private val binding get() = _binding!!
 
-    //ViewModel внедряется через Koin
-    private val viewModel: AudioPlayerViewModel by viewModel()
+
+// передаем track в ViewModel через Koin
+private val track: Track by lazy {
+    requireArguments().getParcelable<Track>("track")
+        ?: error("Track is missing in AudioPlayerFragment")
+}
+private val viewModel: AudioPlayerViewModel by viewModel { parametersOf(track) }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -46,9 +52,8 @@ class AudioPlayerFragment : Fragment() {
             insets
         }
 
-        val track = arguments?.getParcelable<Track>("track")
-        track?.let { bindTrack(it) }
-
+        // получаем track из аргументов фрагмента
+        bindTrack(track)
         // подписка на State
         viewModel.observePlayerState().observe(viewLifecycleOwner) { state ->
             when (state) {
@@ -70,6 +75,14 @@ class AudioPlayerFragment : Fragment() {
                 Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
             }
         }
+        // отображение иконки "избранные" в соответствии с состоянием трека
+        viewModel.observeIsFavourite().observe(viewLifecycleOwner) { isFavourite ->
+            if (isFavourite) {
+                binding.buttonLike.setImageResource(R.drawable.button_liked)
+            } else {
+                binding.buttonLike.setImageResource(R.drawable.button_like)
+            }
+        }
 
         binding.buttonPlay.setOnClickListener {
             if (track?.previewUrl.isNullOrEmpty()) {
@@ -89,6 +102,11 @@ class AudioPlayerFragment : Fragment() {
         // подготовка плейера
         track?.previewUrl?.let {
             viewModel.prepare(it)
+        }
+
+        // вызов функции для работы с избранными треками из viewModel
+        binding.buttonLike.setOnClickListener {
+            viewModel.onFavoriteClicked()
         }
     }
 

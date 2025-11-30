@@ -8,7 +8,7 @@ import org.koin.dsl.module
 val mediaModule = module {
 
     //ui
-    viewModel { FavouriteTracksFragmentViewModel() }
+    viewModel { FavouriteTracksFragmentViewModel(get()) }
     viewModel { PlaylistsFragmentViewModel() }
 
 }

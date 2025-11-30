@@ -27,7 +27,7 @@ class SearchHistoryRepositoryImpl( // класс для работы с исто
         sharedPreferences.edit { putString(SEARCH_HISTORY_KEY, gson.toJson(history)) } // преобразовываю и добавляю изменения в history и в SharedPreferences. Данную запись sharedPrefs.edit().putString(SEARCH_HISTORY_KEY, gson.toJson(history)).apply() AndroidStudio рекомендовало поменять, хотя изначально ее использовал
     }
 
-    override fun getHistory(): List<Track> { // функция для отображения списка истории
+    override fun getHistory(): List<Track> { // функция для отображения списка истории // без пометки isFavorite
         val json = sharedPreferences.getString(SEARCH_HISTORY_KEY, null) // переменная json для преобразования и сохранения данных в SharedPreferences, а SharedPreferences хранит только строки
         return if (json != null) {
             val type = object : TypeToken<List<Track>>() {}.type // преобразовываю список треков ArrayList<Track> в строку (JSON) при сохранении и обратно при загрузке. !!! gson.fromJson(json, ArrayList<Track>::class.java) НЕ ПОДХОДИТ!!! Gson не сможет корректно разобрать обобщённый тип (ArrayList<Track>) из-за type erasure в Java/Kotlin — во время выполнения тип Track стирается, и остаётся просто ArrayList (это вместе со строкой ниже)
