@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
@@ -82,12 +83,16 @@ class FavouriteTracksFragment : Fragment() {
             when (state) {
                 is FavouriteTracksFragmentViewModel.PlaceholderFavouriteTracksState.Empty -> {
                     // пустой плейсхолдер
-                    binding.placeholderContainerFavouriteTracks.visibility = View.VISIBLE
-                    binding.recyclerViewFav.visibility = View.GONE
+                    //binding.placeholderContainerFavouriteTracks.visibility = View.VISIBLE
+                    binding.placeholderContainerFavouriteTracks.isVisible = true
+                    //binding.recyclerViewFav.visibility = View.GONE
+                    binding.recyclerViewFav.isVisible = false
                 }
                 is FavouriteTracksFragmentViewModel.PlaceholderFavouriteTracksState.Favourites -> {
-                    binding.placeholderContainerFavouriteTracks.visibility = View.GONE
-                    binding.recyclerViewFav.visibility = View.VISIBLE
+                    //binding.placeholderContainerFavouriteTracks.visibility = View.GONE
+                    binding.placeholderContainerFavouriteTracks.isVisible = false
+                    //binding.recyclerViewFav.visibility = View.VISIBLE
+                    binding.recyclerViewFav.isVisible = true
                 }
             }
         }

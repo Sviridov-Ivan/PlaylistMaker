@@ -15,8 +15,11 @@ interface TrackDao {
     suspend fun insertTracks(track: TrackEntity) // suspend обозначает асинхронный характер метода, то есть он может выполняться в фоновом потоке
 
     //@Delete(entity = TrackEntity::class)
-    @Delete // для удаления трека из таблицы избранных треков
-    suspend fun deleteTrack(trackEntity: TrackEntity)
+    //@Delete // для удаления трека из таблицы избранных треков
+    //suspend fun deleteTrack(trackEntity: TrackEntity)
+
+    @Query("DELETE FROM track_table WHERE trackId = :id")
+    suspend fun deleteTrackById(id: Long) // для удаления трека из таблицы избранных треков по id (нет лишней аллокации памяти быстрее работает)
 
     @Query("SELECT * FROM track_table ORDER BY addedAt DESC") // для получения списка со всеми треками сразу с определением порядка
     //suspend fun getAllTracks(): List<TrackEntity> // bозвращает список объектов TrackEntity из таблицы movie_table по запросу SELECT * FROM track_table
