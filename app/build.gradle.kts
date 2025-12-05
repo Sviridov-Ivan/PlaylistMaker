@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     id("kotlin-parcelize")
+    kotlin("kapt") // для внедрения Room sp21
 }
 
 android {
@@ -64,4 +65,12 @@ dependencies {
 
     // Корутины
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
+
+    // Room с корутинами сразу sp21
+    val room_version = "2.6.1"
+    implementation("androidx.room:room-runtime:$room_version")
+    kapt("androidx.room:room-compiler:$room_version")
+
+    // Опционально — Kotlin Extensions + Flow sp21
+    implementation("androidx.room:room-ktx:$room_version")
 }

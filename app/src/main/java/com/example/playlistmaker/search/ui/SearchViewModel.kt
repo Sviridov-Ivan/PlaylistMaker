@@ -70,13 +70,15 @@ class SearchViewModel(
 
     // Показать историю поиска
     fun showHistory() {
-        val history = searchInteractor.getHistory()
-        if (history.isNotEmpty()) {
-            tracksLiveData.postValue(history) // показываем историю
-            placeholderStateLiveData.postValue(PlaceholderState.History)
-        } else {
-            tracksLiveData.postValue(emptyList())
-            placeholderStateLiveData.postValue(PlaceholderState.None) // скрываем плейсхолдер
+        viewModelScope.launch { // запускаем в отдельном потоке, так как getHistory suspend (теперь асинхронный)
+            val history = searchInteractor.getHistory()
+            if (history.isNotEmpty()) {
+                tracksLiveData.postValue(history) // показываем историю
+                placeholderStateLiveData.postValue(PlaceholderState.History)
+            } else {
+                tracksLiveData.postValue(emptyList())
+                placeholderStateLiveData.postValue(PlaceholderState.None) // скрываем плейсхолдер
+            }
         }
     }
 

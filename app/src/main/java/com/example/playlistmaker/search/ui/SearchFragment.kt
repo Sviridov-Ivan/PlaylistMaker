@@ -19,6 +19,8 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.adapter.TracksAdapter
 import com.example.playlistmaker.databinding.FragmentSearchBinding
 import com.example.playlistmaker.search.domain.model.Track
+import com.example.playlistmaker.util.DebounceConfig.CLICK_DEBOUNCE_DELAY
+import com.example.playlistmaker.util.DebounceConfig.SEARCH_DEBOUNCE_DELAY
 import com.example.playlistmaker.util.debounce
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.getValue
@@ -68,7 +70,7 @@ class SearchFragment : Fragment() {
         binding.recyclerView.adapter = adapter
 
         // инициализация переменной для работы с корутинами (работа с потоком) с использованием функции из файла Debounce.kt
-        onTrackClickDebounce = debounce<Track>(CLICK_DEBOUNCE_DELAY, viewLifecycleOwner.lifecycleScope, false) { track ->  // реализация дебонса - задержки на открытие активити на CLICK_DEBOUNCE_DELAY при нажатии (спринт 14)
+        onTrackClickDebounce = debounce<Track>(CLICK_DEBOUNCE_DELAY, viewLifecycleOwner.lifecycleScope, false) { track ->  // реализация дебонса - задержки на открытие активити на CLICK_DEBOUNCE_DELAY при нажатии (спринт 14,20)
             viewModel.saveTrack(track) // сохраняю трек в историю по клику на отображенном списке поиска (вызывается до tracksList.adapter = adapter // адаптер для RecyclerView) (в классе TrackAdapter)
 
             // парсинг track
@@ -76,13 +78,13 @@ class SearchFragment : Fragment() {
                 putParcelable("track", track)
             }
 
-            // переход на экрна AudioPlayer
+            // переход на экрн AudioPlayer
             findNavController().navigate(
                 R.id.action_searchFragment_to_audioPlayerFragment, bundle
             )
         }
 
-        // oбработка клика по элементу списка RecyclerView треков и сохранение в историю (Спринт 12 + 13 + 14 + замена в 15)
+        // oбработка клика по элементу списка RecyclerView треков и сохранение в историю (Спринт 12 + 13 + 14 + замена в 15 + 20)
         adapter.setOnItemClickListener { track ->
             onTrackClickDebounce(track)
         }
@@ -260,10 +262,6 @@ class SearchFragment : Fragment() {
     }
     companion object {
         private const val KEY_SEARCH_TEXT = "SEARCH_TEXT" // создание константы для ключей хранения данных (для строки поиска) (Спринт 15)
-
-        private const val CLICK_DEBOUNCE_DELAY = 1000L // задержка на открытия активити AudioPlayerActivity (Спринт 14)
-
-        private const val SEARCH_DEBOUNCE_DELAY = 2000L // задержка для начала отправки запроса после введенного текста в строке поиска (Спринт 14)
 
     }
 

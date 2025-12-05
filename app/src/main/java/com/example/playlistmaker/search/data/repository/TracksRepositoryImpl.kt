@@ -1,5 +1,6 @@
 package com.example.playlistmaker.search.data.repository
 
+import com.example.playlistmaker.search.data.db.AppDatabase
 import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.search.domain.repository.TracksRepository
 import com.example.playlistmaker.search.data.dto.TrackDTO
@@ -8,10 +9,11 @@ import com.example.playlistmaker.util.Resource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
+
 
 class TracksRepositoryImpl(
-    private val api: ITunesApi
+    private val api: ITunesApi,
+    private val appDatabase: AppDatabase,
 ) : TracksRepository {
 
 override fun searchTracks(query: String): Flow<Resource<List<Track>>> = flow { //использование корутин и Flow и suspend функции для работы с потоком
@@ -19,6 +21,12 @@ override fun searchTracks(query: String): Flow<Resource<List<Track>>> = flow { /
     try {
         val response = api.search(query)
         val trackList = response.results.map { it.toDomain() }
+        // ID всех избранных
+        val favouriteTds = appDatabase.trackDao().getFavoriteTrackIds()
+        // отмечаем избранные треки
+        trackList.forEach { track ->
+            track.isFavorite = track.trackId in favouriteTds
+        }
         emit(Resource.Success(trackList))
     } catch (e: Exception) {
         emit(Resource.Error(e.message ?: "Ошибка при загрузке"))

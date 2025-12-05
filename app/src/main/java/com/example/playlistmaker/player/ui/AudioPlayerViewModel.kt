@@ -3,6 +3,8 @@ package com.example.playlistmaker.player.ui
 import androidx.lifecycle.*
 import com.example.playlistmaker.player.domain.interactor.AudioPlayerInteractor
 import com.example.playlistmaker.player.domain.model.PlayerState
+import com.example.playlistmaker.search.domain.interactor.FavouriteTracksInteractor
+import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.util.formatDuration
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -11,7 +13,10 @@ import kotlinx.coroutines.launch
 
 
 class AudioPlayerViewModel(
-    private val interactor: AudioPlayerInteractor
+    private val interactor: AudioPlayerInteractor,
+    private val favouriteTracksInteractor: FavouriteTracksInteractor, // для избранных треков
+    private val track: Track // для избранных треков
+
 ) : ViewModel() {
 
     // LiveData
@@ -24,7 +29,22 @@ class AudioPlayerViewModel(
     private val toastMessageLiveData = MutableLiveData<String?>()
     fun observeToastMessage(): LiveData<String?> = toastMessageLiveData
 
+    // для работы с избранными треками
+    private val isFavouriteLiveData = MutableLiveData<Boolean>()  // MutableLiveData(track.isFavorite)
+    fun observeIsFavourite(): LiveData<Boolean> = isFavouriteLiveData
+
     private var timerJob: Job? = null // переменная-ссылка на запущенную корутину, выполняющую обновление таймера
+
+    init {
+        // отслеживаются изменения в базе избранных треков
+        viewModelScope.launch {
+            favouriteTracksInteractor.getFavouriteTracks().collect { tracks ->
+                val isFavorite = tracks.any { it.trackId == track.trackId }
+                track.isFavorite = isFavorite
+                isFavouriteLiveData.postValue(isFavorite)
+            }
+        }
+    }
 
     fun prepare(url: String) {
         interactor.prepare(
@@ -55,7 +75,7 @@ class AudioPlayerViewModel(
     }
 
     private fun pausePlayback() {
-        interactor.play()
+        interactor.pause()
         playerStateLiveData.postValue(PlayerState.PAUSED)
         stopTimerUpdates()
     }
@@ -83,6 +103,23 @@ class AudioPlayerViewModel(
         stopTimerUpdates()
         interactor.release()
         playerStateLiveData.postValue(PlayerState.DEFAULT)
+    }
+
+     // для работы с избранными треками (обработчик нажатия на иконку избранных)
+    fun onFavoriteClicked() {
+        viewModelScope.launch {
+            val newFavoriteStatus = !track.isFavorite
+            // обновляем базу через интерактор
+            if (newFavoriteStatus) {
+                favouriteTracksInteractor.addToFavourites(track)
+            } else {
+                favouriteTracksInteractor.removeFromFavouriteTrack(track)
+            }
+
+            // обновляем локальный объект и LiveData для UI
+            track.isFavorite = newFavoriteStatus
+            isFavouriteLiveData.postValue(newFavoriteStatus)
+        }
     }
 
     companion object {

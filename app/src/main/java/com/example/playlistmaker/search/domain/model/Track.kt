@@ -14,5 +14,6 @@ data class Track(
     val collectionName: String?, // название альбома (может отсутствовать)
     val releaseDate: String?, // дата релиза (опционально)
     val primaryGenreName: String?, // жанр
-    val country: String? // страна
+    val country: String?, // страна
+    var isFavorite: Boolean = false // определять, добавлен ли данный трек в избранное
 ) : Parcelable // для возможности передачи данных не только в RecyclerView, но и в class AudioPlayerActivity
