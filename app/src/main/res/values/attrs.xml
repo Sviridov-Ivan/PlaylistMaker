@@ -7,4 +7,6 @@
     <attr name="colorForTrackName" format="color" />
     <attr name="colorForTitlesNameAudioPlayer" format="color" />
     <attr name="playerBackground" format="color"/>
+    <attr name="playlistBoxStrokeColor" format="color"/>
+    <attr name="playlistHintColor" format="color"/>
 </resources>

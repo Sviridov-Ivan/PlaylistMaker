@@ -17,6 +17,13 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right"/>
+        <action
+            android:id="@+id/action_mediaFragment_to_addPlaylistFragment"
+            app:destination="@id/addPlaylistFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
     </fragment>
     <fragment
         android:id="@+id/searchFragment"
@@ -36,5 +43,14 @@
         android:id="@+id/audioPlayerFragment"
         android:name="com.example.playlistmaker.player.ui.AudioPlayerFragment"
         android:label="fragment_audio_player"
-        tools:layout="@layout/fragment_audio_player" />
+        tools:layout="@layout/fragment_audio_player" >
+        <action
+            android:id="@+id/action_audioPlayerFragment_to_addPlaylistFragment"
+            app:destination="@id/addPlaylistFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addPlaylistFragment"
+        android:name="com.example.playlistmaker.media.ui.fragments.NewPlaylistFragment"
+        android:label="fragment_new_playlist"
+        tools:layout="@layout/fragment_new_playlist" />
 </navigation>

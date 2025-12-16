@@ -1,6 +1,6 @@
 package com.example.playlistmaker.search.domain.interactor
 
-import com.example.playlistmaker.search.data.db.AppDatabase
+import com.example.playlistmaker.data.db.AppDatabase
 
 import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.search.domain.repository.FavouriteTracksRepository

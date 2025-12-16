@@ -7,18 +7,27 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
+import com.example.playlistmaker.adapter.PlaylistsBottomSheetAdapter
 import com.example.playlistmaker.databinding.FragmentAudioPlayerBinding
 import com.example.playlistmaker.player.domain.model.PlayerState
 import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.util.dpToPx
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import kotlin.getValue
+private const val OVERLAY_MAX_ALPHA = 0.7f // максимальное затемнение при BottomSheet
 
 
 class AudioPlayerFragment : Fragment() {
@@ -28,11 +37,14 @@ class AudioPlayerFragment : Fragment() {
 
 
 // передаем track в ViewModel через Koin
-private val track: Track by lazy {
-    requireArguments().getParcelable<Track>("track")
-        ?: error("Track is missing in AudioPlayerFragment")
-}
-private val viewModel: AudioPlayerViewModel by viewModel { parametersOf(track) }
+    private val track: Track by lazy {
+        requireArguments().getParcelable<Track>("track")
+            ?: error("Track is missing in AudioPlayerFragment")
+    }
+    private val viewModel: AudioPlayerViewModel by viewModel { parametersOf(track) }
+
+    private val adapter = PlaylistsBottomSheetAdapter() // переменная для адаптера BottomSheet
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -52,6 +64,16 @@ private val viewModel: AudioPlayerViewModel by viewModel { parametersOf(track) }
             insets
         }
 
+        // настройка RecyclerView для альбомов в BottomSheet
+        binding.recyclerViewBottomSheet.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+        binding.recyclerViewBottomSheet.adapter = adapter
+
+        // переход на экран AddPlaylistFragment
+        binding.newPlayListButtonBottomSheet.setOnClickListener {
+            findNavController().navigate(
+                R.id.action_audioPlayerFragment_to_addPlaylistFragment)
+        }
+
         // получаем track из аргументов фрагмента
         bindTrack(track)
         // подписка на State
@@ -69,12 +91,33 @@ private val viewModel: AudioPlayerViewModel by viewModel { parametersOf(track) }
             binding.sourceTrackTimeMillsPlayer.text = time
         }
 
-        // подписка на Toast
-        viewModel.observeToastMessage().observe(viewLifecycleOwner) { message ->
-            message?.let {
-                Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+        // подписка на Toast с AudioPlayerViewModel.ToastEvent
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.toastMessage.collect { event ->
+                    event?.let {
+                        val message = when (it) {
+                            is AudioPlayerViewModel.ToastEvent.Added -> getString(
+                                R.string.track_added_to_playlist,
+                                it.playlistName
+                            )
+
+                            is AudioPlayerViewModel.ToastEvent.AlreadyExists -> getString(
+                                R.string.track_already_in_playlist,
+                                it.playlistName
+                            )
+                        }
+                        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+                        viewModel.clearToastMessage()
+                    }
+                }
             }
         }
+//        viewModel.observeToastMessage().observe(viewLifecycleOwner) { message ->
+//            message?.let {
+//                Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+//            }
+//        }
         // отображение иконки "избранные" в соответствии с состоянием трека
         viewModel.observeIsFavourite().observe(viewLifecycleOwner) { isFavourite ->
             if (isFavourite) {
@@ -107,6 +150,87 @@ private val viewModel: AudioPlayerViewModel by viewModel { parametersOf(track) }
         // вызов функции для работы с избранными треками из viewModel
         binding.buttonLike.setOnClickListener {
             viewModel.onFavoriteClicked()
+        }
+
+        // работа с BottomSheet
+        val bottomSheetContainer = binding.playlistsBottomSheet
+
+        //  BottomSheetBehavior.from() — вспомогательная функция, позволяющая получить объект BottomSheetBehavior, связанный с контейнером BottomSheet
+        val bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetContainer).apply {
+            state = BottomSheetBehavior.STATE_HIDDEN
+        }
+
+        // обработка нажатия на кнопку Добавить трек в Альбом
+        binding.buttonAddTopPl.setOnClickListener {
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+        }
+
+        // обработка нажатия на оверлей для скрытия BottomSheet (дополнительно к свайпу)
+        binding.overlay.setOnClickListener {
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+        }
+
+        bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                when (newState) {
+                    BottomSheetBehavior.STATE_HIDDEN -> {
+                        binding.overlay.isVisible = false
+                        binding.overlay.alpha = 0f
+                    }
+                    else -> {
+                        binding.overlay.isVisible = true
+                        binding.overlay.alpha = OVERLAY_MAX_ALPHA
+                    }
+                }
+            }
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                if (slideOffset <= 0f) return
+
+                binding.overlay.alpha = slideOffset * OVERLAY_MAX_ALPHA
+            }
+        })
+
+        viewModel.showPlaylistsBottomSheet() // первичная загрузка данных о плейлистах(возможно лучше сделать через Старт, смотри ниже)
+        observePlaylists() // отображение списка с плейлистами в BottomSheet
+
+        // обработчик клика по плейлисту в BottomSheet
+        adapter.setOnItemClickListener { playlist ->
+            viewModel.onPlaylistClicked(playlist)
+        }
+
+        // подписка на плейлисты v BottomSheet
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.playlists.collect { playlists ->
+                    adapter.updatePlaylists(playlists)
+                }
+            }
+        }
+
+        // подписка на событие для работы с BottomSheet
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiEvents.collect { event ->
+                    when (event) {
+                        is AudioPlayerViewModel.UiEvent.HideBottomSheet -> {
+                            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // подписка на отображение адаптера с плейлистами в BottomSheet
+    private fun observePlaylists() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.playlists.collect { playlists ->
+                    // обновление адаптера
+                    adapter.updatePlaylists(playlists) //!!!
+                }
+            }
         }
     }
 
@@ -143,6 +267,7 @@ private val viewModel: AudioPlayerViewModel by viewModel { parametersOf(track) }
         }
     }
 
+
     // Если пользователь НЕ на экране плейера (свернул активити через кнопку Home или запускает другое приложение), то проигрывание на ПАУЗУ
     override fun onPause() {
         super.onPause()
@@ -150,6 +275,11 @@ private val viewModel: AudioPlayerViewModel by viewModel { parametersOf(track) }
             viewModel.playbackControl() // поставить на паузу
         }
     }
+
+//    override fun onStart() {
+//        super.onStart()
+//        viewModel.showPlaylistsBottomSheet()
+//    }
 
     // Если пользователь закрыл активити и медиаплеер и его возможности больше не нужны чтобы освободить память и ресурсы процессора, выделенные системой при подготовке медиаплеера
     override fun onDestroyView() {

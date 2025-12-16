@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/colorSecondary"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingStart="@dimen/padding_act_track_left"
+    android:paddingTop="@dimen/padding_act_track_top_bottom"
+    android:paddingEnd="@dimen/padding_act_track_right"
+    android:paddingBottom="@dimen/padding_act_track_top_bottom">
+
+    <!-- Картинка с лого трека -->
+    <ImageView
+        android:id="@+id/playlist_image_item_bottom_sheet"
+        android:layout_width="@dimen/padding_act_track_main_icon_size"
+        android:layout_height="@dimen/padding_act_track_main_icon_size" />
+
+    <!-- Центр: название трека, исполнитель, тайминг -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_act_track_top_bottom"
+        android:layout_marginBottom="@dimen/margin_act_track_top_bottom"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/padding_act_track_top_bottom"
+        android:paddingRight="@dimen/padding_act_track_top_bottom">
+
+        <!-- Название альбома -->
+        <TextView
+            android:id="@+id/playlist_name_item_bottom_sheet"
+            style="@style/TextViewSettingsStyle"
+            android:layout_width="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="?attr/colorForTrackName"
+            tools:text="Playlist" />
+
+        <!-- Нижняя строка: текст + картинка + текст -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin2_act_track_top"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <!-- Название исполнителя."layout_width было 0dp  -->
+            <TextView
+                android:id="@+id/playlist_track_count_item_bottom_sheet"
+                style="@style/TextViewArtistAndTime"
+                android:layout_width="wrap_content"
+                android:layout_weight="1"
+                android:text="777tracks" />
+
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

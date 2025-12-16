@@ -14,10 +14,10 @@ import com.example.playlistmaker.search.domain.model.Track
 val playerModule = module { // вызов в Арр
 
     // MediaPlayer как зависимость
-    factory { MediaPlayer() }
+    single { MediaPlayer() } // один и тот же плейер
 
     // data
-    factory<AudioPlayerRepository> { AudioPlayerRepositoryImpl(get()) }
+    factory<AudioPlayerRepository> { AudioPlayerRepositoryImpl() }
 
     // Domain
     factory<AudioPlayerInteractor> { AudioPlayerInteractorImpl(get()) }
@@ -25,7 +25,7 @@ val playerModule = module { // вызов в Арр
     // UI (ViewModel)
     // ViewModel с передачей трека напрямую через параметры
     viewModel { (track: Track) ->
-        AudioPlayerViewModel(get(), get(), track)
+        AudioPlayerViewModel(get(), get(), get(), track)
     }
     //viewModel { AudioPlayerViewModel(get(), get(), get())}
 

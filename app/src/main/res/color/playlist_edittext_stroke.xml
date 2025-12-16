@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Фокус -->
+    <item android:color="@color/blue" android:state_focused="true"/>
+    <!-- Дефолтное состояние (будет менять цвет в зависимости от темы) -->
+    <item android:color="?attr/playlistBoxStrokeColor"/>
+</selector>

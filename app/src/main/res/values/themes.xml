@@ -14,7 +14,8 @@
         <item name="colorForTrackName">@color/black_2</item> <!-- Использую для цвета названия трека-->
         <item name="colorForTitlesNameAudioPlayer">@color/white</item> <!-- Использую для надписей в экране Аудиоплейер, сам attr находится в res/values/attrs-->
         <item name="playerBackground">@color/white</item> <!-- Использую для фона activity_audio_player-->
-
+        <item name="playlistBoxStrokeColor">@color/text_gray</item> <!-- Использую для рамки во фрагменте Создать новый плейлист-->
+        <item name="playlistHintColor">@color/black</item>
 
         <!-- Status bar color. -->
         <item name="android:statusBarColor">@color/blue</item>

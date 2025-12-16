@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="@dimen/item_playlist_margin_start"
+    android:layout_marginEnd="@dimen/item_playlist_margin_end"
+    android:layout_marginTop="@dimen/item_playlist_margin_top"
+    android:layout_marginBottom="@dimen/item_playlist_margin_bottom"
+    android:orientation="vertical">
+
+    <!-- Картинка -->
+    <com.example.playlistmaker.adapter.SquareImageView
+        android:id="@+id/playlist_image_item"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rounded_8"
+        android:clipToOutline="true"
+        android:scaleType="centerCrop"
+        android:contentDescription="@string/contentDescription_arrow_back" />
+
+    <!-- Название -->
+    <TextView
+        android:id="@+id/playlist_name_item"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/item_playlist_name_margin_top"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:textColor="?attr/colorOnSecondary"
+        android:textSize="12sp"
+        android:fontFamily="@font/ys_display_regular"
+        tools:text="Best song 2025"/>
+
+    <!-- Кол-во треков -->
+    <TextView
+        android:id="@+id/playlist_track_count_item"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:textColor="?attr/colorOnSecondary"
+        android:textSize="@dimen/item_playlist_track_count_text_size"
+        android:fontFamily="@font/ys_display_regular"
+        tools:text="99999 треков"/>
+
+</LinearLayout>
