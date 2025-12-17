@@ -70,17 +70,6 @@ class NewPlaylistFragment : Fragment() {
             insets
         }
 
-//        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, insets ->
-//
-//            val imeHeight = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
-//
-//            // сдвигаем только контент с полями
-//            binding.textInputLayoutName.translationY = -imeHeight.toFloat()
-//            binding.textInputLayoutDescription.translationY = -imeHeight.toFloat()
-//
-//            insets
-//        }
-
         // установка селектора цвета для hint для EditText
         val hintColor = ContextCompat.getColorStateList(requireContext(), R.color.playlist_hint_color)
         binding.textInputLayoutName.defaultHintTextColor = hintColor
@@ -96,10 +85,10 @@ class NewPlaylistFragment : Fragment() {
     // реализация диалога при нажатии на стрелку назад и при начале заполнения
      private fun setupBackHandling() {
         confirmDialog = MaterialAlertDialogBuilder(requireContext())
-            .setTitle("Завершить создание плейлиста?")
-            .setMessage("Все несохраненные данные будут потеряны")
-            .setNegativeButton("Отмена") { dialog, which -> dialog.dismiss() } // закрываем диалог
-            .setPositiveButton("Завершить") { dialog, which -> findNavController().navigateUp() }
+            .setTitle(getString(R.string.new_playlist_dialog_title))
+            .setMessage(getString(R.string.new_playlist_dialog_message))
+            .setNegativeButton(getString(R.string.new_playlist_dialog_negative_button)) { dialog, which -> dialog.dismiss() } // закрываем диалог
+            .setPositiveButton(getString(R.string.new_playlist_dialog_positive_button)) { dialog, which -> findNavController().navigateUp() }
 
         // добавление слушателя для обработки нажатия на кнопку Back, проверка shouldShowExitDialog() и реализация диалога на закрытие
         requireActivity().onBackPressedDispatcher.addCallback(

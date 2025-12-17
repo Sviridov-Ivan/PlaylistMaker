@@ -65,5 +65,12 @@
     <string name="bottom_sheet_player_name">Добавить в плейлист</string>
 
 
+    <!-- Диалог при создании(закрытии) Плейлиста -->
+    <string name="new_playlist_dialog_title">Завершить создание плейлиста?</string>
+    <string name="new_playlist_dialog_message">Все несохраненные данные будут потеряны</string>
+    <string name="new_playlist_dialog_negative_button">Отмена</string>
+    <string name="new_playlist_dialog_positive_button">Завершить</string>
+
+
 
 </resources>

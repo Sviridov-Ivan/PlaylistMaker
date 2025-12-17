@@ -13,10 +13,6 @@ interface TrackDao {
     @Insert(onConflict = OnConflictStrategy.Companion.REPLACE) // для добавления трека в таблицу с избранными треками
     suspend fun insertTracks(track: TrackEntity) // suspend обозначает асинхронный характер метода, то есть он может выполняться в фоновом потоке
 
-    //@Delete(entity = TrackEntity::class)
-    //@Delete // для удаления трека из таблицы избранных треков
-    //suspend fun deleteTrack(trackEntity: TrackEntity)
-
     @Query("DELETE FROM track_table WHERE trackId = :id")
     suspend fun deleteTrackById(id: Long) // для удаления трека из таблицы избранных треков по id (нет лишней аллокации памяти быстрее работает)
 

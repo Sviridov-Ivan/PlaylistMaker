@@ -2,9 +2,7 @@ package com.example.playlistmaker.search.di
 
 import android.content.Context
 import android.content.SharedPreferences
-import androidx.room.Room
 import com.example.playlistmaker.search.data.converters.TrackDbConvertor
-import com.example.playlistmaker.data.db.AppDatabase
 import com.example.playlistmaker.search.data.network.ITunesApi
 import com.example.playlistmaker.search.data.repository.FavouriteTracksRepositoryImpl
 import com.example.playlistmaker.search.data.repository.SearchHistoryRepositoryImpl
@@ -57,13 +55,6 @@ val searchModule = module {
     // ui
     // viewModel
     viewModel { SearchViewModel(get(), get()) }
-
-    // Room для избранных
-//    single { // инициализацию базы данных
-//        Room.databaseBuilder(androidContext(), AppDatabase::class.java, "database.db") //единственный экземпляр объекта, который создаёт экземпляр класса RoomDatabase и связывает его с именем базы данных database.db
-//            .fallbackToDestructiveMigration() // удаление избранных при миграции (при изменении структуры) базы данных
-//            .build()
-//    }
 
     // Repositories для избранных
     single<FavouriteTracksRepository> {

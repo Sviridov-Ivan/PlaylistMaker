@@ -64,11 +64,11 @@
         android:paddingBottom="@dimen/new_playlist_padding_bottom_name_textview"
         android:textColor="?attr/colorOnSecondary"
         android:textSize="@dimen/text_size_source_track_name_player"
+        android:text="@string/new_playlist_screen_title"
         app:layout_constrainedWidth="true"
         app:layout_constraintEnd_toStartOf="@id/right_guideline_24dp"
         app:layout_constraintStart_toEndOf="@id/arrow_back_to_media"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="@string/new_playlist_screen_title" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <!-- Проверь потом радиусы закруглений (тут 8дп) и размеры картинки-->
     <ImageView
