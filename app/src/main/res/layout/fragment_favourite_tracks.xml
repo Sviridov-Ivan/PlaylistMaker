@@ -13,7 +13,7 @@
         android:layout_weight="1"
         android:layout_marginTop="@dimen/padding_top_recycler_view">
 
-        <!-- RecyclerView и заголовок истории -->
+        <!-- RecyclerView  -->
         <LinearLayout
             android:id="@+id/listContainer"
             android:layout_width="match_parent"

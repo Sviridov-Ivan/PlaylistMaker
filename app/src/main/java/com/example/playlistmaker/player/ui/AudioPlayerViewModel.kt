@@ -1,6 +1,8 @@
 package com.example.playlistmaker.player.ui
 
 import androidx.lifecycle.*
+import com.example.playlistmaker.media.domain.interactor.PlaylistInteractor
+import com.example.playlistmaker.media.domain.model.Playlist
 import com.example.playlistmaker.player.domain.interactor.AudioPlayerInteractor
 import com.example.playlistmaker.player.domain.model.PlayerState
 import com.example.playlistmaker.search.domain.interactor.FavouriteTracksInteractor
@@ -8,16 +10,30 @@ import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.util.formatDuration
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 
 class AudioPlayerViewModel(
+    private val interactorPlaylist: PlaylistInteractor,
     private val interactor: AudioPlayerInteractor,
     private val favouriteTracksInteractor: FavouriteTracksInteractor, // для избранных треков
     private val track: Track // для избранных треков
 
 ) : ViewModel() {
+
+    // одноразовое событие для работы с BottomSheet в зависимости от UiEvent
+    private val _uiEvents = MutableSharedFlow<UiEvent>()
+    val uiEvents = _uiEvents.asSharedFlow()
+
+    // StateFlow со списком плейлистов (использую вместо LiveData - рекомендация наставника)
+    private val _playlists = MutableStateFlow<List<Playlist>>(emptyList())
+    val playlists: StateFlow<List<Playlist>> = _playlists.asStateFlow()
 
     // LiveData
     val playerStateLiveData = MutableLiveData<PlayerState>() // убрал private - использую в onPause AudioPlayerActivity
@@ -26,8 +42,12 @@ class AudioPlayerViewModel(
     private val currentTimeLiveData = MutableLiveData(formatDuration(0L))
     fun observeCurrentTime(): LiveData<String> = currentTimeLiveData
 
-    private val toastMessageLiveData = MutableLiveData<String?>()
-    fun observeToastMessage(): LiveData<String?> = toastMessageLiveData
+    // StateFlow для тостов (использую вместо LiveData - рекомендация наставника)
+    private val _toastMessage = MutableStateFlow<ToastEvent?>(null)
+    val toastMessage: StateFlow<ToastEvent?> = _toastMessage.asStateFlow()
+
+//    private val toastMessageLiveData = MutableLiveData<String?>()
+//    fun observeToastMessage(): LiveData<String?> = toastMessageLiveData
 
     // для работы с избранными треками
     private val isFavouriteLiveData = MutableLiveData<Boolean>()  // MutableLiveData(track.isFavorite)
@@ -120,6 +140,50 @@ class AudioPlayerViewModel(
             track.isFavorite = newFavoriteStatus
             isFavouriteLiveData.postValue(newFavoriteStatus)
         }
+    }
+
+    // получение плейлистов из интерактора для отображения в BottomSheet
+    fun showPlaylistsBottomSheet() {
+        viewModelScope.launch {
+            interactorPlaylist.getPlaylists().collect { playlistsList ->
+                if (playlistsList.isNullOrEmpty()) {
+                    _playlists.value = emptyList()
+
+                } else {
+                    _playlists.value = playlistsList
+                }
+            }
+        }
+    }
+
+    // класс для тоста для использования в StateFlow
+    sealed class ToastEvent(val playlistName: String) {
+        class Added(name: String) : ToastEvent(name)
+        class AlreadyExists(name: String) : ToastEvent(name)
+    }
+
+    // отдельное UI-событие для BottomSheet
+    sealed class UiEvent {
+        object HideBottomSheet : UiEvent()
+    }
+
+    // функция для работы с добавлением трека в плейлист и отображения тостов
+    fun onPlaylistClicked(playlist: Playlist) {
+        if (playlist.trackIds.contains(track.trackId.toString())) { // проверка на наличие трека в альбоме
+            _toastMessage.value = ToastEvent.AlreadyExists(playlist.name) // тост при наличии трека
+            return
+        }
+
+        viewModelScope.launch {
+            interactorPlaylist.addTrackToPlaylist(playlist, track) // добавление трека в альбом, если его нет
+            _toastMessage.value = ToastEvent.Added(playlist.name) // тост при добавлении
+            _uiEvents.emit(UiEvent.HideBottomSheet) // команда для BottomSheet
+        }
+    }
+
+    // функция для очистки тостов
+    fun clearToastMessage() {
+        _toastMessage.value = null
     }
 
     companion object {

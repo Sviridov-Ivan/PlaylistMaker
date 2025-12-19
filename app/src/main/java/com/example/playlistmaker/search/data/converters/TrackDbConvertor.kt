@@ -1,6 +1,6 @@
 package com.example.playlistmaker.search.data.converters
 
-import com.example.playlistmaker.search.data.db.entity.TrackEntity
+import com.example.playlistmaker.data.entity.TrackEntity
 import com.example.playlistmaker.search.domain.model.Track
 
 class TrackDbConvertor {

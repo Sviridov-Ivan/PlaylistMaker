@@ -22,15 +22,15 @@ class RootActivity : AppCompatActivity() {
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
         bottomNavigationView.setupWithNavController(navController)
 
-        // скрываю bottomNavigationView при переходе на фрагмент AudioPlayerFragment
+        // сокрытие bottomNavigationView при переходе на фрагмент AudioPlayerFragment or NewPlaylistFragment
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            when (destination.id) {
-                R.id.audioPlayerFragment -> {
-                    bottomNavigationView.visibility = View.GONE
-                }
-                else -> {
-                    bottomNavigationView.visibility = View.VISIBLE
-                }
+            bottomNavigationView.visibility = if (
+                destination.id == R.id.audioPlayerFragment ||
+                destination.id == R.id.addPlaylistFragment
+            ) {
+                View.GONE
+            } else {
+                View.VISIBLE
             }
         }
     }

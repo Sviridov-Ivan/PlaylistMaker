@@ -1,22 +1,17 @@
-package com.example.playlistmaker.search.data.db.dao
+package com.example.playlistmaker.data.dao
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.example.playlistmaker.search.data.db.entity.TrackEntity
+import com.example.playlistmaker.data.entity.TrackEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface TrackDao {
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE) // для добавления трека в таблицу с избранными треками
+    @Insert(onConflict = OnConflictStrategy.Companion.REPLACE) // для добавления трека в таблицу с избранными треками
     suspend fun insertTracks(track: TrackEntity) // suspend обозначает асинхронный характер метода, то есть он может выполняться в фоновом потоке
-
-    //@Delete(entity = TrackEntity::class)
-    //@Delete // для удаления трека из таблицы избранных треков
-    //suspend fun deleteTrack(trackEntity: TrackEntity)
 
     @Query("DELETE FROM track_table WHERE trackId = :id")
     suspend fun deleteTrackById(id: Long) // для удаления трека из таблицы избранных треков по id (нет лишней аллокации памяти быстрее работает)

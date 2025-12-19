@@ -90,6 +90,7 @@
    <dimen name="title_media_padding_left_right">12dp</dimen>
    <dimen name="title_media_padding_top">10dp</dimen>
    <dimen name="p_h_text_button_text_size_playlist">14sp</dimen>
+   <dimen name="p_h_media_playlists_button_to_grid_lay_margin_bottom">16dp</dimen>"
 
    <!-- Поиск дополнение -->
    <dimen name="title_search_padding_left_right_bottom">12dp</dimen>
@@ -97,4 +98,58 @@
    <!-- Настройки дополнение -->
    <dimen name="title_settings_padding_left_right_bottom">12dp</dimen>
    <dimen name="title_settings_padding_top">10dp</dimen>
+
+    <!-- Плейлисты -->
+    
+    <!-- RecyclerView -->
+    <dimen name="playlist_item_spacing">8dp</dimen>
+    <dimen name="playlist_edge_spacing">16dp</dimen>
+    <!-- Общее -->
+    <dimen name="playlist_image_corner_radius">8dp</dimen>
+
+    <!-- ХМЛ Создание нового плейлиста -->
+    <dimen name="new_playlist_margin_top_name_textview">4dp</dimen>
+    <dimen name="new_playlist_padding_start_name_textview">12dp</dimen>
+    <dimen name="new_playlist_padding_top_name_textview">10dp</dimen>
+    <dimen name="new_playlist_padding_bottom_name_textview">11dp</dimen>
+
+    <dimen name="new_playlist_box_corner_radius">3.5dp</dimen>
+
+    <dimen name="new_playlist_padding_top_edittext">18dp</dimen>
+    <dimen name="new_playlist_padding_bottom_edittext">18dp</dimen>
+
+    <dimen name="new_playlist_margin_bottom_name_input_layout">16dp</dimen>
+    <dimen name="new_playlist_margin_bottom_description_input_layout">170dp</dimen>
+
+    <dimen name="new_playlist_margin_start_button">16dp</dimen>
+    <dimen name="new_playlist_margin_end_button">16dp</dimen>
+    <dimen name="new_playlist_margin_bottom_button">32dp</dimen>
+
+    <dimen name="new_playlist_text_size_button">16sp</dimen>
+
+    <!-- BottomSheet у плейера -->
+    <dimen name="player_bottom_sheet_handle_width">50dp</dimen>
+    <dimen name="player_bottom_sheet_handle_height">4dp</dimen>
+    <dimen name="player_bottom_sheet_handle_margin_top">8dp</dimen>
+    <dimen name="player_bottom_sheet_handle_margin_bottom">12dp</dimen>
+
+    <dimen name="player_bottom_sheet_title_padding_start">12dp</dimen>
+    <dimen name="player_bottom_sheet_title_padding_top">18dp</dimen>
+    <dimen name="player_bottom_sheet_title_padding_end">12dp</dimen>
+    <dimen name="player_bottom_sheet_title_padding_bottom">12dp</dimen>
+
+    <dimen name="player_bottom_sheet_new_button_margin_top">16dp</dimen>
+    <dimen name="player_bottom_sheet_new_button_margin_bottom">24dp</dimen>
+
+    <!-- itemPlaylist -->
+
+    <dimen name="item_playlist_margin_start">4dp</dimen>
+    <dimen name="item_playlist_margin_end">4dp</dimen>
+    <dimen name="item_playlist_margin_top">4dp</dimen>
+    <dimen name="item_playlist_margin_bottom">16dp</dimen>
+
+    <dimen name="item_playlist_name_margin_top">4dp</dimen>
+    <dimen name="item_playlist_name_text_size">12sp</dimen>
+    <dimen name="item_playlist_track_count_text_size">12sp</dimen>
+
 </resources>

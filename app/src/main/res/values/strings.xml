@@ -44,11 +44,32 @@
     <string name="media_is_empty">Ваша медиатека пуста</string>
     <string name="new_playlist">Новый плейлист</string>
     <string name="playlists_is_empty">Вы не создали\n\ни одного плейлиста</string>
+    <!-- Медиатека плейлеисты-->
+    <string name="playlist_tracks_count_format">%d треков</string>
 
     <!-- Tabs for MediaActivity (Медиатека)-->
     <string name="tab_favourite_tracks">Избранные треки</string>
     <string name="tab_playlist">Плейлисты</string>
 
+    <!-- Плейлисты (Медиатека)-->
+    <string name="track_added_to_playlist">Добавлено в плейлист %1$s</string>
+    <string name="track_already_in_playlist">Трек уже добавлен в плейлист %1$s</string>
+
+    <!-- ХМЛ Создание нового плейлиста -->
+    <string name="new_playlist_screen_title">Новый плейлист</string>
+    <string name="new_playlist_button">Создать</string>
+    <string name="new_playlist_description">Описание</string>
+    <string name="new_playlist_name_playlist">Название*</string>
+
+    <!-- BottomSheet у плейера -->
+    <string name="bottom_sheet_player_name">Добавить в плейлист</string>
+
+
+    <!-- Диалог при создании(закрытии) Плейлиста -->
+    <string name="new_playlist_dialog_title">Завершить создание плейлиста?</string>
+    <string name="new_playlist_dialog_message">Все несохраненные данные будут потеряны</string>
+    <string name="new_playlist_dialog_negative_button">Отмена</string>
+    <string name="new_playlist_dialog_positive_button">Завершить</string>
 
 
 

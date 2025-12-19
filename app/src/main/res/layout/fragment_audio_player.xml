@@ -1,270 +1,343 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/player"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/playerBackground"
-    tools:context="com.example.playlistmaker.player.ui.AudioPlayerFragment">
-    <!-- tools:context=".MainActivity" добавь соответствующий контекст-->
+    android:background="@color/white"
+    android:orientation="vertical">
 
-    <!-- Добавил по 2 Guideline с каждой стороны, так разные отступы у объектов-->
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/left_guideline_24dp"
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/player"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?attr/playerBackground"
+        tools:context="com.example.playlistmaker.player.ui.AudioPlayerFragment">
+
+        <!-- Добавил по 2 Guideline с каждой стороны, так разные отступы у объектов-->
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/left_guideline_24dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="@dimen/guideline_large_player" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/left_guideline_16dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="@dimen/guideline_small_player" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/right_guideline_24dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="@dimen/guideline_large_player" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/right_guideline_16dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="@dimen/guideline_small_player" />
+
+        <ImageView
+            android:id="@+id/arrow_back_to_main_player"
+            android:layout_width="@dimen/back_arrow_size"
+            android:layout_height="@dimen/back_arrow_size"
+            android:layout_marginStart="@dimen/margin_arrow_player"
+            android:layout_marginTop="@dimen/margin_arrow_player"
+            android:contentDescription="@string/contentDescription_arrow_back"
+            android:scaleType="centerCrop"
+            android:src="@drawable/light_mode_3"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="?attr/colorOnSecondary" />
+
+        <!-- Проверь потом радиусы закруглений (тут 8дп) и размеры картинки-->
+        <ImageView
+            android:id="@+id/source_track_image_player"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="@dimen/margin_top_image_player"
+            android:layout_marginBottom="@dimen/margin_bottom_image_player"
+            android:contentDescription="@string/contentDescription_track_image"
+            android:scaleType="fitCenter"
+            app:layout_constraintBottom_toTopOf="@+id/source_track_name_player"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toStartOf="@+id/right_guideline_24dp"
+            app:layout_constraintStart_toStartOf="@+id/left_guideline_24dp"
+            app:layout_constraintTop_toBottomOf="@+id/arrow_back_to_main_player" />
+
+        <TextView
+            android:id="@+id/source_track_name_player"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/margin_bottom_source_track_name_player"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:fontFamily="@font/ys_display_medium"
+            android:maxLines="1"
+            android:textColor="?attr/colorOnSecondary"
+            android:textSize="@dimen/text_size_source_track_name_player"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintBottom_toTopOf="@+id/source_artist_name_player"
+            app:layout_constraintEnd_toStartOf="@id/right_guideline_24dp"
+            app:layout_constraintStart_toStartOf="@id/left_guideline_24dp"
+            tools:text="Song" />
+
+        <TextView
+            android:id="@+id/source_artist_name_player"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/margin_bottom_source_artist_name_player"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:fontFamily="@font/ys_display_medium"
+            android:maxLines="1"
+            android:textColor="?attr/colorOnSecondary"
+            android:textSize="@dimen/text_size_source_artist_name_player"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintBottom_toTopOf="@+id/button_add_top_pl"
+            app:layout_constraintEnd_toStartOf="@id/right_guideline_24dp"
+            app:layout_constraintStart_toStartOf="@id/left_guideline_24dp"
+            tools:text="Artist" />
+
+        <!-- Ниже цепь из трех ImageButton chainStyle="spread_inside" для того, чтобы крайние элементы прикреп.к Guideline-->
+        <ImageButton
+            android:id="@+id/button_add_top_pl"
+            android:layout_width="@dimen/size_image_button_not_play_player"
+            android:layout_height="@dimen/size_image_button_not_play_player"
+            android:layout_marginBottom="@dimen/margin_bottom_button_add_top_pl_player"
+            android:background="@null"
+            android:contentDescription="@string/contentDescription_button_add_top_pl_player"
+            app:layout_constraintBottom_toTopOf="@id/source_track_time_mills_player"
+            app:layout_constraintEnd_toStartOf="@id/button_play"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_constraintStart_toStartOf="@+id/left_guideline_24dp"
+            app:srcCompat="@drawable/button_add_to_pl" />
+
+        <ImageButton
+            android:id="@+id/button_play"
+            android:layout_width="@dimen/size_image_button_play_player"
+            android:layout_height="@dimen/size_image_button_play_player"
+            android:layout_marginBottom="@dimen/margin_bottom_button_button_play_player"
+            android:background="@null"
+            android:contentDescription="@string/contentDescription_button_play_player"
+            app:layout_constraintBottom_toTopOf="@id/source_track_time_mills_player"
+            app:layout_constraintEnd_toStartOf="@+id/button_like"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@id/button_add_top_pl"
+            app:srcCompat="@drawable/button_play"
+            app:tint="?attr/colorOnSecondary" />
+
+        <ImageButton
+            android:id="@+id/button_like"
+            android:layout_width="@dimen/size_image_button_not_play_player"
+            android:layout_height="@dimen/size_image_button_not_play_player"
+            android:layout_marginBottom="@dimen/margin_bottom_button_add_top_pl_player"
+            android:background="@null"
+            android:contentDescription="@string/contentDescription_button_like_player"
+            app:layout_constraintBottom_toTopOf="@id/source_track_time_mills_player"
+            app:layout_constraintEnd_toEndOf="@+id/right_guideline_24dp"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@id/button_play"
+            app:srcCompat="@drawable/button_like" />
+
+        <!--  Начал верстку снизу (ниже просто текст)-->
+
+        <TextView
+            android:id="@+id/title_country_player"
+            style="@style/TitlesPlayer"
+            android:layout_marginBottom="@dimen/margin_bottom_title_country_player"
+            android:text="@string/title_country_player"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@id/left_guideline_16dp"
+            app:layout_constraintTag="titleCountryPlayer" />
+
+        <TextView
+            android:id="@+id/title_primaryGenreName_player"
+            style="@style/TitlesPlayer"
+            android:text="@string/title_genre_player"
+            app:layout_constraintBottom_toTopOf="@+id/title_country_player"
+            app:layout_constraintStart_toStartOf="@id/left_guideline_16dp" />
+
+        <TextView
+            android:id="@+id/title_release_date_player"
+            style="@style/TitlesPlayer"
+            android:text="@string/title_year_player"
+            app:layout_constraintBottom_toTopOf="@+id/title_primaryGenreName_player"
+            app:layout_constraintStart_toStartOf="@id/left_guideline_16dp" />
+
+        <TextView
+            android:id="@+id/title_collection_name_player"
+            style="@style/TitlesPlayer"
+            android:text="@string/title_album_player"
+            app:layout_constraintBottom_toTopOf="@+id/title_release_date_player"
+            app:layout_constraintStart_toStartOf="@id/left_guideline_16dp" />
+
+        <TextView
+            android:id="@+id/title_track_time_player"
+            style="@style/TitlesPlayer"
+            android:text="@string/title_time_player"
+            app:layout_constraintBottom_toTopOf="@+id/source_collection_name_player"
+            app:layout_constraintStart_toStartOf="@id/left_guideline_16dp"
+            app:layout_constraintTag="titleTrackTimePlayer" />
+
+        <!--  (Позиции справа - источники)-->
+
+        <TextView
+            android:id="@+id/source_country_player"
+            style="@style/SourcesPlayer"
+            android:layout_width="0dp"
+            android:layout_marginBottom="@dimen/margin_bottom_source_country_player"
+            android:ellipsize="end"
+            android:gravity="end"
+            android:maxLines="1"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/right_guideline_16dp"
+            app:layout_constraintStart_toStartOf="@id/textsBarrier"
+            tools:text="Country" />
+
+        <TextView
+            android:id="@+id/source_primaryGenreName_player"
+            style="@style/SourcesPlayer"
+            android:layout_width="0dp"
+            android:ellipsize="end"
+            android:gravity="end"
+            android:maxLines="1"
+            app:layout_constraintBottom_toTopOf="@+id/source_country_player"
+            app:layout_constraintEnd_toStartOf="@id/right_guideline_16dp"
+            app:layout_constraintStart_toStartOf="@id/textsBarrier"
+            tools:text="GenreName" />
+
+        <TextView
+            android:id="@+id/source_release_date_player"
+            style="@style/SourcesPlayer"
+            android:layout_width="0dp"
+            android:ellipsize="end"
+            android:gravity="end"
+            android:maxLines="1"
+            app:layout_constraintBottom_toTopOf="@+id/source_primaryGenreName_player"
+            app:layout_constraintEnd_toStartOf="@id/right_guideline_16dp"
+            app:layout_constraintStart_toStartOf="@id/textsBarrier"
+            tools:text="releaseDate" />
+
+        <TextView
+            android:id="@+id/source_collection_name_player"
+            style="@style/SourcesPlayer"
+            android:layout_width="0dp"
+            android:ellipsize="end"
+            android:gravity="end"
+            android:maxLines="1"
+            app:layout_constraintBottom_toTopOf="@+id/source_release_date_player"
+            app:layout_constraintEnd_toStartOf="@id/right_guideline_16dp"
+            app:layout_constraintStart_toStartOf="@id/textsBarrier"
+            tools:text="collectionName" />
+
+        <TextView
+            android:id="@+id/source_track_time_player"
+            style="@style/SourcesPlayer"
+            android:layout_width="0dp"
+            android:ellipsize="end"
+            android:gravity="end"
+            android:maxLines="1"
+            app:layout_constraintBottom_toTopOf="@+id/source_collection_name_player"
+            app:layout_constraintEnd_toEndOf="@id/right_guideline_16dp"
+            app:layout_constraintStart_toStartOf="@id/textsBarrier"
+            app:layout_constraintTop_toTopOf="@id/title_track_time_player"
+            tools:text="trackTime" />
+
+        <TextView
+            android:id="@+id/source_track_time_mills_player"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_top_source_track_time_mills_player"
+            android:layout_marginBottom="@dimen/margin_bottom_source_track_time_mills_player"
+            android:fontFamily="@font/ys_display_medium"
+            android:text="@string/temporary_source_track_time_mills_player"
+            android:textColor="?attr/colorOnSecondary"
+            android:textSize="@dimen/text_size_source_track_time_mills_player"
+            app:layout_constraintBottom_toTopOf="@id/source_track_time_player"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/textsBarrier"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierDirection="end"
+            app:constraint_referenced_tags="titleTrackTimePlayer,titleCountryPlayer" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <View
+        android:id="@+id/overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#99000000"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/playlists_bottom_sheet"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/bottom_sheet_bg"
         android:orientation="vertical"
-        app:layout_constraintGuide_begin="@dimen/guideline_large_player" />
+        android:gravity="center"
+        app:behavior_hideable="true"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/left_guideline_16dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_begin="@dimen/guideline_small_player" />
+        <!-- Вёрстка Bottom Sheet с кнопкой и списком -->
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/right_guideline_24dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_end="@dimen/guideline_large_player" />
+        <View
+            android:layout_width="@dimen/player_bottom_sheet_handle_width"
+            android:layout_height="@dimen/player_bottom_sheet_handle_height"
+            android:layout_marginTop="@dimen/player_bottom_sheet_handle_margin_top"
+            android:layout_marginBottom="@dimen/player_bottom_sheet_handle_margin_bottom"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/bottom_sheet_handle" />
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/right_guideline_16dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_end="@dimen/guideline_small_player" />
+        <TextView
+            android:id="@+id/playlists_bottom_sheet_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/ys_display_medium"
+            android:paddingStart="@dimen/player_bottom_sheet_title_padding_start"
+            android:paddingTop="@dimen/player_bottom_sheet_title_padding_top"
+            android:paddingEnd="@dimen/player_bottom_sheet_title_padding_end"
+            android:paddingBottom="@dimen/player_bottom_sheet_title_padding_bottom"
+            android:text="@string/bottom_sheet_player_name"
+            android:textAlignment="center"
+            android:textColor="?attr/colorOnSecondary"
+            android:textSize="@dimen/p_h_text_view_text_size" />
 
-    <ImageView
-        android:id="@+id/arrow_back_to_main_player"
-        android:layout_width="@dimen/back_arrow_size"
-        android:layout_height="@dimen/back_arrow_size"
-        android:scaleType="centerCrop"
-        android:src="@drawable/light_mode_3"
-        app:tint="?attr/colorOnSecondary"
-        android:contentDescription="@string/contentDescription_arrow_back"
-        android:layout_marginStart="@dimen/margin_arrow_player"
-        android:layout_marginTop="@dimen/margin_arrow_player"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        <Button
+            android:id="@+id/new_play_list_button_bottom_sheet"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/player_bottom_sheet_new_button_margin_top"
+            android:layout_marginBottom="@dimen/player_bottom_sheet_new_button_margin_bottom"
+            android:background="@drawable/refresh_search_button"
+            android:fontFamily="@font/ys_display_medium"
+            android:letterSpacing="0"
+            android:text="@string/new_playlist"
+            android:textAllCaps="false"
+            android:textColor="?attr/colorSecondary"
+            android:textSize="@dimen/p_h_text_button_text_size_playlist"
+            app:backgroundTint="@null"/>
 
-    <!-- Проверь потом радиусы закруглений (тут 8дп) и размеры картинки-->
-    <ImageView
-        android:id="@+id/source_track_image_player"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="@dimen/margin_top_image_player"
-        android:layout_marginBottom="@dimen/margin_bottom_image_player"
-        android:scaleType="fitCenter"
-        app:layout_constraintDimensionRatio="1:1"
-        android:contentDescription="@string/contentDescription_track_image"
-        app:layout_constraintEnd_toStartOf="@+id/right_guideline_24dp"
-        app:layout_constraintStart_toStartOf="@+id/left_guideline_24dp"
-        app:layout_constraintTop_toBottomOf="@+id/arrow_back_to_main_player"
-        app:layout_constraintBottom_toTopOf="@+id/source_track_name_player"/>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view_bottom_sheet"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:visibility="visible"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
-    <TextView
-        android:id="@+id/source_track_name_player"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:layout_marginBottom="@dimen/margin_bottom_source_track_name_player"
-        tools:text="Song"
-        android:textColor="?attr/colorOnSecondary"
-        android:fontFamily="@font/ys_display_medium"
-        android:textSize="@dimen/text_size_source_track_name_player"
-        android:maxLines="1"
-        android:ellipsize="end"
-        app:layout_constrainedWidth="true"
-        app:layout_constraintBottom_toTopOf="@+id/source_artist_name_player"
-        app:layout_constraintStart_toStartOf="@id/left_guideline_24dp"
-        app:layout_constraintEnd_toStartOf="@id/right_guideline_24dp"/>
+    </LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
 
-    <TextView
-        android:id="@+id/source_artist_name_player"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:layout_marginBottom="@dimen/margin_bottom_source_artist_name_player"
-        tools:text="Artist"
-        android:textColor="?attr/colorOnSecondary"
-        android:fontFamily="@font/ys_display_medium"
-        android:textSize="@dimen/text_size_source_artist_name_player"
-        android:maxLines="1"
-        android:ellipsize="end"
-        app:layout_constrainedWidth="true"
-        app:layout_constraintBottom_toTopOf="@+id/button_add_top_pl"
-        app:layout_constraintStart_toStartOf="@id/left_guideline_24dp"
-        app:layout_constraintEnd_toStartOf="@id/right_guideline_24dp"/>
-
-    <!-- Ниже цепь из трех ImageButton chainStyle="spread_inside" для того, чтобы крайние элементы прикреп.к Guideline-->
-    <ImageButton
-        android:id="@+id/button_add_top_pl"
-        android:layout_width="@dimen/size_image_button_not_play_player"
-        android:layout_height="@dimen/size_image_button_not_play_player"
-        android:layout_marginBottom="@dimen/margin_bottom_button_add_top_pl_player"
-        android:background="@null"
-        app:srcCompat="@drawable/button_add_to_pl"
-        android:contentDescription="@string/contentDescription_button_add_top_pl_player"
-        app:layout_constraintEnd_toStartOf="@id/button_play"
-        app:layout_constraintStart_toStartOf="@+id/left_guideline_24dp"
-        app:layout_constraintBottom_toTopOf="@id/source_track_time_mills_player"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintHorizontal_chainStyle="spread_inside"/>
-
-    <ImageButton
-        android:id="@+id/button_play"
-        android:layout_width="@dimen/size_image_button_play_player"
-        android:layout_height="@dimen/size_image_button_play_player"
-        android:layout_marginBottom="@dimen/margin_bottom_button_button_play_player"
-        android:background="@null"
-        app:tint="?attr/colorOnSecondary"
-        app:srcCompat="@drawable/button_play"
-        android:contentDescription="@string/contentDescription_button_play_player"
-        app:layout_constraintStart_toEndOf="@id/button_add_top_pl"
-        app:layout_constraintBottom_toTopOf="@id/source_track_time_mills_player"
-        app:layout_constraintEnd_toStartOf="@+id/button_like"
-        app:layout_constraintHorizontal_bias="0.5" />
-
-    <ImageButton
-        android:id="@+id/button_like"
-        android:layout_width="@dimen/size_image_button_not_play_player"
-        android:layout_height="@dimen/size_image_button_not_play_player"
-        android:layout_marginBottom="@dimen/margin_bottom_button_add_top_pl_player"
-        android:background="@null"
-        app:srcCompat="@drawable/button_like"
-        android:contentDescription="@string/contentDescription_button_like_player"
-        app:layout_constraintEnd_toEndOf="@+id/right_guideline_24dp"
-        app:layout_constraintStart_toEndOf="@id/button_play"
-        app:layout_constraintBottom_toTopOf="@id/source_track_time_mills_player"
-        app:layout_constraintHorizontal_bias="0.5" />
-
-    <!--  Начал верстку снизу (ниже просто текст)-->
-
-    <TextView
-        android:id="@+id/title_country_player"
-        app:layout_constraintTag="titleCountryPlayer"
-        android:layout_marginBottom="@dimen/margin_bottom_title_country_player"
-        android:text="@string/title_country_player"
-        style="@style/TitlesPlayer"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="@id/left_guideline_16dp" />
-
-    <TextView
-        android:id="@+id/title_primaryGenreName_player"
-        android:text="@string/title_genre_player"
-        style="@style/TitlesPlayer"
-        app:layout_constraintBottom_toTopOf="@+id/title_country_player"
-        app:layout_constraintStart_toStartOf="@id/left_guideline_16dp" />
-
-    <TextView
-        android:id="@+id/title_release_date_player"
-        android:text="@string/title_year_player"
-        style="@style/TitlesPlayer"
-        app:layout_constraintBottom_toTopOf="@+id/title_primaryGenreName_player"
-        app:layout_constraintStart_toStartOf="@id/left_guideline_16dp" />
-
-    <TextView
-        android:id="@+id/title_collection_name_player"
-        android:text="@string/title_album_player"
-        style="@style/TitlesPlayer"
-        app:layout_constraintBottom_toTopOf="@+id/title_release_date_player"
-        app:layout_constraintStart_toStartOf="@id/left_guideline_16dp" />
-
-    <TextView
-        android:id="@+id/title_track_time_player"
-        app:layout_constraintTag="titleTrackTimePlayer"
-        android:text="@string/title_time_player"
-        style="@style/TitlesPlayer"
-        app:layout_constraintBottom_toTopOf="@+id/source_collection_name_player"
-        app:layout_constraintStart_toStartOf="@id/left_guideline_16dp" />
-
-    <!--  (Позиции справа - источники)-->
-
-    <TextView
-        android:id="@+id/source_country_player"
-        android:layout_marginBottom="@dimen/margin_bottom_source_country_player"
-        tools:text="Country"
-        style="@style/SourcesPlayer"
-        android:maxLines="1"
-        android:ellipsize="end"
-        android:layout_width="0dp"
-        android:gravity="end"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/right_guideline_16dp"
-        app:layout_constraintStart_toStartOf="@id/textsBarrier" />
-
-    <TextView
-        android:id="@+id/source_primaryGenreName_player"
-        tools:text="GenreName"
-        style="@style/SourcesPlayer"
-        android:maxLines="1"
-        android:ellipsize="end"
-        android:layout_width="0dp"
-        android:gravity="end"
-        app:layout_constraintBottom_toTopOf="@+id/source_country_player"
-        app:layout_constraintEnd_toStartOf="@id/right_guideline_16dp"
-        app:layout_constraintStart_toStartOf="@id/textsBarrier" />
-
-    <TextView
-        android:id="@+id/source_release_date_player"
-        tools:text="releaseDate"
-        style="@style/SourcesPlayer"
-        android:maxLines="1"
-        android:ellipsize="end"
-        android:layout_width="0dp"
-        android:gravity="end"
-        app:layout_constraintBottom_toTopOf="@+id/source_primaryGenreName_player"
-        app:layout_constraintEnd_toStartOf="@id/right_guideline_16dp"
-        app:layout_constraintStart_toStartOf="@id/textsBarrier" />
-
-    <TextView
-        android:id="@+id/source_collection_name_player"
-        tools:text="collectionName"
-        style="@style/SourcesPlayer"
-        android:maxLines="1"
-        android:ellipsize="end"
-        android:layout_width="0dp"
-        android:gravity="end"
-        app:layout_constraintBottom_toTopOf="@+id/source_release_date_player"
-        app:layout_constraintEnd_toStartOf="@id/right_guideline_16dp"
-        app:layout_constraintStart_toStartOf="@id/textsBarrier" />
-
-    <TextView
-        android:id="@+id/source_track_time_player"
-        tools:text="trackTime"
-        style="@style/SourcesPlayer"
-        android:maxLines="1"
-        android:ellipsize="end"
-        android:layout_width="0dp"
-        android:gravity="end"
-        app:layout_constraintBottom_toTopOf="@+id/source_collection_name_player"
-        app:layout_constraintEnd_toEndOf="@id/right_guideline_16dp"
-        app:layout_constraintTop_toTopOf="@id/title_track_time_player"
-        app:layout_constraintStart_toStartOf="@id/textsBarrier" />
-
-    <TextView
-        android:id="@+id/source_track_time_mills_player"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_top_source_track_time_mills_player"
-        android:layout_marginBottom="@dimen/margin_bottom_source_track_time_mills_player"
-        android:text="@string/temporary_source_track_time_mills_player"
-        android:textColor="?attr/colorOnSecondary"
-        android:fontFamily="@font/ys_display_medium"
-        android:textSize="@dimen/text_size_source_track_time_mills_player"
-        app:layout_constraintBottom_toTopOf="@id/source_track_time_player"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <androidx.constraintlayout.widget.Barrier
-        android:id="@+id/textsBarrier"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:constraint_referenced_tags="titleTrackTimePlayer,titleCountryPlayer"
-        app:barrierDirection="end"/>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
