@@ -18,9 +18,9 @@ class PlaylistsMediaAdapter() : RecyclerView.Adapter<PlaylistsMediaViewHolder>()
     override fun onBindViewHolder(holder: PlaylistsMediaViewHolder, position: Int) {
         val playlist = playlists[position]
         holder.bind(playlist)
-//        holder.itemView.setOnClickListener { // для добавления обработчика кликов на элементы плейлистов для открытия плейлиста
-//            onItemClickListener?.invoke(playlist)
-//        }
+        holder.itemView.setOnClickListener { // для добавления обработчика кликов на элементы плейлистов для открытия плейлиста
+            onItemClickListener?.invoke(playlist)
+        }
     }
 
     override fun getItemCount(): Int {

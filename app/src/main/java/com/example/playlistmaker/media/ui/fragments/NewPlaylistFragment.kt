@@ -31,12 +31,12 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 import java.io.FileOutputStream
 
-class NewPlaylistFragment : Fragment() {
+open class NewPlaylistFragment : Fragment() {
 
     private var _binding: FragmentNewPlaylistBinding? = null
-    private val binding get() = _binding!!
+    val binding get() = _binding!!
 
-    private val viewModel: NewPlaylistViewModel by viewModel()
+    open val viewModel: NewPlaylistViewModel by viewModel()
     lateinit var confirmDialog: MaterialAlertDialogBuilder // инициализация переменной для использования диалога
 
     // работа с загрузкой фото из общего хранилища телефона через photo picker и сохранения этого фото в хранилище приложения
@@ -45,8 +45,10 @@ class NewPlaylistFragment : Fragment() {
         registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
             //обрабатываем событие выбора пользователем фотографии
             if (uri != null) {
-                viewModel.onCoverSelected(uri) // подписка на функцию onCoverSelected
-                saveImageToPrivateStorage(uri)
+                val savedPath = saveImageToPrivateStorage(uri)
+                if (savedPath != null) {
+                    viewModel.onCoverSelected(Uri.fromFile(File(savedPath)), savedPath)
+                } // подписка на функцию onCoverSelected
             } else {
                 Log.d("PhotoPicker", "No media selected")
             }
@@ -106,7 +108,7 @@ class NewPlaylistFragment : Fragment() {
 
         // возврат на фрагмент Медиа
         binding.arrowBackToMedia.setOnClickListener {
-            if (viewModel.shouldShowExitDialog()) { // роверка shouldShowExitDialog()
+            if (viewModel.shouldShowExitDialog()) { // проверка shouldShowExitDialog()
                 confirmDialog.show()
             } else {
                 findNavController().navigateUp()
@@ -179,24 +181,26 @@ class NewPlaylistFragment : Fragment() {
     }
 
     // работа с сохранением фото photo picker в хранилище приложения
-    private fun saveImageToPrivateStorage(uri: Uri) {
-        //создаём экземпляр класса File, который указывает на нужный каталог
-        val filePath = File(requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "myalbum")
-        //создаем каталог, если он не создан
-        if (!filePath.exists()){
-            filePath.mkdirs()
+    private fun saveImageToPrivateStorage(uri: Uri): String {
+        val dir = File(
+            requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES),
+            "playlists"
+        )
+
+        if (!dir.exists()) dir.mkdirs()
+
+        val file = File(dir, "cover_${System.currentTimeMillis()}.jpg")
+
+        requireContext().contentResolver.openInputStream(uri).use { input ->
+            FileOutputStream(file).use { output ->
+                BitmapFactory.decodeStream(input)
+                    .compress(Bitmap.CompressFormat.JPEG, 90, output)
+            }
         }
-        //создаём экземпляр класса File, который указывает на файл внутри каталога
-        val file = File(filePath, "first_cover.jpg")
-        // создаём входящий поток байтов из выбранной картинки
-        val inputStream = requireContext().contentResolver.openInputStream(uri)
-        // создаём исходящий поток байтов в созданный выше файл
-        val outputStream = FileOutputStream(file)
-        // записываем картинку с помощью BitmapFactory
-        BitmapFactory
-            .decodeStream(inputStream)
-            .compress(Bitmap.CompressFormat.JPEG, 30, outputStream)
+
+        return file.absolutePath
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

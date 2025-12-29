@@ -4,7 +4,9 @@ import com.example.playlistmaker.data.entity.AddTrackToPlaylistEntity
 import com.example.playlistmaker.search.domain.model.Track
 
 class PlaylistTrackDbConverter {
-    fun map(track: Track): AddTrackToPlaylistEntity { // обратная конвертация не нужна - не извлекаю AddTrackToPlaylist обратно в Track
+
+    // Track -> AddTrackToPlaylistEntity
+    fun map(track: Track): AddTrackToPlaylistEntity {
         return AddTrackToPlaylistEntity(
             trackId = track.trackId,
             trackName = track.trackName,
@@ -18,6 +20,23 @@ class PlaylistTrackDbConverter {
             country = track.country,
             isFavorite = track.isFavorite,
             addedAt = System.currentTimeMillis()
+        )
+    }
+
+    // AddTrackToPlaylistEntity -> Track
+    fun map(entity: AddTrackToPlaylistEntity): Track {
+        return Track(
+            trackId = entity.trackId,
+            trackName = entity.trackName,
+            artistName = entity.artistName,
+            trackTimeMillis = entity.trackTimeMillis,
+            artworkUrl100 = entity.artworkUrl100,
+            previewUrl = entity.previewUrl,
+            collectionName = entity.collectionName,
+            releaseDate = entity.releaseDate,
+            primaryGenreName = entity.primaryGenreName,
+            country = entity.country,
+            isFavorite = entity.isFavorite
         )
     }
 }

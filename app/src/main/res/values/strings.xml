@@ -45,7 +45,7 @@
     <string name="new_playlist">Новый плейлист</string>
     <string name="playlists_is_empty">Вы не создали\n\ни одного плейлиста</string>
     <!-- Медиатека плейлеисты-->
-    <string name="playlist_tracks_count_format">%d треков</string>
+    <string name="playlist_tracks_count_format">%1$d трек(ов)</string>
 
     <!-- Tabs for MediaActivity (Медиатека)-->
     <string name="tab_favourite_tracks">Избранные треки</string>
@@ -71,6 +71,50 @@
     <string name="new_playlist_dialog_negative_button">Отмена</string>
     <string name="new_playlist_dialog_positive_button">Завершить</string>
 
+    <!-- Диалог при удалении трека из Плейлиста -->
+    <string name="delete_track_from_playlist_dialog_title">Хотите удалить трек?</string>
+    <string name="delete_track_from_playlist_dialog_message">Вы действительно хотите удалить трек?</string>
+    <string name="delete_track_from_playlist_dialog_negative_button">Нет</string>
+    <string name="delete_track_from_playlist_dialog_positive_button">Да</string>
 
+    <!-- BottomSheet для МЕНЮ -->
+    <string name="playlist_menu_bottom_sheet_share">Поделиться</string>
+    <string name="playlist_menu_bottom_sheet_edit_info">Редактировать информацию</string>
+    <string name="playlist_menu_bottom_sheet_delete_playlist">Удалить плейлист</string>
 
+    <!-- Диалог при удалении плейлиста из BottomSheet Menu -->
+    <string name="delete_playlist_dialog_title">Удалить плейлист</string>
+    <string name="delete_playlist_dialog_message">Вы уверены, что хотите удалить этот плейлист?</string>
+    <string name="delete_playlist_dialog_negative_button">Отмена</string>
+    <string name="delete_playlist_dialog_positive_button">Удалить</string>
+
+    <!-- Для EditPlaylistViewModel -->
+    <string name="toast_no_playlist_edit_playlist_viewmodel">Плейлист не найден</string>
+    <string name="toast_changes_saved_edit_playlist_viewmodel">Изменения сохранены</string>
+    <string name="toast_mistake_saves_edit_playlist_viewmodel">Ошибка при сохранении изменений</string>
+
+    <!-- Для EditPlaylistFragment -->
+    <string name="title_edit_playlist_fragment">Редактировать</string>
+    <string name="button_save_edit_playlist_fragment">Сохранить</string>
+
+    <!-- Для PlaylistFragment common -->
+    <string name="toast_data_not_loaded_playlist_fragment">Данные плейлиста еще не загружены</string>
+    <string name="toast_playlist_deleted_playlist_fragment">Плейлист удален</string>
+    <string name="bottom_sheet_playlist_no_tracks">Ваш плейлист пуст</string>
+
+    <!-- Для Количества треков в плейлисте -->
+    <plurals name="playlist_tracks_count">
+        <item quantity="one">%d трек</item>
+        <item quantity="few">%d трека</item>
+        <item quantity="many">%d треков</item>
+        <item quantity="other">%d трека</item>
+    </plurals>
+
+    <!-- Для отображения суммы треков в плейлисте в минутах -->
+    <plurals name="playlist_minutes_count">
+        <item quantity="one">%d минута</item>
+        <item quantity="few">%d минуты</item>
+        <item quantity="many">%d минут</item>
+        <item quantity="other">%d минуты</item>
+    </plurals>
 </resources>
