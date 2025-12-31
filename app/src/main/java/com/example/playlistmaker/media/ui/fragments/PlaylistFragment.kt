@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.core.view.ViewCompat
@@ -36,6 +37,9 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 private const val OVERLAY_MAX_ALPHA = 0.7f // максимальное затемнение при BottomSheet
 
 class PlaylistFragment : Fragment() {
+
+    // объявил здесь для реализации избежания ошибкаи самост. открытия по возврату с Едит (обе переменные)
+    private lateinit var bottomSheetBehaviorMenu: BottomSheetBehavior<LinearLayout>
 
     private val externalNavigator by lazy { ExternalNavigatorImpl(requireActivity()) }
     private val viewModel: PlaylistFragmentViewModel by viewModel() // подключаем ViewModel через Koin
@@ -119,7 +123,7 @@ class PlaylistFragment : Fragment() {
             val screenHeight = resources.displayMetrics.heightPixels
 
             // фиксированная высота — 30% экрана (можно менять)
-            val maxHeight = (screenHeight * 0.32f).toInt()
+            val maxHeight = (screenHeight * 0.30f).toInt()
 
             bottomSheetContainer.layoutParams.height = maxHeight
             bottomSheetContainer.requestLayout()
@@ -146,9 +150,9 @@ class PlaylistFragment : Fragment() {
                 // количество треков в альбоме + работа с отображением во множественном числе
                 val count = playlist.trackCount
                 binding.playlistTracksQuantity.text = resources.getQuantityString(
-                        R.plurals.playlist_tracks_count,
-                        count,
-                        count)
+                    R.plurals.playlist_tracks_count,
+                    count,
+                    count)
 
                 if (playlist.artworkPath != null) { // загрузка обложки из альбома, если есть
                     Glide.with(binding.root)
@@ -247,12 +251,11 @@ class PlaylistFragment : Fragment() {
         }
 
         // работа с BottomSheet при нажатии на иконку МЕНЮ
-        val bottomSheetContainerMenu = binding.playlistBottomSheetMenu
-
         //  BottomSheetBehavior.from() — вспомогательная функция, позволяющая получить объект BottomSheetBehavior, связанный с контейнером BottomSheet
-        val bottomSheetBehaviorMenu = BottomSheetBehavior.from(bottomSheetContainerMenu).apply {
-            state = BottomSheetBehavior.STATE_HIDDEN
-        }
+        bottomSheetBehaviorMenu =
+            BottomSheetBehavior.from(binding.playlistBottomSheetMenu).apply {
+                BottomSheetBehavior.STATE_HIDDEN   // старт всегда скрыт
+            }
 
         // обработка нажатия на иконку МЕНЮ
         binding.playlistMenu.setOnClickListener {
@@ -342,8 +345,9 @@ class PlaylistFragment : Fragment() {
             bottomSheetBehaviorMenu.state = BottomSheetBehavior.STATE_HIDDEN // скрытие BottomSheet Меню при нажатии
         }
 
-        // переход на наследуемый фрагмент для редактирования Плейлиста
+        // переход на наследуемый фрагмент от NewPlaylistFragment для редактирования Плейлиста
         binding.playlistEditInfoMenuBottomSheet.setOnClickListener {
+            bottomSheetBehaviorMenu.state = BottomSheetBehavior.STATE_HIDDEN // скрытие BottomSheet Меню при нажатии
             val currentPlaylist = viewModel.playlist.value
             if (currentPlaylist != null) {
                 findNavController().navigate(
@@ -354,7 +358,6 @@ class PlaylistFragment : Fragment() {
                 Toast.makeText(requireContext(), getString(R.string.toast_data_not_loaded_playlist_fragment),
                     Toast.LENGTH_SHORT).show()
             }
-            bottomSheetBehaviorMenu.state = BottomSheetBehavior.STATE_HIDDEN // скрытие BottomSheet Меню при нажатии
         }
     }
 
@@ -382,16 +385,16 @@ class PlaylistFragment : Fragment() {
             .show()
     }
 
+    // необходимо для скрывания BottomSheet Меню при переходе и возврате с Едит
+    override fun onResume() {
+        super.onResume()
+        if (bottomSheetBehaviorMenu.state != BottomSheetBehavior.STATE_HIDDEN) {
+            bottomSheetBehaviorMenu.state = BottomSheetBehavior.STATE_HIDDEN
+        }
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
-
-
-    //    override fun onStart() {
-//        super.onStart()
-//        viewModel.loadPlaylist(playlistId)
-//    }
-
-
 }
