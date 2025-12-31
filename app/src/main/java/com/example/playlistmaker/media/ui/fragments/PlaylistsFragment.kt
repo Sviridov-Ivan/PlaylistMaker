@@ -44,6 +44,19 @@ class PlaylistsFragment : Fragment() {
 
         binding.recyclerViewMedia.adapter = adapter
 
+        // переход на экран PlaylistFragment с передачей аргумента ID плейлиста (также прописан в Навигации фрагмента)  // Навигация через родительский MediaFragment (где определён action)
+        adapter.setOnItemClickListener { playlist ->
+            val bundle = Bundle().apply {
+                putLong("playlistId", playlist.id)
+            }
+
+            NavHostFragment.findNavController(requireParentFragment())
+                .navigate(
+                    R.id.action_mediaFragment_to_playlistFragment,
+                    bundle
+                )
+        }
+
         // переход на экран AddPlaylistFragment  // Навигация через родительский MediaFragment (где определён action)
         binding.newPlaylistButton.setOnClickListener {
             NavHostFragment.findNavController(requireParentFragment())

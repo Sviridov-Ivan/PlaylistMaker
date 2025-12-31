@@ -12,22 +12,23 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class NewPlaylistViewModel(
-    private val interactor: PlaylistInteractor
+open class NewPlaylistViewModel( // open так как наследуется в EditPlaylistViewModel
+    val interactor: PlaylistInteractor // not private так как переиспользуется в EditPlaylistViewModel
 ) : ViewModel() {
 
     data class UiState(
         val name: String = "",
         val description: String = "",
         val coverUri: Uri? = null,
+        val artworkPath: String? = null, //!!!!!!
         val isCreateButtonEnabled: Boolean = false
     )
 
-    private val _uiState = MutableStateFlow(UiState())
+    val _uiState = MutableStateFlow(UiState()) // убрал private, так как используется EditPlaylistViewModel
     val uiState: StateFlow<UiState> = _uiState
 
     // Одноразовые события для фрагмента
-    private val _events = MutableSharedFlow<Event>()
+    val _events = MutableSharedFlow<Event>() // not private так как переиспользуется в EditPlaylistViewModel
     val events = _events.asSharedFlow()
 
     sealed class Event {
@@ -49,8 +50,12 @@ class NewPlaylistViewModel(
         _uiState.update { it.copy(description = newValue) }
     }
 
-    fun onCoverSelected(uri: Uri) {
-        _uiState.update { it.copy(coverUri = uri) }
+    //!!!!!!
+    fun onCoverSelected(uri: Uri, savedPath: String) {
+        _uiState.value = _uiState.value.copy(
+            coverUri = uri,
+            artworkPath = savedPath
+        )
     }
 
     fun onCoverClick() {
@@ -66,7 +71,7 @@ class NewPlaylistViewModel(
                 state.coverUri != null
     }
 
-    fun createPlaylist() {
+   open fun createPlaylist() { // open так как переиспользуется в EditPlaylistViewModel
         val state = _uiState.value
         if (state.name.isBlank()) return
 

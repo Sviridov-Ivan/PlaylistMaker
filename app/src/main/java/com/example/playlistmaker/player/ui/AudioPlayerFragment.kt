@@ -113,11 +113,7 @@ class AudioPlayerFragment : Fragment() {
                 }
             }
         }
-//        viewModel.observeToastMessage().observe(viewLifecycleOwner) { message ->
-//            message?.let {
-//                Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
-//            }
-//        }
+
         // отображение иконки "избранные" в соответствии с состоянием трека
         viewModel.observeIsFavourite().observe(viewLifecycleOwner) { isFavourite ->
             if (isFavourite) {

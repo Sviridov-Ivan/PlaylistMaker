@@ -10,6 +10,8 @@ class TracksAdapter() : RecyclerView.Adapter<TracksViewHolder> () { // убра�
     private val tracks = ArrayList<Track>() // var tracks = ArrayList<Track>() до создания fun updateTracks (до 11 спринта)
     private var onItemClickListener: ((Track) -> Unit)? = null // для добавления обработчика кликов на элементы треков для открытия трека, и для сохранения его в ИСТОРИЮ (спринт 12)
 
+    private var onItemLongClickListener: ((Track) -> Unit)? = null // "длинный клик" по элементу адаптреа
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TracksViewHolder {
         // val view = LayoutInflater.from(parent.context).inflate(R.layout.activity_track, parent, false) // традиционно inflate размещается здесь, но так необходимо по заданию
         return TracksViewHolder(parent) // здесь вместо parent было view при реализации inflate в строке выше
@@ -21,6 +23,10 @@ class TracksAdapter() : RecyclerView.Adapter<TracksViewHolder> () { // убра�
         holder.bind(track)
         holder.itemView.setOnClickListener { // для добавления обработчика кликов на элементы треков для открытия трека, и для сохранения его в ИСТОРИЮ (спринт 12)
             onItemClickListener?.invoke(track)
+        }
+        holder.itemView.setOnLongClickListener { // для добавления обработчика ДЛИННЫХ кликов на элементы треков
+            onItemLongClickListener?.invoke(track)
+            true
         }
     }
 
@@ -41,5 +47,9 @@ class TracksAdapter() : RecyclerView.Adapter<TracksViewHolder> () { // убра�
 
     fun setOnItemClickListener(listener: (Track) -> Unit) { // для добавления обработчика кликов на элементы треков для открытия трека, и для сохранения его в ИСТОРИЮ (спринт 12)
         onItemClickListener = listener
+    }
+
+    fun setOnItemLongClickListener(listener: (Track) -> Unit) { // для добавления обработчика длительных кликов на элементы
+        onItemLongClickListener = listener
     }
 }

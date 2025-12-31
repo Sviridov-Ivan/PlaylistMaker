@@ -5,8 +5,10 @@ import com.example.playlistmaker.media.data.converters.PlaylistTrackDbConverter
 import com.example.playlistmaker.media.data.repository.PlaylistsRepositoryImpl
 import com.example.playlistmaker.media.domain.interactor.PlaylistInteractor
 import com.example.playlistmaker.media.domain.repository.PlaylistRepository
+import com.example.playlistmaker.media.ui.viewmodels.EditPlaylistViewModel
 import com.example.playlistmaker.media.ui.viewmodels.FavouriteTracksFragmentViewModel
 import com.example.playlistmaker.media.ui.viewmodels.NewPlaylistViewModel
+import com.example.playlistmaker.media.ui.viewmodels.PlaylistFragmentViewModel
 import com.example.playlistmaker.media.ui.viewmodels.PlaylistsFragmentViewModel
 import com.google.gson.Gson
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -34,5 +36,6 @@ val mediaModule = module {
     viewModel { NewPlaylistViewModel(get()) }
     viewModel { FavouriteTracksFragmentViewModel(get()) }
     viewModel { PlaylistsFragmentViewModel(get()) }
-
+    viewModel { PlaylistFragmentViewModel(get(), get()) }
+    viewModel { EditPlaylistViewModel(get(), get()) }
 }

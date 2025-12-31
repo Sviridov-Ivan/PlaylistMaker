@@ -2,7 +2,7 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.PlaylistMaker" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/black</item> <!-- Основной цвет бренда приложения. -->
+        <item name="colorPrimary">@color/blue</item> <!-- Основной цвет бренда приложения. -->
         <item name="colorPrimaryVariant">@color/black</item> <!-- Самый светлый цвет бренда приложения. -->
         <item name="colorOnPrimary">@color/white</item> <!-- Используются для задания цвета элементов переднего плана (например, текста и иконок)-->
         <!-- Secondary brand color. -->

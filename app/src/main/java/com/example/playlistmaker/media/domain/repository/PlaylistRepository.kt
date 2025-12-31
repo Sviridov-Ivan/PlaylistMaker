@@ -6,14 +6,34 @@ import kotlinx.coroutines.flow.Flow
 
 interface PlaylistRepository {
 
-    suspend fun addPlaylist(playlist: Playlist) // добавление плейлиста
+    // добавление плейлиста (медиатека)
+    suspend fun addPlaylist(playlist: Playlist)
 
-    suspend fun updatePlaylist(playlist: Playlist) // обновление плейлиста
+    // обновление плейлиста (медиатека)
+    suspend fun updatePlaylist(playlist: Playlist)
 
-    fun getPlaylists(): Flow<List<Playlist>> // получение плейлиста
+    // получение плейлиста (медиатека)
+    fun getPlaylists(): Flow<List<Playlist>>
 
-    suspend fun addTrackToPlaylist( // добавление трека в плейлист
+    // добавление трека в плейлист (плейер)
+    suspend fun addTrackToPlaylist(
         playlist: Playlist,
         track: Track
     )
+
+    // получение плейлиста по переданному индентификатору (фрагмент Плейлист)
+    suspend fun getPlaylistById(playlistId: Long) : Playlist?
+
+    // получение треков по ID в плейлисте (Плейлист)
+    fun getTracksByIdsFromPlaylists(trackIds: List<String>): Flow<List<Track>>
+
+    // удаление трека из плейлиста по Id
+    suspend fun removeTrackFromPlaylist(
+        playlistId: Long,
+        trackId: String
+    )
+
+    // удаление плейлиста полностью
+    suspend fun removePlaylist(playlist: Playlist)
+
 }

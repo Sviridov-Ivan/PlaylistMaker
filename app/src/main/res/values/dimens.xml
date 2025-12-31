@@ -152,4 +152,7 @@
     <dimen name="item_playlist_name_text_size">12sp</dimen>
     <dimen name="item_playlist_track_count_text_size">12sp</dimen>
 
+    <!-- Контейнер для плейсхолдера для списка треков в плейлисте -->
+    <dimen name="p_h_bottom_sheet_playlist_image_size">100dp</dimen>
+
 </resources>

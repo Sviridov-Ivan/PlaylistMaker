@@ -22,4 +22,16 @@ interface PlaylistDao {
     // получение всех плейлистов
     @Query("SELECT * FROM playlist_table") // для получения списка со всеми треками сразу с определением порядка
     fun getAllPlaylists(): Flow<List<PlaylistEntity>>
+
+    // получение плейлиста по переданному индентификатору
+    @Query("SELECT * FROM playlist_table WHERE playlistId = :playlistId")
+    suspend fun getPlaylistById(playlistId: Long): PlaylistEntity?
+
+    // получение всех плейлистов для опредления есть ли в них удаляемый трек
+    @Query("SELECT * FROM playlist_table")
+    suspend fun getAllPlaylistsOnce(): List<PlaylistEntity>
+
+    // удаление плейлиста по id
+    @Query("DELETE FROM playlist_table WHERE playlistId = :id")
+    suspend fun deletePlaylistById(id: Long) // для удаления трека из таблицы избранных треков по id (нет лишней аллокации памяти быстрее работает)
 }
