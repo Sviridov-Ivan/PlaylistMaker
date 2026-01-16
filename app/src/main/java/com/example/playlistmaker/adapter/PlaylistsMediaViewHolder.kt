@@ -28,7 +28,11 @@ class PlaylistsMediaViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
 
     fun bind(model: Playlist) {
         sourcePlaylistName.text = model.name
-        sourceTrackCount.text = itemView.context.getString(R.string.playlist_tracks_count_format, model.trackCount)
+        //sourceTrackCount.text = itemView.context.getString(R.string.playlist_tracks_count_format, model.trackCount) // без использования plurals, работает, но некрасиво
+
+        val count = model.trackCount
+
+        sourceTrackCount.text = itemView.resources.getQuantityString(R.plurals.playlist_tracks_count,count,count) // количество треков по правилам
 
         Glide.with(itemView)
             .load(model.artworkPath)

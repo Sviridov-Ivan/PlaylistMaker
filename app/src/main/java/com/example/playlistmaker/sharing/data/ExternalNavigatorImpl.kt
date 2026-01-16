@@ -1,5 +1,6 @@
 package com.example.playlistmaker.sharing.data
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -28,5 +29,14 @@ class ExternalNavigatorImpl(private val context: Context) : ExternalNavigator { 
             putExtra(Intent.EXTRA_TEXT, emailData.body)
         }
         context.startActivity(intent)
+    }
+
+    // функция для передачи инфы о плейлисте в фиче Медиа
+    override fun shareText(activity: Activity, text: String) {
+        val intent = Intent(Intent.ACTION_SEND).apply {
+            type = "text/plain"
+            putExtra(Intent.EXTRA_TEXT, text)
+        }
+        context.startActivity(Intent.createChooser(intent, null))
     }
 }
