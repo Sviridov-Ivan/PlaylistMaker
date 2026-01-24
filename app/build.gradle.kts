@@ -3,6 +3,9 @@ plugins {
     alias(libs.plugins.kotlin.android)
     id("kotlin-parcelize")
     kotlin("kapt") // для внедрения Room sp21
+
+    id("com.google.gms.google-services") // firebase
+
 }
 
 android {
@@ -23,13 +26,29 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        create("release") {
+            storeFile = file("playlistmaker-real.jks")
+            storePassword = "MyPlay"
+            keyAlias = "playlistmaker_alias"
+            keyPassword = "Key123"
+        }
+    }
+
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true // для активации оптимизации и шифровки перед релизом по умолчанию был false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+
+            signingConfig = signingConfigs.getByName("release")
+        }
+
+        debug {
+            isMinifyEnabled = false
+            applicationIdSuffix = ".debug" // позволит иметь на устройстве релизную версию и дебаг версию для отладки
         }
     }
     compileOptions {
@@ -73,4 +92,11 @@ dependencies {
 
     // Опционально — Kotlin Extensions + Flow sp21
     implementation("androidx.room:room-ktx:$room_version")
+
+    // firebase analytics
+    implementation(platform("com.google.firebase:firebase-bom:34.7.0"))
+    implementation("com.google.firebase:firebase-analytics")
+
 }
+
+

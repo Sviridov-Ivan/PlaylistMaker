@@ -9,4 +9,13 @@
     <attr name="playerBackground" format="color"/>
     <attr name="playlistBoxStrokeColor" format="color"/>
     <attr name="playlistHintColor" format="color"/>
+
+    <!-- Атрибуты для CustomView для кнопки проигрывателя Плей/Пауза  -->
+    <declare-styleable name="CustomImageViewPlayButton">
+        <attr name="imagePlay"
+            format="reference" />
+
+        <attr name="imagePause"
+            format="reference" />
+    </declare-styleable>
 </resources>

@@ -10,6 +10,8 @@ import com.example.playlistmaker.player.ui.AudioPlayerViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 import com.example.playlistmaker.search.domain.model.Track
+import com.google.firebase.analytics.FirebaseAnalytics
+import org.koin.android.ext.koin.androidContext
 
 val playerModule = module { // вызов в Арр
 
@@ -22,11 +24,13 @@ val playerModule = module { // вызов в Арр
     // Domain
     factory<AudioPlayerInteractor> { AudioPlayerInteractorImpl(get()) }
 
+    single<FirebaseAnalytics> {
+        FirebaseAnalytics.getInstance(androidContext())
+    }
+
     // UI (ViewModel)
     // ViewModel с передачей трека напрямую через параметры
     viewModel { (track: Track) ->
-        AudioPlayerViewModel(get(), get(), get(), track)
+        AudioPlayerViewModel(get(), get(), get(), track, analytics = get())
     }
-    //viewModel { AudioPlayerViewModel(get(), get(), get())}
-
 }
