@@ -117,4 +117,10 @@
         <item quantity="many">%d минут</item>
         <item quantity="other">%d минуты</item>
     </plurals>
+
+    <!-- Плейлист contentDescription -->
+    <string name="contentDescription_playlist_share_icon">Иконка поделиться плейлистом</string>
+    <string name="contentDescription_playlist_menu_icon">Иконка меню</string>
+    <string name="contentDescription_playlist_dot_icon">Иконка точки</string>
+    <string name="contentDescription_playlist_small_picture_icon">Иконка мальенькая в меню плейлиста</string>
 </resources>

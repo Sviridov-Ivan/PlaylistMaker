@@ -20,6 +20,7 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.adapter.PlaylistsBottomSheetAdapter
 import com.example.playlistmaker.databinding.FragmentAudioPlayerBinding
 import com.example.playlistmaker.player.domain.model.PlayerState
+import com.example.playlistmaker.player.ui.customview.PlaybackButtonState
 import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.util.dpToPx
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -76,14 +77,15 @@ class AudioPlayerFragment : Fragment() {
 
         // получаем track из аргументов фрагмента
         bindTrack(track)
-        // подписка на State
+        // подписка на State, но уже с использованием состояния кастомного элемента PlaybackButtonState
         viewModel.observePlayerState().observe(viewLifecycleOwner) { state ->
-            when (state) {
-                PlayerState.PLAYING -> binding.buttonPlay.setImageResource(R.drawable.button_pause)
-                PlayerState.PAUSED, PlayerState.PREPARED ->
-                    binding.buttonPlay.setImageResource(R.drawable.button_play)
-                else -> {}
-            }
+            binding.buttonPlay.setState(
+                when (state) {
+                    PlayerState.PLAYING -> PlaybackButtonState.PAUSE
+                    PlayerState.PAUSED, PlayerState.PREPARED -> PlaybackButtonState.PLAY
+                    else -> PlaybackButtonState.PLAY
+                }
+            )
         }
 
         // подписка на Time
@@ -123,7 +125,8 @@ class AudioPlayerFragment : Fragment() {
             }
         }
 
-        binding.buttonPlay.setOnClickListener {
+        // обработка нажатия уже на кастомный элемент PlaybackButtonView
+        binding.buttonPlay.onClick = {
             if (track?.previewUrl.isNullOrEmpty()) {
                 Toast.makeText(requireContext(), "Отрывок отсутствует для этого трека", Toast.LENGTH_SHORT)
                     .show()

@@ -120,19 +120,18 @@
             app:layout_constraintStart_toStartOf="@+id/left_guideline_24dp"
             app:srcCompat="@drawable/button_add_to_pl" />
 
-        <ImageButton
+        <com.example.playlistmaker.player.ui.customview.PlaybackButtonView
             android:id="@+id/button_play"
             android:layout_width="@dimen/size_image_button_play_player"
             android:layout_height="@dimen/size_image_button_play_player"
             android:layout_marginBottom="@dimen/margin_bottom_button_button_play_player"
-            android:background="@null"
+            app:imagePlay="@drawable/button_play"
+            app:imagePause="@drawable/button_pause"
             android:contentDescription="@string/contentDescription_button_play_player"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintBottom_toTopOf="@id/source_track_time_mills_player"
             app:layout_constraintEnd_toStartOf="@+id/button_like"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@id/button_add_top_pl"
-            app:srcCompat="@drawable/button_play"
-            app:tint="?attr/colorOnSecondary" />
+            app:layout_constraintStart_toEndOf="@id/button_add_top_pl"/>
 
         <ImageButton
             android:id="@+id/button_like"

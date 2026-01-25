@@ -8,6 +8,9 @@ import com.example.playlistmaker.player.domain.model.PlayerState
 import com.example.playlistmaker.search.domain.interactor.FavouriteTracksInteractor
 import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.util.formatDuration
+import com.google.firebase.Firebase
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.logEvent
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -23,7 +26,8 @@ class AudioPlayerViewModel(
     private val interactorPlaylist: PlaylistInteractor,
     private val interactor: AudioPlayerInteractor,
     private val favouriteTracksInteractor: FavouriteTracksInteractor, // для избранных треков
-    private val track: Track // для избранных треков
+    private val track: Track, // для избранных треков
+    private val analytics: FirebaseAnalytics // для сбора аналитики
 
 ) : ViewModel() {
 
@@ -132,8 +136,20 @@ class AudioPlayerViewModel(
             // обновляем базу через интерактор
             if (newFavoriteStatus) {
                 favouriteTracksInteractor.addToFavourites(track)
+
+                // при добавлении трека в избранные - добавление в аналитику
+                analytics.logEvent("add_to_favorite") {
+                    param("track_id", track.trackId)
+                    param("track_name", track.trackName)
+                }
             } else {
                 favouriteTracksInteractor.removeFromFavouriteTrack(track)
+
+                // при удалении трека из избранных - добавление в аналитику
+                analytics.logEvent("remove_from_favorite") {
+                    param("track_id", track.trackId)
+                    param("track_name", track.trackName)
+                }
             }
 
             // обновляем локальный объект и LiveData для UI

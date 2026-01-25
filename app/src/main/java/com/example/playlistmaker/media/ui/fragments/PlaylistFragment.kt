@@ -385,7 +385,7 @@ class PlaylistFragment : Fragment() {
             .show()
     }
 
-    // необходимо для скрывания BottomSheet Меню при переходе и возврате с Едит
+    // необходимо для скрытия BottomSheet Меню при переходе и возврате с Едит
     override fun onResume() {
         super.onResume()
         if (bottomSheetBehaviorMenu.state != BottomSheetBehavior.STATE_HIDDEN) {
