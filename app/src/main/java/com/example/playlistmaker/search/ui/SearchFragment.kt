@@ -1,6 +1,7 @@
 package com.example.playlistmaker.search.ui
 
 import android.content.Context.INPUT_METHOD_SERVICE
+import android.content.IntentFilter
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -9,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
@@ -21,12 +23,16 @@ import com.example.playlistmaker.databinding.FragmentSearchBinding
 import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.util.DebounceConfig.CLICK_DEBOUNCE_DELAY
 import com.example.playlistmaker.util.DebounceConfig.SEARCH_DEBOUNCE_DELAY
+import com.example.playlistmaker.util.NetworkReceiver
 import com.example.playlistmaker.util.debounce
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.getValue
 import kotlin.toString
 
 class SearchFragment : Fragment() {
+
+    private val networkReceiver = NetworkReceiver() // объект класса NetworkReceiver для работы с отслеживанием наличия доступа к сети Интернет
+    private var isReceiverRegistered = false // проверка зарегистрирован ли ресивер, если onPause() сработает раньше
 
     private lateinit var binding: FragmentSearchBinding
 
@@ -259,6 +265,29 @@ class SearchFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+
+        // регистрация ресивера здесь, чтобы избежать утечики памяти
+        if (!isReceiverRegistered) { // проверка на регистрацию ресивера
+            val filter = IntentFilter("android.net.conn.CONNECTIVITY_CHANGE")
+
+            ContextCompat.registerReceiver(
+                requireContext(),
+                networkReceiver,
+                filter,
+                ContextCompat.RECEIVER_NOT_EXPORTED
+            )
+
+            isReceiverRegistered = true
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        // отмена регистрации ресивера, чтобы избежать утечек памяти, при выгрузке из фрагмента
+        if (isReceiverRegistered) { // проверка на регистрацию ресивера
+            requireContext().unregisterReceiver(networkReceiver)
+            isReceiverRegistered = false
+        }
     }
     companion object {
         private const val KEY_SEARCH_TEXT = "SEARCH_TEXT" // создание константы для ключей хранения данных (для строки поиска) (Спринт 15)
