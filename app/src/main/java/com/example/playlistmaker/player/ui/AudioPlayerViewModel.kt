@@ -1,14 +1,15 @@
 package com.example.playlistmaker.player.ui
 
+import android.util.Log
 import androidx.lifecycle.*
 import com.example.playlistmaker.media.domain.interactor.PlaylistInteractor
 import com.example.playlistmaker.media.domain.model.Playlist
 import com.example.playlistmaker.player.domain.interactor.AudioPlayerInteractor
 import com.example.playlistmaker.player.domain.model.PlayerState
+import com.example.playlistmaker.player.service.PlayerServiceController
 import com.example.playlistmaker.search.domain.interactor.FavouriteTracksInteractor
 import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.util.formatDuration
-import com.google.firebase.Firebase
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.logEvent
 import kotlinx.coroutines.Job
@@ -31,6 +32,25 @@ class AudioPlayerViewModel(
 
 ) : ViewModel() {
 
+    // экземпляр PlayerServiceController для передачи команд в сервис для Плейера
+    private var audioPlayerControl: PlayerServiceController? = null
+
+    fun setAudioPlayerControl(serviceController: PlayerServiceController) {
+        audioPlayerControl = serviceController
+
+        // состояние сервиса
+        viewModelScope.launch {
+            serviceController.playerState.collect { state ->
+                playerStateLiveData.postValue(state)
+                //updateForegroundState()
+            }
+        }
+    }
+
+    fun removeAudioPlayerControl() {
+        audioPlayerControl = null
+    }
+
     // одноразовое событие для работы с BottomSheet в зависимости от UiEvent
     private val _uiEvents = MutableSharedFlow<UiEvent>()
     val uiEvents = _uiEvents.asSharedFlow()
@@ -50,9 +70,6 @@ class AudioPlayerViewModel(
     private val _toastMessage = MutableStateFlow<ToastEvent?>(null)
     val toastMessage: StateFlow<ToastEvent?> = _toastMessage.asStateFlow()
 
-//    private val toastMessageLiveData = MutableLiveData<String?>()
-//    fun observeToastMessage(): LiveData<String?> = toastMessageLiveData
-
     // для работы с избранными треками
     private val isFavouriteLiveData = MutableLiveData<Boolean>()  // MutableLiveData(track.isFavorite)
     fun observeIsFavourite(): LiveData<Boolean> = isFavouriteLiveData
@@ -70,21 +87,17 @@ class AudioPlayerViewModel(
         }
     }
 
-    fun prepare(url: String) {
-        interactor.prepare(
-            url,
-            onPrepared = {
-                playerStateLiveData.postValue(PlayerState.PREPARED)
-            },
-            onCompletion = {
-                stopTimerUpdates() // завершаю работу корутин
-                playerStateLiveData.postValue(PlayerState.PREPARED)
-                currentTimeLiveData.postValue(formatDuration(0L))
-            }
-        )
+    // PLAYER CONTROL (через PlayerService)
+    fun prepare() {
+        Log.d("PLAYER", "prepare called, control = $audioPlayerControl")
+        val state = audioPlayerControl?.getCurrentState() ?: return
+        if (state != PlayerState.DEFAULT) return
+
+        audioPlayerControl?.prepare(track)
     }
 
     fun playbackControl() {
+        Log.d("PLAYER", "state = ${playerStateLiveData.value}")
         when (playerStateLiveData.value) {
             PlayerState.PLAYING -> pausePlayback()
             PlayerState.PREPARED, PlayerState.PAUSED -> startPlayback()
@@ -93,14 +106,12 @@ class AudioPlayerViewModel(
     }
 
     private fun startPlayback() {
-        interactor.play()
-        playerStateLiveData.postValue(PlayerState.PLAYING)
+        audioPlayerControl?.play()
         startTimerUpdates()
     }
 
     private fun pausePlayback() {
-        interactor.pause()
-        playerStateLiveData.postValue(PlayerState.PAUSED)
+        audioPlayerControl?.pause()
         stopTimerUpdates()
     }
 
@@ -109,7 +120,8 @@ class AudioPlayerViewModel(
 
         timerJob = viewModelScope.launch { // запуск таймера в потоке (Dispatchers.Main)
             while (isActive) { // свойство медиаплейера
-                currentTimeLiveData.value = formatDuration(interactor.currentPosition().toLong())
+                val pos = audioPlayerControl?.currentPosition() ?: 0
+                currentTimeLiveData.postValue(formatDuration(pos.toLong()))
                 delay(DELAY_MILLIS)
             }
         }
@@ -125,7 +137,7 @@ class AudioPlayerViewModel(
 
     fun release() {
         stopTimerUpdates()
-        interactor.release()
+        audioPlayerControl?.release()
         playerStateLiveData.postValue(PlayerState.DEFAULT)
     }
 
@@ -172,17 +184,6 @@ class AudioPlayerViewModel(
         }
     }
 
-    // класс для тоста для использования в StateFlow
-    sealed class ToastEvent(val playlistName: String) {
-        class Added(name: String) : ToastEvent(name)
-        class AlreadyExists(name: String) : ToastEvent(name)
-    }
-
-    // отдельное UI-событие для BottomSheet
-    sealed class UiEvent {
-        object HideBottomSheet : UiEvent()
-    }
-
     // функция для работы с добавлением трека в плейлист и отображения тостов
     fun onPlaylistClicked(playlist: Playlist) {
         if (playlist.trackIds.contains(track.trackId.toString())) { // проверка на наличие трека в альбоме
@@ -200,6 +201,30 @@ class AudioPlayerViewModel(
     // функция для очистки тостов
     fun clearToastMessage() {
         _toastMessage.value = null
+    }
+
+    // функция запуска foreground уведомления при сворачивании Ui
+    fun onUiHidden() {
+        if (playerStateLiveData.value == PlayerState.PLAYING) {
+            audioPlayerControl?.startForegroundIfPlaying()
+        }
+    }
+
+    // функция остановки foreground уведомления при разворачивании Ui
+    fun onUiVisible() {
+        audioPlayerControl?.stopForegroundIfNeed()
+    }
+
+
+    // класс для тоста для использования в StateFlow
+    sealed class ToastEvent(val playlistName: String) {
+        class Added(name: String) : ToastEvent(name)
+        class AlreadyExists(name: String) : ToastEvent(name)
+    }
+
+    // отдельное UI-событие для BottomSheet
+    sealed class UiEvent {
+        object HideBottomSheet : UiEvent()
     }
 
     companion object {
