@@ -128,4 +128,5 @@
     <string name="notification_permission_denied">Нет разрешения на запуск плейера в фоне</string>
     <string name="no_track">Отрывок отсутствует для этого трека</string>
     <string name="no_permission_for_foreground_service">Разрешение на уведомления не выдано</string>
+    <string name="title_foreground_service">Playlist Maker</string>
 </resources>

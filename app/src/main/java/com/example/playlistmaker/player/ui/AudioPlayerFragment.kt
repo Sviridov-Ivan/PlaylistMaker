@@ -325,6 +325,7 @@ class AudioPlayerFragment : Fragment() {
             requireContext().unregisterReceiver(networkReceiver)
             isReceiverRegistered = false
         }
+        viewModel.onUiHidden()
     }
 
     override fun onResume() {
@@ -342,6 +343,7 @@ class AudioPlayerFragment : Fragment() {
 
             isReceiverRegistered = true
         }
+        viewModel.onUiVisible()
     }
 
     override fun onStart() {
@@ -349,11 +351,13 @@ class AudioPlayerFragment : Fragment() {
         // BIND привязка Сервиса PlayService
         val intent = Intent(requireContext(), PlayerService::class.java)
 
-        // сервис запущен и может жить сам
-        ContextCompat.startForegroundService(requireContext(), intent)
+        // сервис запущен
+        //ContextCompat.startForegroundService(requireContext(), intent)
 
         // привязка к сервису для управления
         requireContext().bindService(intent, connection, Context.BIND_AUTO_CREATE)
+
+        viewModel.onUiVisible() // остановка сервиса foreground уведомления
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(
@@ -370,6 +374,16 @@ class AudioPlayerFragment : Fragment() {
         super.onStop()
 
         if (serviceBound) {
+
+            if (viewModel.observePlayerState().value == PlayerState.PLAYING) {
+
+                // запускаем сервис
+                val intent = Intent(requireContext(), PlayerService::class.java)
+                requireContext().startService(intent)
+
+                viewModel.onUiHidden() // запуск сервиса foreground уведомления
+            }
+
             requireContext().unbindService(connection)
             serviceBound = false
         }

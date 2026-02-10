@@ -32,9 +32,6 @@ class AudioPlayerViewModel(
 
 ) : ViewModel() {
 
-    // переменная/флаг для определения свернут/не свернут плейер
-    private var isUiVisible = false
-
     // экземпляр PlayerServiceController для передачи команд в сервис для Плейера
     private var audioPlayerControl: PlayerServiceController? = null
 
@@ -91,17 +88,12 @@ class AudioPlayerViewModel(
     }
 
     // PLAYER CONTROL (через PlayerService)
-    private var isPrepared = false
     fun prepare() {
         Log.d("PLAYER", "prepare called, control = $audioPlayerControl")
-        if (isPrepared) return
+        val state = audioPlayerControl?.getCurrentState() ?: return
+        if (state != PlayerState.DEFAULT) return
 
-        audioPlayerControl?.prepare(
-            url = track.previewUrl ?: return,
-            trackName = track.trackName,
-            artistName = track.artistName
-        )
-        isPrepared = true
+        audioPlayerControl?.prepare(track)
     }
 
     fun playbackControl() {
@@ -210,6 +202,19 @@ class AudioPlayerViewModel(
     fun clearToastMessage() {
         _toastMessage.value = null
     }
+
+    // функция запуска foreground уведомления при сворачивании Ui
+    fun onUiHidden() {
+        if (playerStateLiveData.value == PlayerState.PLAYING) {
+            audioPlayerControl?.startForegroundIfPlaying()
+        }
+    }
+
+    // функция остановки foreground уведомления при разворачивании Ui
+    fun onUiVisible() {
+        audioPlayerControl?.stopForegroundIfNeed()
+    }
+
 
     // класс для тоста для использования в StateFlow
     sealed class ToastEvent(val playlistName: String) {

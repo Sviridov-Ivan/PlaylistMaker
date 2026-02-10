@@ -14,14 +14,14 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.example.playlistmaker.R
 import com.example.playlistmaker.player.domain.model.PlayerState
+import com.example.playlistmaker.search.domain.model.Track
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class PlayerService : Service(), PlayerServiceController {
 
-    // переменные для передачи в уведомление сервиса
-    private var trackTitle: String = ""
-    private var artistName: String = ""
+    // объект класса Track (для передачи имени исполнителя и названия трека в уведомление)
+    private var currentTrack: Track? = null
 
     private var mediaPlayer: MediaPlayer? = null
 
@@ -53,11 +53,16 @@ class PlayerService : Service(), PlayerServiceController {
 
     // создание самого уведомления foreground
     private fun createNotification(): Notification {
-        val contentText = "$artistName - $trackTitle"
+        val track = currentTrack
+        val contentText = if (track != null) {
+            "${track.artistName} - ${track.trackName}"
+        } else {
+            ""
+        }
 
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_notification)
-            .setContentTitle("Playlist Maker")
+            .setContentTitle(getString(R.string.title_foreground_service))
             .setContentText(contentText)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setCategory(NotificationCompat.CATEGORY_SERVICE)
@@ -73,35 +78,9 @@ class PlayerService : Service(), PlayerServiceController {
         return START_NOT_STICKY
     }
 
-    // Методы управления Media Player
-    override fun prepare(url: String, trackName: String, artistName: String) {
-        this.trackTitle = trackName
-        this.artistName = artistName
-
-        release()
-
-        mediaPlayer = MediaPlayer().apply {
-            setDataSource(url)
-            prepareAsync()
-
-            setOnPreparedListener {
-                _playerState.value = PlayerState.PREPARED
-
-            }
-
-            setOnCompletionListener {
-                mediaPlayer?.seekTo(0) // обнуляем таймер при окончании трека
-                _playerState.value = PlayerState.PREPARED
-                stopForeground(STOP_FOREGROUND_REMOVE)
-            }
-        }
-    }
-
-    override fun play() {
-        if (mediaPlayer?.isPlaying == false) {
-            mediaPlayer?.start()
-            _playerState.value = PlayerState.PLAYING
-
+    // функция для запуска foreground уведомления
+    override fun startForegroundIfPlaying() {
+        if (mediaPlayer?.isPlaying == true) {
             createNotificationChannel()
 
             startForeground(
@@ -112,12 +91,49 @@ class PlayerService : Service(), PlayerServiceController {
         }
     }
 
+    // функция для остановки foreground уведомления
+    override fun stopForegroundIfNeed() {
+        stopForeground(STOP_FOREGROUND_REMOVE)
+    }
+
+    // Методы управления Media Player
+    override fun prepare(track: Track) {
+        currentTrack = track
+
+        release()
+
+        mediaPlayer = MediaPlayer().apply {
+            setDataSource(track.previewUrl)
+            prepareAsync()
+
+            setOnPreparedListener {
+                _playerState.value = PlayerState.PREPARED
+            }
+
+            setOnCompletionListener {
+                mediaPlayer?.seekTo(0) // обнуляем таймер при окончании трека
+                _playerState.value = PlayerState.PREPARED
+                stopForeground(STOP_FOREGROUND_REMOVE)
+                stopSelf() // остановка сервиса
+            }
+        }
+    }
+
+    override fun getCurrentState(): PlayerState {
+        return _playerState.value
+    }
+
+    override fun play() {
+        if (mediaPlayer?.isPlaying == false) {
+            mediaPlayer?.start()
+            _playerState.value = PlayerState.PLAYING
+        }
+    }
+
     override fun pause() {
         if (mediaPlayer?.isPlaying == true) {
             mediaPlayer?.pause()
             _playerState.value = PlayerState.PAUSED
-
-            stopForeground(STOP_FOREGROUND_REMOVE)
         }
     }
 
