@@ -67,6 +67,7 @@ class AudioPlayerFragment : Fragment() {
     private var serviceBound = false
     private var audioPlayerControl: PlayerServiceController? = null
 
+    // работа с сервисом
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, binder: IBinder?) {
             val serviceBinder = binder as PlayerService.PlayerServiceBinder
