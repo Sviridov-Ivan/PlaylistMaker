@@ -155,4 +155,7 @@
     <!-- Контейнер для плейсхолдера для списка треков в плейлисте -->
     <dimen name="p_h_bottom_sheet_playlist_image_size">100dp</dimen>
 
+    <!-- Compose -->
+    <dimen name="compose_padding_title_top_start">20dp</dimen>
+
 </resources>

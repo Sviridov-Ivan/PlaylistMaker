@@ -17,7 +17,7 @@
     <string name="dialog_choice_title">Поделиться ссылкой на курс Android-разработчик через:</string>
     <string name="refresh">Обновить</string>
     <string name="nothing_found">Ничего не нашлось</string>
-    <string name="something_went_wrong">Проблемы со связью\n\nЗагрузка не удалась. Проверьте подключение к интернету</string>
+    <string name="something_went_wrong">Проблемы со связью\n\nЗагрузка не удалась.\nПроверьте подключение к интернету</string>
     <string name="history_title">Вы искали</string>
     <string name="clear_history_button">Очистить историю</string>
 
@@ -107,7 +107,7 @@
         <item quantity="one">%d трек</item>
         <item quantity="few">%d трека</item>
         <item quantity="many">%d треков</item>
-        <item quantity="other">%d трека</item>
+        <item quantity="other">%d треков</item>
     </plurals>
 
     <!-- Для отображения суммы треков в плейлисте в минутах -->
@@ -129,4 +129,6 @@
     <string name="no_track">Отрывок отсутствует для этого трека</string>
     <string name="no_permission_for_foreground_service">Разрешение на уведомления не выдано</string>
     <string name="title_foreground_service">Playlist Maker</string>
+
+
 </resources>

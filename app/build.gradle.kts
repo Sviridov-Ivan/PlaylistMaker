@@ -5,12 +5,13 @@ plugins {
     kotlin("kapt") // для внедрения Room sp21
 
     id("com.google.gms.google-services") // firebase
+    alias(libs.plugins.kotlin.compose) // compose
 
 }
 
 android {
     namespace = "com.example.playlistmaker"
-    compileSdk = 35
+    compileSdk = 36
 
     buildFeatures {
         viewBinding = true // binding
@@ -58,6 +59,10 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
+
+    buildFeatures {
+        compose = true
+    }
 }
 
 dependencies {
@@ -70,6 +75,9 @@ dependencies {
     implementation(libs.androidx.viewpager2)
 
     implementation(libs.glide)
+    implementation(libs.androidx.compose.runtime.livedata)
+    implementation(libs.androidx.compose.runtime)
+    implementation(libs.androidx.compose.foundation)
     annotationProcessor(libs.glide.compiler)
     implementation(libs.gson)
     implementation(libs.retrofit)
@@ -96,6 +104,22 @@ dependencies {
     // firebase analytics
     implementation(platform("com.google.firebase:firebase-bom:34.7.0"))
     implementation("com.google.firebase:firebase-analytics")
+
+    // compose
+    implementation(libs.androidx.activity.compose)
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.ui.graphics)
+    implementation(libs.androidx.compose.ui.tooling.preview)
+    implementation(libs.androidx.compose.material3)
+
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(libs.androidx.compose.ui.test.junit4)
+    debugImplementation(libs.androidx.compose.ui.tooling)
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
+
+    // coil
+    implementation("io.coil-kt:coil-compose:2.6.0")
 
 }
 

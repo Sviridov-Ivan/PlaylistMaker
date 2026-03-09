@@ -1,13 +1,19 @@
 package com.example.playlistmaker.search.ui
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.search.domain.interactor.SearchInteractor
 import com.example.playlistmaker.search.domain.interactor.TracksInteractor
 import com.example.playlistmaker.search.domain.model.Track
+import com.example.playlistmaker.search.ui.model.PlaceholderState
+import com.example.playlistmaker.search.ui.model.SearchUiState
 import com.example.playlistmaker.util.Resource
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 // управление состоянием экрана поиска
@@ -16,83 +22,141 @@ class SearchViewModel(
     private val searchInteractor: SearchInteractor // интерактор для работы с историей поиска
 ) : ViewModel() {
 
-    // LiveData со списком треков (результаты поиска или история)
-    private val tracksLiveData = MutableLiveData<List<Track>>()
-    fun observeTracks(): LiveData<List<Track>> = tracksLiveData
+    init {
+        showHistory()
+    }
 
-    // LiveData для отображения загрузки (показываем ProgressBar)
-    private val isLoadingLiveData = MutableLiveData<Boolean>()
-    fun observeLoading(): LiveData<Boolean> = isLoadingLiveData
+    private val _uiState = MutableStateFlow(SearchUiState())
+    val uiState: StateFlow<SearchUiState> = _uiState.asStateFlow()
 
-    // LiveData для состояния плейсхолдера (пусто, ошибка, история или ничего)
-    private val placeholderStateLiveData = MutableLiveData<PlaceholderState>()
-    fun observePlaceholderState(): LiveData<PlaceholderState> = placeholderStateLiveData
+    private var searchJob: Job? = null
 
-    //  Поиск треков по запросу с использованием корутин и FLow
-    fun searchTracks(query: String) {
-        if (query.isEmpty()) return // если строка пустая, возращаем
 
-        viewModelScope.launch { // запуск потока
+
+    fun onQueryChanged(text: String) {
+
+        _uiState.update {
+            it.copy(query = text)
+        }
+
+        if (text.isEmpty()) {
+            showHistory()
+            return
+        }
+
+        searchDebounce(text)
+    }
+
+    private fun searchDebounce(text: String) {
+
+        searchJob?.cancel()
+
+        searchJob = viewModelScope.launch {
+
+            delay(SEARCH_DEBOUNCE_DELAY)
+
+            searchTracks(text)
+        }
+    }
+
+    private suspend fun searchTracks(query: String) {
+
+            _uiState.update {
+                it.copy(
+                    isLoading = true,
+                    placeholder = PlaceholderState.None
+                )
+            }
+
             trackInteractor.searchTracks(query).collect { result ->
+
                 when (result) {
 
-                    is Resource.Loading -> {
-                        isLoadingLiveData.postValue(true)
-                        placeholderStateLiveData.postValue(PlaceholderState.None)
-                    }
-
                     is Resource.Success -> {
-                        isLoadingLiveData.postValue(false)
+
                         val tracks = result.data
-                        if (tracks.isNotEmpty()) {
-                            tracksLiveData.postValue(tracks)
-                            placeholderStateLiveData.postValue(PlaceholderState.None)
-                        } else {
-                            tracksLiveData.postValue(emptyList())
-                            placeholderStateLiveData.postValue(PlaceholderState.Empty)
+
+                        _uiState.update {
+
+                            it.copy(
+                                tracks = tracks,
+                                isLoading = false,
+                                placeholder =
+                                    if (tracks.isEmpty())
+                                        PlaceholderState.Empty
+                                    else
+                                        PlaceholderState.None
+                            )
                         }
                     }
 
                     is Resource.Error -> {
-                        isLoadingLiveData.postValue(false)
-                        tracksLiveData.postValue(emptyList())
-                        placeholderStateLiveData.postValue(PlaceholderState.Error)
+
+                        _uiState.update {
+
+                            it.copy(
+                                isLoading = false,
+                                placeholder = PlaceholderState.Error
+                            )
+                        }
                     }
+
+                    else -> {}
                 }
             }
-        }
     }
 
-    // Сохранить трек в историю поиска
-    fun saveTrack(track: Track) {
+    fun onTrackClicked(track: Track) {
+
         searchInteractor.saveTrack(track)
     }
 
-    // Показать историю поиска
     fun showHistory() {
-        viewModelScope.launch { // запускаем в отдельном потоке, так как getHistory suspend (теперь асинхронный)
+
+        viewModelScope.launch { // запуск suspend функции в отдельном потоке
+
             val history = searchInteractor.getHistory()
-            if (history.isNotEmpty()) {
-                tracksLiveData.postValue(history) // показываем историю
-                placeholderStateLiveData.postValue(PlaceholderState.History)
-            } else {
-                tracksLiveData.postValue(emptyList())
-                placeholderStateLiveData.postValue(PlaceholderState.None) // скрываем плейсхолдер
+
+            _uiState.update {
+
+                it.copy(
+                    tracks = history,
+                    history = history,
+                    placeholder =
+                        if (history.isEmpty())
+                            PlaceholderState.None
+                        else
+                            PlaceholderState.History
+                )
             }
         }
     }
 
-    // Очистить историю поиска
     fun clearHistory() {
+
         searchInteractor.clearHistory()
-        showHistory() // сразу обновляем UI
+
+        _uiState.update {
+
+            it.copy(
+                tracks = emptyList(),
+                history = emptyList(),
+                placeholder = PlaceholderState.None
+            )
+        }
     }
 
-    // Состояния для отображения плейсхолдеров на экране
-    sealed class PlaceholderState {
-        object None : PlaceholderState() // ничего не показывать
-        object Empty : PlaceholderState() // "ничего не найдено"
-        object Error : PlaceholderState() // ошибка сети / сервера
-        object History : PlaceholderState() // показать историю поиска
+    fun retry() {
+        val query = _uiState.value.query // сохранение состояние query в переменную
+
+        if (query.isBlank()) return
+
+        viewModelScope.launch { // вызов suspend функции поиска в отдельном потоке
+            searchTracks(query)
+        }
+    }
+
+    companion object {
+        private const val SEARCH_DEBOUNCE_DELAY = 2000L
     }
 }

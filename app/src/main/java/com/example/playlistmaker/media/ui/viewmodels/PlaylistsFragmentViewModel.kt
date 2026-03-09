@@ -19,6 +19,7 @@ class PlaylistsFragmentViewModel(
     val playlists: StateFlow<List<Playlist>> = _playlists.asStateFlow()
 
     // StateFlow для состояния плейсхолдера
+    //private val _placeholderState = MutableStateFlow<PlaceholderPlaylistsState>(PlaceholderPlaylistsState.None)
     private val _placeholderState = MutableStateFlow<PlaceholderPlaylistsState>(PlaceholderPlaylistsState.None)
     val placeholderState: StateFlow<PlaceholderPlaylistsState> = _placeholderState.asStateFlow()
 
