@@ -4,105 +4,75 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.isVisible
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.map
 import androidx.navigation.fragment.NavHostFragment
-import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.playlistmaker.ui.PlaylistMakerTheme
 import com.example.playlistmaker.R
-import com.example.playlistmaker.adapter.TracksAdapter
-import com.example.playlistmaker.databinding.FragmentFavouriteTracksBinding
+import com.example.playlistmaker.media.ui.compose.FavouriteTracksScreen
 import com.example.playlistmaker.media.ui.viewmodels.FavouriteTracksFragmentViewModel
 import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.util.DebounceConfig.CLICK_DEBOUNCE_DELAY
 import com.example.playlistmaker.util.debounce
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import kotlinx.collections.immutable.toImmutableList
 
 class FavouriteTracksFragment : Fragment() {
 
-    private var _binding: FragmentFavouriteTracksBinding? = null
-    private val binding get() = _binding!!
-
-    // создаем переменную для адаптера с пустым конструктором (там есть пометка)
-    private val adapter = TracksAdapter()
 
     // Подключаем ViewModel через Koin
     private val viewModel: FavouriteTracksFragmentViewModel by viewModel()
-
-    // объявление функции для работы с Debounce.kt для задержки и исключения многократного нажатия при переходе на Аудиоплейер
-    private lateinit var onTrackClickDebounce: (Track) -> Unit
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        _binding = FragmentFavouriteTracksBinding.inflate(inflater, container, false)
-        return binding.root
-    }
+    ): View {
+        return ComposeView(requireContext()).apply {
+            // добавлена стратегия - Композиция уничтожается только когда уничтожается View фрагмента (onDestroyView), рекомендуется Гуглом при совместной работе Фрагментов и компоуз функций
+            setViewCompositionStrategy(
+                ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed
+            )
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+            setContent {
 
-        // настройка RecyclerView
-        // поправил использование Context
-        binding.recyclerViewFav.layoutManager = LinearLayoutManager(
-            requireContext(),
-            LinearLayoutManager.VERTICAL,
-            false
-        ) // вызываем адаптер для LinearLayoutManager (составляющий элемент RecyclerView помимо адаптера и вьюхолдера)
-        binding.recyclerViewFav.adapter = adapter
+                PlaylistMakerTheme { // обернут для использования моей цветовой гаммы
 
-        // инициализация переменной для работы с корутинами (работа с потоком) с использованием функции из файла Debounce.kt
-        onTrackClickDebounce = debounce<Track>(CLICK_DEBOUNCE_DELAY, viewLifecycleOwner.lifecycleScope, false) { track ->  // реализация дебонса - задержки на открытие активити на CLICK_DEBOUNCE_DELAY при нажатии (спринт 14,20)
+                    val tracks by viewModel.observeFavourTracks().observeAsState(emptyList())
+                    //val placeholderVisible by viewModel.observePlaceholderState().observeAsState(true)
+                    // any to boolean
+                    val placeholderVisible by viewModel.observePlaceholderState()
+                        .map { state ->
+                            state is FavouriteTracksFragmentViewModel.PlaceholderFavouriteTracksState.Empty
+                        }
+                        .observeAsState(true)
+                    val scope = rememberCoroutineScope()
 
-            // парсинг track
-            val bundle = Bundle().apply {
-                putParcelable("track", track)
-            }
+                    val debouncedClick = remember {
+                        debounce<Track>(CLICK_DEBOUNCE_DELAY, scope, false) { track ->
+                            NavHostFragment.findNavController(requireParentFragment())
+                                .navigate(
+                                    R.id.action_mediaFragment_to_audioPlayerFragment,
+                                    Bundle().apply { putParcelable("track", track) }
+                                )
+                        }
+                    }
 
-            // переход на экран AudioPlayer  // Навигация через родительский MediaFragment (где определён action)
-            NavHostFragment.findNavController(requireParentFragment())
-                .navigate(R.id.action_mediaFragment_to_audioPlayerFragment, bundle)
-        }
-
-        // oбработка клика по элементу списка RecyclerView и вызов функции для перехода на фрагмент Аудиоплейер
-        adapter.setOnItemClickListener { track ->
-            onTrackClickDebounce(track)
-        }
-
-        observeFavViewModel() // вызов функции для избранных треков
-    }
-    private fun observeFavViewModel() {
-        // список избранных треков
-        viewModel.observeFavourTracks().observe(viewLifecycleOwner) { favTracks ->
-            adapter.updateTracks(favTracks)
-        }
-
-        // LiveData отображение заглушки и треков
-        viewModel.observePlaceholderState().observe(viewLifecycleOwner) { state ->
-            when (state) {
-                is FavouriteTracksFragmentViewModel.PlaceholderFavouriteTracksState.Empty -> {
-                    // пустой плейсхолдер
-                    //binding.placeholderContainerFavouriteTracks.visibility = View.VISIBLE
-                    binding.placeholderContainerFavouriteTracks.isVisible = true
-                    //binding.recyclerViewFav.visibility = View.GONE
-                    binding.recyclerViewFav.isVisible = false
-                }
-                is FavouriteTracksFragmentViewModel.PlaceholderFavouriteTracksState.Favourites -> {
-                    //binding.placeholderContainerFavouriteTracks.visibility = View.GONE
-                    binding.placeholderContainerFavouriteTracks.isVisible = false
-                    //binding.recyclerViewFav.visibility = View.VISIBLE
-                    binding.recyclerViewFav.isVisible = true
+                    FavouriteTracksScreen(
+                        tracks = tracks.toImmutableList(), // // немьютабельные коллекции для повышения стабильности композабл функций. В данном случае используется ImmutableList (чтобы сказать компилятору)
+                        isPlaceholderVisible = placeholderVisible,
+                        onTrackClick = { track -> debouncedClick(track) }
+                    )
                 }
             }
         }
     }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-
     companion object {
         fun newInstance(): FavouriteTracksFragment {
             return FavouriteTracksFragment() // возвращаем новый экземпляр фрагмента
