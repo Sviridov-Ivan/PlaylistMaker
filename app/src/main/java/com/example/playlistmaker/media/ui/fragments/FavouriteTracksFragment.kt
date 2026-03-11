@@ -9,6 +9,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.map
 import androidx.navigation.fragment.NavHostFragment
@@ -20,6 +21,7 @@ import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.util.DebounceConfig.CLICK_DEBOUNCE_DELAY
 import com.example.playlistmaker.util.debounce
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import kotlinx.collections.immutable.toImmutableList
 
 class FavouriteTracksFragment : Fragment() {
 
@@ -33,6 +35,10 @@ class FavouriteTracksFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         return ComposeView(requireContext()).apply {
+            // добавлена стратегия - Композиция уничтожается только когда уничтожается View фрагмента (onDestroyView), рекомендуется Гуглом при совместной работе Фрагментов и компоуз функций
+            setViewCompositionStrategy(
+                ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed
+            )
 
             setContent {
 
@@ -59,7 +65,7 @@ class FavouriteTracksFragment : Fragment() {
                     }
 
                     FavouriteTracksScreen(
-                        tracks = tracks,
+                        tracks = tracks.toImmutableList(), // // немьютабельные коллекции для повышения стабильности композабл функций. В данном случае используется ImmutableList (чтобы сказать компилятору)
                         isPlaceholderVisible = placeholderVisible,
                         onTrackClick = { track -> debouncedClick(track) }
                     )

@@ -12,7 +12,7 @@ class FavouriteTracksFragmentViewModel(
     private val favouriteTracksInteractor: FavouriteTracksInteractor, // для избранных треков
 ) : ViewModel() {
 
-    // LiveData со списком треков (результаты поиска для избранных)
+    // LiveData со списком треков (результаты поиска для избранных) // immutable делаю в UI
     private val tracksFavourLiveData = MutableLiveData<List<Track>>()
     fun observeFavourTracks(): LiveData<List<Track>> = tracksFavourLiveData
 

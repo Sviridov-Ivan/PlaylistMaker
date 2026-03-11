@@ -121,6 +121,12 @@ dependencies {
     // coil
     implementation("io.coil-kt:coil-compose:2.6.0")
 
+    // compose, immutable list
+    implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.7")
+
+    // Koin для Compose
+    implementation("io.insert-koin:koin-androidx-compose:3.5.0")
+
 }
 
 

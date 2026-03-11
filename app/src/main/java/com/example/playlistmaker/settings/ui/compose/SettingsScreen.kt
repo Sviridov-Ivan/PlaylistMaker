@@ -110,7 +110,7 @@ fun ThemeSwitcher(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = "Темная тема",
+            text = stringResource(R.string.theme),
             modifier = Modifier.weight(1f),
             color = MaterialTheme.colorScheme.onSecondary,
             fontSize = dimensionResource(R.dimen.settings_text_size).value.sp,

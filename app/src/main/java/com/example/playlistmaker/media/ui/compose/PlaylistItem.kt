@@ -96,7 +96,7 @@ fun PlaylistItem(
 @Preview(name = "Light Theme", showBackground = true)
 @Preview(name = "Dark Theme", showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
-fun PlaylistItemPreview() {
+private fun PlaylistItemPreview() { // приватная функция, чтобы случайно не вызвать её из реального кода
 
     val playlist = Playlist(
         id = 112132,

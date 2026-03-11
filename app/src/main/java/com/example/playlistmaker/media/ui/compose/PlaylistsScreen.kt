@@ -15,6 +15,8 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -24,14 +26,40 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.playlistmaker.R
 import com.example.playlistmaker.media.domain.model.Playlist
+import com.example.playlistmaker.media.ui.model.PlaylistsScreenState
+import com.example.playlistmaker.media.ui.viewmodels.PlaylistsFragmentViewModel
+import org.koin.androidx.compose.koinViewModel
 import com.example.playlistmaker.ui.RoundedButton
+
+// функция для связи ViewModel и сомпоуз функции (Логика загрузки ViewModel перенесена внутрь Composable)
+@Composable
+fun PlaylistsScreenRoute(
+    viewModel: PlaylistsFragmentViewModel = koinViewModel(), // подключение вьюмодели через koinViewModel для Compose
+    onPlaylistClick: (Playlist) -> Unit,
+    onCreatePlaylistClick: () -> Unit
+) {
+    // Загружаем данные один раз при первом запуске
+    LaunchedEffect(Unit) {
+        viewModel.showPlaylists()
+    }
+
+    // Подписка на UiState с учётом lifecycle
+    val state by viewModel.uiState.collectAsStateWithLifecycle() // обязательно!!! для связи с UiState с учётом lifecycle
+
+    PlaylistsScreen(
+        state = state,
+        onPlaylistClick = onPlaylistClick,
+        onCreatePlaylistClick = onCreatePlaylistClick
+    )
+}
+
 
 @Composable
 fun PlaylistsScreen(
-    playlists: List<Playlist>,
-    isPlaceholderVisible: Boolean,
+    state: PlaylistsScreenState,
     onPlaylistClick: (Playlist) -> Unit,
     onCreatePlaylistClick: () -> Unit
 ) {
@@ -53,7 +81,7 @@ fun PlaylistsScreen(
             fontSize = 14.sp
         )
 
-        if (isPlaceholderVisible) {
+        if (state.isPlaceholderVisible) {
 
             // Плейсхолдер
             Column(
@@ -91,7 +119,7 @@ fun PlaylistsScreen(
             ) {
 
                 items(
-                    items = playlists,
+                    items = state.playlists,
                     key = { it.id },              // стабильный ключ, чтобы не перерисовывать все items, а только изменившиеся
                     contentType = { "playlist" } // тип элемента для ускоренного отображения
                 ) { playlist ->
@@ -100,7 +128,6 @@ fun PlaylistsScreen(
                         playlist = playlist,
                         onClick = onPlaylistClick
                     )
-
                 }
             }
         }

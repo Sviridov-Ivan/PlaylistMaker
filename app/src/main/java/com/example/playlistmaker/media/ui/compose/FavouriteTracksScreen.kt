@@ -26,10 +26,11 @@ import androidx.compose.ui.unit.sp
 import com.example.playlistmaker.R
 import com.example.playlistmaker.search.domain.model.Track
 import androidx.compose.foundation.lazy.items
+import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun FavouriteTracksScreen(
-    tracks: List<Track>,
+    tracks: ImmutableList<Track>, // немьютабельные коллекции для повышения стабильности композабл функций. В данном случае используется ImmutableList
     isPlaceholderVisible: Boolean,
     onTrackClick: (Track) -> Unit
 ) {

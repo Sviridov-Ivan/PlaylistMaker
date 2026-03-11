@@ -1,7 +1,9 @@
 package com.example.playlistmaker.search.ui.model
 
+import androidx.compose.runtime.Immutable
 import com.example.playlistmaker.search.domain.model.Track
 
+@Immutable
 data class SearchUiState(
     val query: String = "",
 
